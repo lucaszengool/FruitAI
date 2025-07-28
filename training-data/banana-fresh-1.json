@@ -1,0 +1,10 @@
+{
+  "item": "Banana",
+  "freshness": 92,
+  "characteristics": {
+    "color": "Bright yellow",
+    "texture": "Firm but yielding",
+    "blemishes": "None visible",
+    "ripeness": "Perfect ripeness"
+  }
+}

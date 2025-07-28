@@ -1,0 +1,10 @@
+{
+  "item": "Apple",
+  "freshness": 25,
+  "characteristics": {
+    "color": "Brown discoloration",
+    "texture": "Soft and mushy",
+    "blemishes": "Extensive browning",
+    "ripeness": "Overripe, avoid"
+  }
+}

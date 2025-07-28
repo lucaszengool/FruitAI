@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "created": "2025-07-28T17:50:01.482Z",
+  "fruitTypes": [
+    "apple",
+    "banana",
+    "orange",
+    "strawberry",
+    "grape",
+    "tomato"
+  ],
+  "imageSize": 64,
+  "architecture": "CNN",
+  "description": "Fruit classification model for FruitAI"
+}

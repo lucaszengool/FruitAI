@@ -1,0 +1,10 @@
+{
+  "item": "Banana",
+  "freshness": 45,
+  "characteristics": {
+    "color": "Yellow-brown with many spots",
+    "texture": "Very soft",
+    "blemishes": "Many brown spots",
+    "ripeness": "Overripe but edible"
+  }
+}

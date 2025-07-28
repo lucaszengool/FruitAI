@@ -1,0 +1,10 @@
+{
+  "item": "Strawberry",
+  "freshness": 52,
+  "characteristics": {
+    "color": "Red with dark spots",
+    "texture": "Slightly soft",
+    "blemishes": "Some dark spots",
+    "ripeness": "Use quickly"
+  }
+}

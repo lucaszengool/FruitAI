@@ -1,0 +1,10 @@
+{
+  "item": "Tomato",
+  "freshness": 76,
+  "characteristics": {
+    "color": "Red with green stem area",
+    "texture": "Firm",
+    "blemishes": "Minor surface marks",
+    "ripeness": "Good for cooking"
+  }
+}

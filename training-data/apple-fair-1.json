@@ -1,0 +1,10 @@
+{
+  "item": "Apple",
+  "freshness": 55,
+  "characteristics": {
+    "color": "Faded red, some brown spots",
+    "texture": "Slightly soft",
+    "blemishes": "Several brown spots",
+    "ripeness": "Consume soon"
+  }
+}
