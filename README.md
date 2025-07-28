@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FruitAI - Freshness Analyzer
+
+An AI-powered web application that analyzes the freshness of fruits and vegetables from photos, providing smart recommendations for grocery shopping.
+
+## Features
+
+- 🤖 **AI-Powered Analysis**: Advanced image analysis to detect freshness indicators
+- 📊 **Freshness Scoring**: Comprehensive rating system (0-100%)
+- 🎯 **Smart Recommendations**: Get "buy", "check", or "avoid" recommendations
+- 🔍 **Detailed Analysis**: Color, texture, blemishes, and ripeness assessment
+- 🔐 **Secure Authentication**: Powered by Clerk for user management
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- ⚡ **Fast Performance**: Optimized for quick analysis and smooth user experience
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS
+- **Authentication**: Clerk
+- **Icons**: Lucide React
+- **Deployment**: Railway
+- **AI Analysis**: Mock analysis (ready for OpenAI Vision API integration)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Clerk account for authentication
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd fruitai-freshness
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in your Clerk credentials:
+   ```
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   CLERK_WEBHOOK_SECRET=your_webhook_secret
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production Build
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build:prod
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This application is configured for deployment on Railway:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Connect your GitHub repository to Railway
+2. Add environment variables in Railway dashboard
+3. Deploy automatically on push to main branch
 
-## Learn More
+### Environment Variables for Production
 
-To learn more about Next.js, take a look at the following resources:
+Set these in your Railway environment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+CLERK_WEBHOOK_SECRET=your_webhook_secret
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+1. **Sign Up/Sign In**: Create an account or sign in with Clerk authentication
+2. **Upload Image**: Take or upload a clear photo of fruits or vegetables
+3. **Get Analysis**: Click "Analyze Freshness" to get AI-powered results
+4. **Review Results**: See freshness score, recommendation, and detailed analysis
+5. **Make Smart Decisions**: Use the insights for informed grocery shopping
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/analyze` - Analyze uploaded fruit/vegetable images
+
+## Future Enhancements
+
+- Integration with OpenAI Vision API for real AI analysis
+- Support for multiple items in one image
+- Historical analysis tracking
+- Shopping list recommendations
+- Mobile app development
+- Offline analysis capabilities
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, email support@fruitai.com or open an issue on GitHub.
