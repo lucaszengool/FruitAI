@@ -22,20 +22,29 @@ interface AnalysisResult {
 }
 
 export default function Home() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-        setResult(null);
-      };
-      reader.readAsDataURL(file);
+    try {
+      const file = event.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setSelectedImage(e.target?.result as string);
+          setResult(null);
+          setError(null);
+        };
+        reader.onerror = () => {
+          setError('Failed to load image. Please try again.');
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (err) {
+      setError('Failed to process image. Please try again.');
     }
   };
 
@@ -61,7 +70,7 @@ export default function Home() {
       setResult(analysisResult);
     } catch (error) {
       console.error('Analysis error:', error);
-      // Fallback to show error state
+      setError('Analysis failed. Please try again.');
       setResult(null);
     } finally {
       setAnalyzing(false);
@@ -93,6 +102,17 @@ export default function Home() {
         return 'bg-gray-100 border-gray-200 text-gray-800';
     }
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-green-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -129,6 +149,15 @@ export default function Home() {
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8">
+            {/* Error Display */}
+            {error && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="w-5 h-5 text-red-500" />
+                  <p className="text-red-700">{error}</p>
+                </div>
+              </div>
+            )}
             {/* Upload Section */}
             <div className="mb-8">
               <div className="border-2 border-dashed border-green-300 rounded-xl p-8 text-center hover:border-green-400 transition-colors">
