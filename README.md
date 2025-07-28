@@ -19,7 +19,7 @@ An AI-powered web application that analyzes the freshness of fruits and vegetabl
 - **Authentication**: Clerk
 - **Icons**: Lucide React
 - **Deployment**: Railway
-- **AI Analysis**: Mock analysis (ready for OpenAI Vision API integration)
+- **AI Analysis**: OpenAI Vision API for accurate fruit detection
 
 ## Getting Started
 
@@ -47,11 +47,12 @@ An AI-powered web application that analyzes the freshness of fruits and vegetabl
    cp .env.example .env.local
    ```
    
-   Fill in your Clerk credentials:
+   Fill in your Clerk credentials and OpenAI API key:
    ```
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
    CLERK_SECRET_KEY=your_clerk_secret_key
    CLERK_WEBHOOK_SECRET=your_webhook_secret
+   OPENAI_API_KEY=your_openai_api_key
    ```
 
 4. Run the development server:
@@ -88,6 +89,7 @@ NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
 CLERK_WEBHOOK_SECRET=whsec_3JdYlttIcnLRcm1fejLVOQiUyHZnqU+Y
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ## Usage
@@ -104,7 +106,6 @@ CLERK_WEBHOOK_SECRET=whsec_3JdYlttIcnLRcm1fejLVOQiUyHZnqU+Y
 
 ## Future Enhancements
 
-- Integration with OpenAI Vision API for real AI analysis
 - Support for multiple items in one image
 - Historical analysis tracking
 - Shopping list recommendations

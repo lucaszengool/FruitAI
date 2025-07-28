@@ -43,7 +43,7 @@ export default function Home() {
         };
         reader.readAsDataURL(file);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to process image. Please try again.');
     }
   };
