@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // In a production environment, you would use OpenAI's Vision API or another AI service
     // For now, we'll simulate AI analysis based on some basic image characteristics
-    const mockAnalysis = await simulateAIAnalysis(image);
+    const mockAnalysis = await simulateAIAnalysis();
     
     return NextResponse.json(mockAnalysis);
   } catch (error) {
@@ -42,7 +42,7 @@ interface AnalysisResult {
   analysisId: string;
 }
 
-async function simulateAIAnalysis(_imageBase64: string): Promise<AnalysisResult> {
+async function simulateAIAnalysis(): Promise<AnalysisResult> {
   // Simulate processing time
   await new Promise(resolve => setTimeout(resolve, 2000));
   
