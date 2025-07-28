@@ -89,7 +89,6 @@ async function analyzeImageFallback(base64Image: string): Promise<AnalysisResult
 // Enhanced image analysis without AI
 function analyzeImageCharacteristics(buffer: Buffer) {
   // Basic heuristics based on file size, format, and simple characteristics
-  const size = buffer.length;
   
   // Common fruit analysis patterns
   const fruits = [
@@ -141,19 +140,3 @@ function analyzeImageCharacteristics(buffer: Buffer) {
   return selectedFruit;
 }
 
-// Very basic color detection heuristic
-function getDominantColorHeuristic(buffer: Buffer): string {
-  // This is a placeholder - in reality you'd use sharp or jimp for image processing
-  // For now, we'll return a basic color based on buffer characteristics
-  const size = buffer.length;
-  const sample = buffer.subarray(0, Math.min(1000, size));
-  
-  // Very crude heuristic based on byte patterns
-  const avgByte = sample.reduce((sum, byte) => sum + byte, 0) / sample.length;
-  
-  if (avgByte > 200) return 'bright red';
-  if (avgByte > 150) return 'yellow';
-  if (avgByte > 100) return 'orange';
-  if (avgByte > 50) return 'green';
-  return 'dark red';
-}

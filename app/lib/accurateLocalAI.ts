@@ -145,7 +145,7 @@ class AccurateFruitAnalyzer {
     }
   }
 
-  private analyzeColorDistribution(data: Buffer, info: any) {
+  private analyzeColorDistribution(data: Buffer, info: { width: number; height: number }) {
     const pixelCount = info.width * info.height;
     let rSum = 0, gSum = 0, bSum = 0;
     let rVariance = 0, gVariance = 0, bVariance = 0;
@@ -180,8 +180,8 @@ class AccurateFruitAnalyzer {
     };
   }
 
-  private generateCharacteristicsFromAnalysis(freshnessScore: number, colorStats: any): AccurateAnalysisResult['characteristics'] {
-    const { brightness, colorfulness, rMean, gMean, bMean } = colorStats;
+  private generateCharacteristicsFromAnalysis(freshnessScore: number, colorStats: { rMean: number; gMean: number; bMean: number; brightness: number; colorfulness: number }): AccurateAnalysisResult['characteristics'] {
+    const { rMean, gMean, bMean } = colorStats;
     
     // Generate color description
     let color = 'Natural coloring';
@@ -262,7 +262,7 @@ class AccurateFruitAnalyzer {
     }
   }
 
-  private generateAccurateAnalysis(fruitType: string, freshnessScore: number, characteristics: any, confidence: number): string {
+  private generateAccurateAnalysis(fruitType: string, freshnessScore: number, characteristics: AccurateAnalysisResult['characteristics'], confidence: number): string {
     const confidenceText = confidence > 0.8 ? 'with high confidence' : confidence > 0.6 ? 'with good confidence' : 'with moderate confidence';
     
     if (freshnessScore >= 85) {
