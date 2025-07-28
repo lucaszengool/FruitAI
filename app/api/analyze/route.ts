@@ -3,12 +3,9 @@ import { auth } from '@clerk/nextjs/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
+    // Optional authentication - works for both authenticated and guest users
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    
     const { image } = await request.json();
     
     if (!image) {

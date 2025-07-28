@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { UserButton, useUser } from '@clerk/nextjs';
-import { Camera, Upload, Leaf, Star, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { UserButton, useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
+import { Camera, Upload, Leaf, Star, CheckCircle, AlertCircle, XCircle, LogIn, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 
 interface AnalysisResult {
@@ -103,16 +103,7 @@ export default function Home() {
     }
   };
 
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-green-700">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  // Remove the loading check - app works without authentication
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -128,8 +119,27 @@ export default function Home() {
             </div>
             
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-green-700">Welcome, {user?.firstName || 'User'}!</span>
-              <UserButton afterSignOutUrl="/" />
+              {isLoaded && user ? (
+                <>
+                  <span className="text-sm text-green-700">Welcome, {user.firstName || 'User'}!</span>
+                  <UserButton afterSignOutUrl="/" />
+                </>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <SignInButton mode="modal">
+                    <button className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-700 transition-colors">
+                      <LogIn className="w-4 h-4" />
+                      <span>Sign In</span>
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                      <UserPlus className="w-4 h-4" />
+                      <span>Sign Up</span>
+                    </button>
+                  </SignUpButton>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -141,10 +151,22 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-green-800 mb-4">
             Analyze Fruit & Vegetable Freshness
           </h2>
-          <p className="text-lg text-green-600 max-w-2xl mx-auto">
+          <p className="text-lg text-green-600 max-w-2xl mx-auto mb-4">
             Upload a photo of fruits or vegetables and get instant AI-powered freshness analysis 
             with buying recommendations for smarter grocery shopping.
           </p>
+          {!user && isLoaded && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-xl mx-auto">
+              <p className="text-sm text-green-700 mb-2">
+                🌟 <strong>Sign up for free</strong> to save your analysis history and get personalized recommendations!
+              </p>
+              <SignUpButton mode="modal">
+                <button className="text-green-600 hover:text-green-700 font-medium underline">
+                  Create Free Account →
+                </button>
+              </SignUpButton>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
