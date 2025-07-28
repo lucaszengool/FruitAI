@@ -13,7 +13,9 @@
     "preview": "npm run build && npm run start",
     "train-model": "node scripts/train-optimized.js",
     "create-training-data": "node scripts/create-training-data.js",
-    "retrain-model": "npm run create-training-data && npm run train-model"
+    "create-synthetic-data": "python3 scripts/download-fresh-rotten-dataset.py",
+    "train-accurate-model": "python3 scripts/train-accurate-model.py",
+    "retrain-model": "npm run create-synthetic-data && npm run train-accurate-model"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.27.1",

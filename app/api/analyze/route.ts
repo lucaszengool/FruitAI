@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { localFruitAnalyzer } from '../../lib/localAI';
+import { accurateFruitAnalyzer } from '../../lib/accurateLocalAI';
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,26 +40,20 @@ interface AnalysisResult {
 }
 
 async function analyzeImageWithLocalAI(base64Image: string): Promise<AnalysisResult> {
-  console.log('Using local AI model for analysis');
+  console.log('Using accurate AI model for analysis');
   
   try {
-    // Check if local model is ready
-    if (!localFruitAnalyzer.isReady()) {
-      console.log('Local AI model not ready, using enhanced fallback analysis');
-      return await analyzeImageFallback(base64Image);
-    }
-
-    // Use local AI model
-    const analysis = await localFruitAnalyzer.analyzeImage(base64Image);
+    // Use accurate AI model
+    const analysis = await accurateFruitAnalyzer.analyzeImage(base64Image);
     
-    console.log('Local AI analysis completed successfully');
+    console.log('Accurate AI analysis completed successfully');
     return analysis;
   } catch (error) {
-    console.error('Local AI analysis error:', error);
+    console.error('Accurate AI analysis error:', error);
     console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
     
     // Fallback to enhanced analysis
-    console.log('Falling back to enhanced analysis due to local AI error');
+    console.log('Falling back to enhanced analysis due to AI error');
     return await analyzeImageFallback(base64Image);
   }
 }

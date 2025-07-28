@@ -1,0 +1,43 @@
+{
+  "dataset_info": {
+    "name": "FruitAI Realistic Synthetic Dataset",
+    "version": "2.0.0",
+    "created": "2025-01-29",
+    "description": "Realistic synthetic fruit freshness dataset with proper color characteristics",
+    "total_images": 200,
+    "image_size": [
+      224,
+      224
+    ],
+    "format": "JPEG"
+  },
+  "statistics": {
+    "fresh": {
+      "apple": 20,
+      "strawberry": 20,
+      "banana": 20,
+      "tomato": 20,
+      "orange": 20
+    },
+    "rotten": {
+      "apple": 20,
+      "strawberry": 20,
+      "banana": 20,
+      "tomato": 20,
+      "orange": 20
+    }
+  },
+  "labels": {
+    "quality": {
+      "fresh": 1,
+      "rotten": 0
+    },
+    "fruits": [
+      "orange",
+      "apple",
+      "strawberry",
+      "banana",
+      "tomato"
+    ]
+  }
+}
