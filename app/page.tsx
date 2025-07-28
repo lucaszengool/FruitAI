@@ -43,6 +43,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('analyze');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setHistory(storage.getHistory());
@@ -53,9 +54,29 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (file) {
       setError(null);
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file.');
+        toast.error('Please select a valid image file.');
+        return;
+      }
+      
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Image file is too large. Please select an image under 10MB.');
+        toast.error('Image file is too large. Please select an image under 10MB.');
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
+        toast.success('Image loaded successfully!');
+      };
+      reader.onerror = () => {
+        setError('Failed to load image. Please try again.');
+        toast.error('Failed to load image. Please try again.');
       };
       reader.readAsDataURL(file);
     }
@@ -178,12 +199,29 @@ ${produceInfo.storage.tips.map(tip => `  • ${tip}`).join('\n')}
     }
   };
 
+  const handleChoosePhoto = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleTakePhoto = () => {
+    // Check if camera is available
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast.error('Camera access is not available on this device.');
+      return;
+    }
+    
+    cameraInputRef.current?.click();
+  };
+
   const resetAnalysis = () => {
     setSelectedImage(null);
     setResult(null);
     setError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = '';
     }
   };
 
@@ -346,31 +384,41 @@ ${produceInfo.storage.tips.map(tip => `  • ${tip}`).join('\n')}
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                          {/* Hidden file inputs */}
                           <input
                             ref={fileInputRef}
                             type="file"
                             accept="image/*"
                             onChange={handleImageSelect}
                             className="hidden"
-                            id="file-upload"
                           />
-                          <label htmlFor="file-upload">
-                            <div className="inline-block">
-                              <Button size="lg" className="cursor-pointer">
-                                <Upload className="w-5 h-5 mr-2" />
-                                Choose Photo
-                              </Button>
-                            </div>
-                          </label>
+                          <input
+                            ref={cameraInputRef}
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            onChange={handleImageSelect}
+                            className="hidden"
+                          />
                           
-                          <label htmlFor="file-upload">
-                            <div className="inline-block">
-                              <Button variant="secondary" size="lg" className="cursor-pointer">
-                                <Camera className="w-5 h-5 mr-2" />
-                                Take Photo
-                              </Button>
-                            </div>
-                          </label>
+                          <Button 
+                            size="lg" 
+                            onClick={handleChoosePhoto}
+                            className="cursor-pointer"
+                          >
+                            <Upload className="w-5 h-5 mr-2" />
+                            Choose Photo
+                          </Button>
+                          
+                          <Button 
+                            variant="secondary" 
+                            size="lg" 
+                            onClick={handleTakePhoto}
+                            className="cursor-pointer"
+                          >
+                            <Camera className="w-5 h-5 mr-2" />
+                            Take Photo
+                          </Button>
                         </div>
                       </div>
                     ) : (
