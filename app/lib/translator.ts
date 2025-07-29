@@ -1,4 +1,5 @@
 import { getLanguageCode } from './languageDetector';
+import OpenAI from 'openai';
 
 // Language name mapping for OpenAI translation
 const languageNames: Record<string, string> = {
@@ -10,39 +11,50 @@ const languageNames: Record<string, string> = {
 
 // AI-powered translation using OpenAI
 async function translateWithAI(text: string, targetLanguage: string): Promise<string> {
+  // Skip translation if target is English or text is empty
+  if (targetLanguage === 'en' || !text || text.trim() === '') {
+    return text;
+  }
+
   try {
-    const openaiClient = new (await import('openai')).default({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // Only use AI translation in server environment
+    if (typeof window === 'undefined' && process.env.OPENAI_API_KEY) {
+      const openaiClient = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
 
-    const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
-    
-    const response = await openaiClient.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: "system",
-          content: `You are a professional translator. Translate the following text to ${targetLanguageName}. 
-          
-          IMPORTANT RULES:
-          1. Maintain the original meaning and context
-          2. Use natural, fluent language in the target language
-          3. Keep technical terms accurate (fruit names, nutritional terms, etc.)
-          4. Preserve any numbers, percentages, or measurements exactly
-          5. Return ONLY the translated text, no explanations or additional content
-          6. If the text is already in the target language, return it unchanged`
-        },
-        {
-          role: "user",
-          content: text
-        }
-      ],
-      max_tokens: 1000,
-      temperature: 0.1,
-    });
+      const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+      
+      const response = await openaiClient.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate the following text to ${targetLanguageName}. 
+            
+            IMPORTANT RULES:
+            1. Maintain the original meaning and context
+            2. Use natural, fluent language in the target language
+            3. Keep technical terms accurate (fruit names, nutritional terms, etc.)
+            4. Preserve any numbers, percentages, or measurements exactly
+            5. Return ONLY the translated text, no explanations or additional content
+            6. If the text is already in the target language, return it unchanged`
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.1,
+      });
 
-    const translatedText = response.choices[0]?.message?.content?.trim();
-    return translatedText || text;
+      const translatedText = response.choices[0]?.message?.content?.trim();
+      return translatedText || text;
+    } else {
+      // Fallback to dictionary translation in client or when no API key
+      return translateWithDictionary(text, targetLanguage);
+    }
   } catch (error) {
     console.error('AI translation failed:', error);
     // Fallback to dictionary-based translation

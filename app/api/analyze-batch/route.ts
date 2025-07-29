@@ -41,20 +41,30 @@ export async function POST(request: NextRequest) {
     console.log(`✅ Batch analysis complete: ${batchAnalysis.totalFruits} fruits processed`);
     
     // Translate all response content based on user's language
-    const userAgent = request.headers.get('user-agent') || '';
-    const acceptLanguage = request.headers.get('accept-language') || '';
+    let translatedResponse = response;
     
-    // Detect language from headers
-    let targetLanguage = 'en';
-    if (acceptLanguage.includes('zh')) {
-      targetLanguage = 'zh';
-    } else if (acceptLanguage.includes('es')) {
-      targetLanguage = 'es';
-    } else if (acceptLanguage.includes('fr')) {
-      targetLanguage = 'fr';
+    try {
+      const acceptLanguage = request.headers.get('accept-language') || '';
+      
+      // Detect language from headers
+      let targetLanguage = 'en';
+      if (acceptLanguage.includes('zh')) {
+        targetLanguage = 'zh';
+      } else if (acceptLanguage.includes('es')) {
+        targetLanguage = 'es';
+      } else if (acceptLanguage.includes('fr')) {
+        targetLanguage = 'fr';
+      }
+      
+      if (targetLanguage !== 'en') {
+        console.log(`🌐 Translating response to ${targetLanguage}...`);
+        translatedResponse = await translateAnalysisResult(response, targetLanguage);
+        console.log('✅ Translation completed');
+      }
+    } catch (translationError) {
+      console.error('Translation failed, using original response:', translationError);
+      // Continue with untranslated response
     }
-    
-    const translatedResponse = await translateAnalysisResult(response, targetLanguage);
     
     return NextResponse.json(translatedResponse);
   } catch (error) {

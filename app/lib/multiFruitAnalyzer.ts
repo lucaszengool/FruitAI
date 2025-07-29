@@ -1,5 +1,4 @@
-import { openAIAnalyzer } from './openaiAnalyzer';
-import { getLanguageCode } from './languageDetector';
+import OpenAI from 'openai';
 
 interface FruitAnalysisResult {
   item: string;
@@ -52,7 +51,11 @@ class MultiFruitAnalyzer {
     console.log('🍎🍌🍊 Analyzing multiple fruits in image...');
     
     try {
-      const openaiClient = new (await import('openai')).default({
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OpenAI API key not configured');
+      }
+
+      const openaiClient = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
       
