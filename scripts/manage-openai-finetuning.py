@@ -20,7 +20,22 @@ class OpenAIFineTuningManager:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
         self.client = OpenAI(api_key=api_key)
-        self.training_data_path = Path('global-training-data/openai_training_data.jsonl')
+        # Use the combined dataset if available
+        combined_file = Path('global-training-data/openai_training_data_combined.jsonl')
+        real_images_file = Path('global-training-data/openai_training_data_with_real_images.jsonl')
+        original_file = Path('global-training-data/openai_training_data.jsonl')
+        
+        if combined_file.exists():
+            self.training_data_path = combined_file
+            print(f"🔄 Using combined dataset (real + synthetic): {combined_file}")
+        elif real_images_file.exists():
+            self.training_data_path = real_images_file
+            print(f"📸 Using training file with real images: {real_images_file}")
+        elif original_file.exists():
+            self.training_data_path = original_file
+            print(f"📋 Using original training file: {original_file}")
+        else:
+            raise FileNotFoundError("No training data file found")
         self.jobs_file = Path('fine_tuning_jobs.json')
         
     def upload_training_file(self) -> str:
