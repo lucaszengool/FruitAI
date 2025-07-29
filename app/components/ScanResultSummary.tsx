@@ -6,6 +6,7 @@ import { ArrowLeft, Check, AlertTriangle, X, Download, Share2, TrendingUp, Packa
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { getTranslations, formatTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface DetectedItem {
   id: string;
@@ -32,6 +33,9 @@ interface DetectedItem {
   selectionTips?: string;
   seasonInfo?: string;
   commonUses?: string;
+  ripeTiming?: string;
+  pairings?: string;
+  medicinalUses?: string;
 }
 
 interface ScanResult {
@@ -52,7 +56,7 @@ export function ScanResultSummary({ result, onClose, onNewScan }: ScanResultSumm
   const [selectedItem, setSelectedItem] = useState<DetectedItem | null>(null);
   const [showAnnotations, setShowAnnotations] = useState(true);
   
-  const t = getTranslations();
+  const { t } = useTranslation();
 
   const saveToHistory = () => {
     // Save to localStorage
@@ -327,20 +331,38 @@ export function ScanResultSummary({ result, onClose, onNewScan }: ScanResultSumm
                       </div>
                     )}
                     
-                    {(item.seasonInfo || item.commonUses) && (
-                      <div className="mt-2 flex flex-wrap gap-2 text-sm">
-                        {item.seasonInfo && (
-                          <div className="flex items-center gap-1">
-                            <span className="font-medium">{t.seasonality}:</span> {item.seasonInfo}
-                          </div>
-                        )}
-                        {item.commonUses && (
-                          <div className="flex items-center gap-1">
-                            <span className="font-medium">{t.commonUses}:</span> {item.commonUses}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    {/* Extended Information Grid */}
+                    <div className="mt-3 space-y-2">
+                      {item.seasonInfo && (
+                        <div className="p-2 bg-orange-50 rounded text-sm">
+                          <span className="font-medium">{t.seasonality}:</span> {item.seasonInfo}
+                        </div>
+                      )}
+                      
+                      {item.commonUses && (
+                        <div className="p-2 bg-gray-50 rounded text-sm">
+                          <span className="font-medium">{t.commonUses}:</span> {item.commonUses}
+                        </div>
+                      )}
+                      
+                      {item.ripeTiming && (
+                        <div className="p-2 bg-yellow-50 rounded text-sm">
+                          <span className="font-medium">{t.ripeTiming}:</span> {item.ripeTiming}
+                        </div>
+                      )}
+                      
+                      {item.pairings && (
+                        <div className="p-2 bg-pink-50 rounded text-sm">
+                          <span className="font-medium">{t.pairings}:</span> {item.pairings}
+                        </div>
+                      )}
+                      
+                      {item.medicinalUses && (
+                        <div className="p-2 bg-indigo-50 rounded text-sm">
+                          <span className="font-medium">{t.medicinalUses}:</span> {item.medicinalUses}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>

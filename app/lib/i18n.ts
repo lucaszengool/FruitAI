@@ -69,6 +69,17 @@ export interface Translations {
   seasonality: string;
   commonUses: string;
   days: string;
+  
+  // Extended Information
+  ripeTiming: string;
+  pairings: string;
+  medicinalUses: string;
+  detailedAnalysis: string;
+  purchaseAdvice: string;
+  qualityIndicators: string;
+  priceValue: string;
+  origins: string;
+  varieties: string;
 }
 
 const translations: Record<string, Translations> = {
@@ -143,6 +154,17 @@ const translations: Record<string, Translations> = {
     seasonality: 'Seasonality',
     commonUses: 'Common Uses',
     days: 'days',
+    
+    // Extended Information
+    ripeTiming: 'Ripening Time',
+    pairings: 'Food Pairings',
+    medicinalUses: 'Medicinal Uses',
+    detailedAnalysis: 'Detailed Analysis',
+    purchaseAdvice: 'Purchase Advice',
+    qualityIndicators: 'Quality Indicators',
+    priceValue: 'Price Value',
+    origins: 'Origins',
+    varieties: 'Varieties',
   },
   
   'zh': {
@@ -216,6 +238,17 @@ const translations: Record<string, Translations> = {
     seasonality: '季节性',
     commonUses: '常见用途',
     days: '天',
+    
+    // Extended Information
+    ripeTiming: '成熟时机',
+    pairings: '搭配建议',
+    medicinalUses: '药用价值',
+    detailedAnalysis: '详细分析',
+    purchaseAdvice: '购买建议',
+    qualityIndicators: '品质指标',
+    priceValue: '性价比',
+    origins: '产地',
+    varieties: '品种',
   },
   
   'es': {
@@ -289,6 +322,17 @@ const translations: Record<string, Translations> = {
     seasonality: 'Temporada',
     commonUses: 'Usos Comunes',
     days: 'días',
+    
+    // Extended Information
+    ripeTiming: 'Tiempo de Maduración',
+    pairings: 'Maridajes',
+    medicinalUses: 'Usos Medicinales',
+    detailedAnalysis: 'Análisis Detallado',
+    purchaseAdvice: 'Consejo de Compra',
+    qualityIndicators: 'Indicadores de Calidad',
+    priceValue: 'Relación Calidad-Precio',
+    origins: 'Orígenes',
+    varieties: 'Variedades',
   },
   
   'fr': {
@@ -362,6 +406,17 @@ const translations: Record<string, Translations> = {
     seasonality: 'Saisonnalité',
     commonUses: 'Utilisations Courantes',
     days: 'jours',
+    
+    // Extended Information
+    ripeTiming: 'Temps de Maturation',
+    pairings: 'Accords',
+    medicinalUses: 'Usages Médicinaux',
+    detailedAnalysis: 'Analyse Détaillée',
+    purchaseAdvice: 'Conseil d\'Achat',
+    qualityIndicators: 'Indicateurs de Qualité',
+    priceValue: 'Rapport Qualité-Prix',
+    origins: 'Origines',
+    varieties: 'Variétés',
   }
 };
 

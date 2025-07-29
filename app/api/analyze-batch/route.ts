@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { multiFruitAnalyzer } from '../../lib/multiFruitAnalyzer';
+import { translateAnalysisResult } from '../../lib/translator';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,22 +19,44 @@ export async function POST(request: NextRequest) {
     // Analyze multiple fruits in the image
     const batchAnalysis = await multiFruitAnalyzer.analyzeBatch(image);
     
-    // Add comparison and ranking
-    const comparison = await multiFruitAnalyzer.compareAndRank(batchAnalysis.analyzedFruits);
+    // Create categories for shopping decisions
+    const buyNow = batchAnalysis.analyzedFruits.filter(fruit => fruit.recommendation === 'buy');
+    const checkFirst = batchAnalysis.analyzedFruits.filter(fruit => fruit.recommendation === 'check');
+    const avoidThese = batchAnalysis.analyzedFruits.filter(fruit => fruit.recommendation === 'avoid');
     
     const response = {
       ...batchAnalysis,
-      ranking: comparison.ranking,
-      categories: comparison.categories,
+      ranking: batchAnalysis.analyzedFruits.sort((a, b) => b.freshness - a.freshness),
+      categories: {
+        buyNow,
+        checkFirst,
+        avoidThese
+      },
       storageAdvice: batchAnalysis.analyzedFruits.map(fruit => ({
         item: fruit.item,
-        advice: multiFruitAnalyzer.generateStorageAdvice(fruit)
+        advice: fruit.storageRecommendation || 'Store in cool, dry place'
       }))
     };
     
     console.log(`✅ Batch analysis complete: ${batchAnalysis.totalFruits} fruits processed`);
     
-    return NextResponse.json(response);
+    // Translate all response content based on user's language
+    const userAgent = request.headers.get('user-agent') || '';
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    
+    // Detect language from headers
+    let targetLanguage = 'en';
+    if (acceptLanguage.includes('zh')) {
+      targetLanguage = 'zh';
+    } else if (acceptLanguage.includes('es')) {
+      targetLanguage = 'es';
+    } else if (acceptLanguage.includes('fr')) {
+      targetLanguage = 'fr';
+    }
+    
+    const translatedResponse = await translateAnalysisResult(response, targetLanguage);
+    
+    return NextResponse.json(translatedResponse);
   } catch (error) {
     console.error('Batch analysis error:', error);
     return NextResponse.json({ 

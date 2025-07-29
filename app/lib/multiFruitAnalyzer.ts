@@ -1,4 +1,5 @@
 import { openAIAnalyzer } from './openaiAnalyzer';
+import { getLanguageCode } from './languageDetector';
 
 interface FruitAnalysisResult {
   item: string;
@@ -30,6 +31,9 @@ interface FruitAnalysisResult {
   selectionTips?: string;
   seasonInfo?: string;
   commonUses?: string;
+  ripeTiming?: string;
+  pairings?: string;
+  medicinalUses?: string;
 }
 
 interface BatchAnalysisResult {
@@ -48,66 +52,83 @@ class MultiFruitAnalyzer {
     console.log('🍎🍌🍊 Analyzing multiple fruits in image...');
     
     try {
-      // Use the existing OpenAI client via the analyzer instance
       const openaiClient = new (await import('openai')).default({
         apiKey: process.env.OPENAI_API_KEY,
       });
       
+      const systemPrompt = `You are an expert fruit and vegetable batch analyzer.
+
+CRITICAL INSTRUCTIONS:
+1. Count EVERY individual fruit/vegetable visible in the image
+2. If you see multiple of the same fruit (like 15 pears), analyze each one separately
+3. Give each fruit a unique number: "Pear #1", "Pear #2", "Pear #3", etc.
+4. Provide exact position coordinates for each individual item
+5. Be thorough with detailed analysis for each item
+
+Return JSON:
+{
+  "fruits": [
+    {
+      "item": "Name with number (e.g., Green Pear #1)",
+      "freshness": "Score 0-100",
+      "recommendation": "buy/check/avoid",
+      "confidence": "0-100",
+      "position": {"x": "left percentage", "y": "top percentage", "width": 8, "height": 12},
+      "characteristics": {
+        "color": "Specific color details",
+        "texture": "Surface texture",
+        "blemishes": "Any spots or marks",
+        "ripeness": "Ripeness stage"
+      },
+      "details": "Detailed condition analysis",
+      "storageRecommendation": "Storage advice",
+      "daysRemaining": "Days until spoilage",
+      "nutritionInfo": {
+        "calories": "Per 100g calories",
+        "vitamins": "Key vitamins",
+        "fiber": "Fiber content",
+        "minerals": "Minerals",
+        "benefits": "Health benefits"
+      },
+      "selectionTips": "Selection tips",
+      "seasonInfo": "Seasonal info",
+      "commonUses": "Common uses",
+      "ripeTiming": "Ripening timing",
+      "pairings": "Food pairings",
+      "medicinalUses": "Medicinal uses"
+    }
+  ]
+}
+
+EXAMPLE: If you see 10 pears, list: Pear #1, Pear #2, Pear #3... Pear #10 with individual positions and analysis for each.`;
+
+      const userPrompt = 'CRITICAL: Analyze EVERY individual fruit/vegetable in this image separately. Count ALL items - if there are 15 pears, I need 15 separate analyses labeled as individual items. Provide precise position coordinates for each fruit. Provide comprehensive analysis including nutrition, selection tips, seasonal info, and usage recommendations.';
+
       const response = await openaiClient.chat.completions.create({
         model: 'gpt-4o',
         messages: [
           {
             role: "system",
-            content: `You are an expert fruit and vegetable batch analyzer for grocery shopping. Analyze the image and identify ALL individual fruits/vegetables visible. For each fruit, provide detailed freshness analysis. Return a JSON response with this structure:
-
-{
-  "fruits": [
-    {
-      "item": "Name of fruit/vegetable",
-      "freshness": "Score 0-100",
-      "recommendation": "buy/check/avoid",
-      "confidence": "0-100",
-      "position": {"x": 0, "y": 0, "width": 100, "height": 100},
-      "characteristics": {
-        "color": "Color description",
-        "texture": "Texture description",
-        "blemishes": "Blemish description",
-        "ripeness": "Ripeness stage"
-      },
-      "details": "Analysis explanation",
-      "storageRecommendation": "Storage advice",
-      "daysRemaining": "Estimated days until spoilage"
-    }
-  ],
-  "summary": {
-    "totalCount": "Total fruits detected",
-    "averageFreshness": "Average freshness score",
-    "bestFruit": "Name of freshest fruit",
-    "worstFruit": "Name of least fresh fruit",
-    "shoppingAdvice": "Overall shopping recommendation"
-  }
-}
-
-Focus on practical grocery shopping decisions. Be specific about which fruits to buy first, which to avoid, and which need immediate consumption.`
+            content: systemPrompt
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analyze all fruits/vegetables in this image. I'm grocery shopping and need to know which ones are the best quality and freshest. Help me make smart purchasing decisions."
+                text: userPrompt
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`,
+                  url: base64Image,
                   detail: "high"
                 }
               }
             ]
           }
         ],
-        max_tokens: 2000,
+        max_tokens: 4000,
         temperature: 0.1,
       });
 
@@ -132,7 +153,7 @@ Focus on practical grocery shopping decisions. Be specific about which fruits to
         item: fruit.item || 'Unknown Fruit',
         freshness: Math.max(0, Math.min(100, parseInt(fruit.freshness) || 50)),
         recommendation: ['buy', 'check', 'avoid'].includes(fruit.recommendation) 
-          ? fruit.recommendation 
+          ? fruit.recommendation
           : 'check',
         details: fruit.details || 'Analysis completed',
         confidence: Math.max(0, Math.min(100, parseInt(fruit.confidence) || 75)),
@@ -143,9 +164,9 @@ Focus on practical grocery shopping decisions. Be specific about which fruits to
           ripeness: fruit.characteristics?.ripeness || 'Good'
         },
         position: fruit.position || { 
-          x: 10 + (index % 5) * 18,
-          y: 10 + Math.floor(index / 5) * 20,
-          width: 15,
+          x: 15 + (index % 4) * 20,
+          y: 15 + Math.floor(index / 4) * 25,
+          width: 12,
           height: 15
         },
         storageRecommendation: fruit.storageRecommendation || 'Store in cool, dry place',
@@ -153,13 +174,16 @@ Focus on practical grocery shopping decisions. Be specific about which fruits to
         nutritionInfo: fruit.nutritionInfo,
         selectionTips: fruit.selectionTips,
         seasonInfo: fruit.seasonInfo,
-        commonUses: fruit.commonUses
+        commonUses: fruit.commonUses,
+        ripeTiming: fruit.ripeTiming,
+        pairings: fruit.pairings,
+        medicinalUses: fruit.medicinalUses
       })) || [];
 
       // Calculate summary statistics
       const totalFruits = analyzedFruits.length;
       const averageFreshness = totalFruits > 0 
-        ? analyzedFruits.reduce((sum, fruit) => sum + fruit.freshness, 0) / totalFruits 
+        ? Math.round(analyzedFruits.reduce((sum, fruit) => sum + fruit.freshness, 0) / totalFruits)
         : 0;
       
       const bestFruit = analyzedFruits.reduce((best, current) => 
@@ -168,79 +192,26 @@ Focus on practical grocery shopping decisions. Be specific about which fruits to
       const worstFruit = analyzedFruits.reduce((worst, current) => 
         current.freshness < worst.freshness ? current : worst, analyzedFruits[0]);
 
-      const shoppingRecommendation = this.generateShoppingAdvice(analyzedFruits, averageFreshness);
-
       const result: BatchAnalysisResult = {
         totalFruits,
         analyzedFruits,
         bestFruit,
         worstFruit,
-        averageFreshness: Math.round(averageFreshness),
-        shoppingRecommendation,
-        analysisId: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        averageFreshness,
+        shoppingRecommendation: `Found ${totalFruits} items with ${averageFreshness}% average freshness. Prioritize items with higher freshness scores.`,
+        analysisId: `batch-${Date.now()}`,
         timestamp: new Date().toISOString()
       };
 
-      console.log(`✅ Batch analysis completed: ${totalFruits} fruits analyzed`);
+      console.log(`✅ Batch analysis complete: ${totalFruits} fruits analyzed`);
       return result;
 
     } catch (error) {
-      console.error('Batch analysis error:', error);
-      throw error;
+      console.error('❌ Batch analysis failed:', error);
+      throw new Error(`Batch analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  }
-
-  private generateShoppingAdvice(fruits: FruitAnalysisResult[], averageFreshness: number): string {
-    const buyCount = fruits.filter(f => f.recommendation === 'buy').length;
-    const avoidCount = fruits.filter(f => f.recommendation === 'avoid').length;
-    const checkCount = fruits.filter(f => f.recommendation === 'check').length;
-
-    if (averageFreshness >= 80) {
-      return `Excellent selection! ${buyCount} fruits are perfect to buy. This batch has high quality overall.`;
-    } else if (averageFreshness >= 60) {
-      return `Good selection with some mixed quality. Buy the ${buyCount} fresh ones, check ${checkCount} carefully, and avoid ${avoidCount} poor quality items.`;
-    } else {
-      return `Poor quality batch. Consider looking for fresher options. Only ${buyCount} items are worth buying, avoid ${avoidCount} items that show spoilage.`;
-    }
-  }
-
-  async compareAndRank(fruits: FruitAnalysisResult[]): Promise<{
-    ranking: FruitAnalysisResult[];
-    categories: {
-      buyNow: FruitAnalysisResult[];
-      checkFirst: FruitAnalysisResult[];
-      avoidThese: FruitAnalysisResult[];
-    };
-  }> {
-    // Sort by freshness score (highest first)
-    const ranking = [...fruits].sort((a, b) => b.freshness - a.freshness);
-
-    const categories = {
-      buyNow: fruits.filter(f => f.recommendation === 'buy'),
-      checkFirst: fruits.filter(f => f.recommendation === 'check'),
-      avoidThese: fruits.filter(f => f.recommendation === 'avoid')
-    };
-
-    return { ranking, categories };
-  }
-
-  generateStorageAdvice(fruit: FruitAnalysisResult): string {
-    const storageAdvice: { [key: string]: string } = {
-      'apple': 'Store in refrigerator crisper drawer for up to 4-6 weeks',
-      'banana': 'Store at room temperature, refrigerate when ripe to slow ripening',
-      'orange': 'Store at room temperature for 1 week, or refrigerate for up to 3 weeks',
-      'strawberry': 'Refrigerate immediately, consume within 3-7 days',
-      'grape': 'Store in refrigerator, keep in perforated bag for up to 3 weeks',
-      'tomato': 'Store at room temperature until ripe, then refrigerate',
-      'avocado': 'Ripen at room temperature, then refrigerate for 3-5 days',
-      'lemon': 'Store at room temperature for 1 week, or refrigerate for up to 4 weeks',
-      'lime': 'Store at room temperature for 1 week, or refrigerate for up to 4 weeks'
-    };
-
-    const fruitKey = fruit.item.toLowerCase();
-    return storageAdvice[fruitKey] || fruit.storageRecommendation || 'Store in cool, dry place away from direct sunlight';
   }
 }
 
 export const multiFruitAnalyzer = new MultiFruitAnalyzer();
-export type { BatchAnalysisResult, FruitAnalysisResult };
+export type { FruitAnalysisResult, BatchAnalysisResult };

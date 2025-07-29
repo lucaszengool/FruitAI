@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { openAIAnalyzer } from '../../lib/openaiAnalyzer';
+import { translateAnalysisResult } from '../../lib/translator';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,22 @@ export async function POST(request: NextRequest) {
     // Use OpenAI for fruit freshness analysis
     const analysis = await analyzeImageWithOpenAI(image);
     
-    return NextResponse.json(analysis);
+    // Translate all response content based on user's language
+    const acceptLanguage = request.headers.get('accept-language') || '';
+    
+    // Detect language from headers
+    let targetLanguage = 'en';
+    if (acceptLanguage.includes('zh')) {
+      targetLanguage = 'zh';
+    } else if (acceptLanguage.includes('es')) {
+      targetLanguage = 'es';
+    } else if (acceptLanguage.includes('fr')) {
+      targetLanguage = 'fr';
+    }
+    
+    const translatedAnalysis = await translateAnalysisResult(analysis, targetLanguage);
+    
+    return NextResponse.json(translatedAnalysis);
   } catch (error) {
     console.error('Analysis error:', error);
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });

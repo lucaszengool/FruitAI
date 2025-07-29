@@ -9,7 +9,7 @@ import { ScanningSession } from './components/ScanningSession';
 import { UserHistory } from './components/UserHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { UserRewards } from './components/UserRewards';
-import { getTranslations } from './lib/i18n';
+import { useTranslation } from './hooks/useTranslation';
 
 // Single fruit analysis result
 interface AnalysisResult {
@@ -77,7 +77,7 @@ export default function Home() {
   const [sessionType, setSessionType] = useState<'shopping' | 'fridge-check' | 'pantry-check'>('shopping');
   const [showHistory, setShowHistory] = useState(false);
   
-  const t = getTranslations();
+  const { t } = useTranslation();
 
 
   return (

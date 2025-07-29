@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Camera, Zap, AlertCircle, Check, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
 import { getTranslations, formatTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface DetectedItem {
   id: string;
@@ -31,6 +32,9 @@ interface DetectedItem {
   selectionTips?: string;
   seasonInfo?: string;
   commonUses?: string;
+  ripeTiming?: string;
+  pairings?: string;
+  medicinalUses?: string;
 }
 
 interface ScanResult {
@@ -63,7 +67,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   const stabilityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  const t = getTranslations();
+  const { t } = useTranslation();
 
   // Start camera
   useEffect(() => {
@@ -237,7 +241,10 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
         nutritionInfo: fruit.nutritionInfo,
         selectionTips: fruit.selectionTips,
         seasonInfo: fruit.seasonInfo,
-        commonUses: fruit.commonUses
+        commonUses: fruit.commonUses,
+        ripeTiming: fruit.ripeTiming,
+        pairings: fruit.pairings,
+        medicinalUses: fruit.medicinalUses
       }));
 
       const averageFreshness = Math.round(
