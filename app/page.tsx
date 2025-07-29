@@ -11,6 +11,7 @@ import { ShoppingList } from './components/ShoppingList';
 import { UserRewards } from './components/UserRewards';
 // Removed useTranslation to fix hydration issues
 
+
 // Single fruit analysis result
 interface AnalysisResult {
   item: string;
