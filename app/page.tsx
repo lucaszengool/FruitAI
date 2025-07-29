@@ -9,6 +9,7 @@ import { ScanningSession } from './components/ScanningSession';
 import { UserHistory } from './components/UserHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { UserRewards } from './components/UserRewards';
+import { getTranslations } from './lib/i18n';
 
 // Single fruit analysis result
 interface AnalysisResult {
@@ -75,6 +76,8 @@ export default function Home() {
   const [showScanningSession, setShowScanningSession] = useState(false);
   const [sessionType, setSessionType] = useState<'shopping' | 'fridge-check' | 'pantry-check'>('shopping');
   const [showHistory, setShowHistory] = useState(false);
+  
+  const t = getTranslations();
 
 
   return (
@@ -87,10 +90,10 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-5xl font-bold text-gray-900 mb-2">
-            🛒 FruitAI
+            🛒 {t.appTitle}
           </h1>
           <p className="text-2xl text-gray-700 mb-2">
-            AI-Powered Freshness Scanner
+            {t.appSubtitle}
           </p>
           <p className="text-lg text-gray-600">
             Smart shopping decisions and waste reduction through AI scanning
@@ -116,7 +119,7 @@ export default function Home() {
                 className="flex items-center gap-2"
               >
                 <Store className="w-5 h-5" />
-                <span className="font-semibold">Store Session</span>
+                <span className="font-semibold">{t.storeSession}</span>
               </Button>
               <Button
                 variant="primary"
@@ -128,7 +131,7 @@ export default function Home() {
                 className="flex items-center gap-2"
               >
                 <Refrigerator className="w-5 h-5" />
-                <span className="font-semibold">Fridge Check</span>
+                <span className="font-semibold">{t.fridgeCheck}</span>
               </Button>
               <Button
                 variant="primary"
@@ -140,7 +143,7 @@ export default function Home() {
                 className="flex items-center gap-2"
               >
                 <Scan className="w-5 h-5" />
-                <span className="font-semibold">Pantry Scan</span>
+                <span className="font-semibold">{t.pantryCheck}</span>
               </Button>
               <Button
                 variant={showHistory ? 'primary' : 'ghost'}
@@ -149,7 +152,7 @@ export default function Home() {
                 className="flex items-center gap-2"
               >
                 <History className="w-5 h-5" />
-                <span className="font-semibold">Dashboard</span>
+                <span className="font-semibold">{t.dashboard}</span>
               </Button>
             </div>
           </div>
@@ -165,23 +168,23 @@ export default function Home() {
           <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-6">
             <Card className="p-4 text-center">
               <Store className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <h3 className="font-semibold mb-2">Store Session</h3>
+              <h3 className="font-semibold mb-2">{t.storeSession}</h3>
               <p className="text-sm text-gray-600">
-                Scan multiple items while shopping to compare freshness and make the best choices
+                {t.storeSessionDesc}
               </p>
             </Card>
             <Card className="p-4 text-center">
               <Refrigerator className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <h3 className="font-semibold mb-2">Fridge Check</h3>
+              <h3 className="font-semibold mb-2">{t.fridgeCheck}</h3>
               <p className="text-sm text-gray-600">
-                Monitor what needs to be used soon and track freshness of stored produce
+                {t.fridgeCheckDesc}
               </p>
             </Card>
             <Card className="p-4 text-center">
               <Scan className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <h3 className="font-semibold mb-2">Pantry Scan</h3>
+              <h3 className="font-semibold mb-2">{t.pantryCheck}</h3>
               <p className="text-sm text-gray-600">
-                Keep track of stored items and get alerts when they need attention
+                {t.pantryCheckDesc}
               </p>
             </Card>
           </div>
