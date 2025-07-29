@@ -4,17 +4,36 @@ import { multiFruitAnalyzer } from '../../lib/multiFruitAnalyzer';
 import { translateAnalysisResult } from '../../lib/translator';
 
 export async function POST(request: NextRequest) {
+  console.log('🔍 API analyze-batch called');
+  
   try {
-    // Optional authentication - works for both authenticated and guest users
-    await auth();
+    // Check environment variables
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('❌ OpenAI API key not found in environment');
+      return NextResponse.json({ 
+        error: 'OpenAI API key not configured',
+        details: 'Server configuration error'
+      }, { status: 500 });
+    }
     
-    const { image } = await request.json();
+    // Optional authentication - works for both authenticated and guest users
+    try {
+      await auth();
+      console.log('✅ Authentication check passed');
+    } catch (authError) {
+      console.log('⚠️ Authentication check failed, continuing as guest:', authError);
+    }
+    
+    const body = await request.json();
+    const { image } = body;
     
     if (!image) {
+      console.error('❌ No image provided in request');
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
     console.log('🛒 Starting batch fruit analysis...');
+    console.log('📸 Image data length:', image.length);
     
     // Analyze multiple fruits in the image
     const batchAnalysis = await multiFruitAnalyzer.analyzeBatch(image);
@@ -68,10 +87,26 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(translatedResponse);
   } catch (error) {
-    console.error('Batch analysis error:', error);
+    console.error('❌ Batch analysis error:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
+    // Provide more detailed error information
+    let errorMessage = 'Batch analysis failed';
+    let errorDetails = 'Unknown error';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = error.stack || error.message;
+    } else {
+      errorDetails = String(error);
+    }
+    
     return NextResponse.json({ 
-      error: 'Batch analysis failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: errorMessage,
+      details: errorDetails,
+      timestamp: new Date().toISOString()
     }, { status: 500 });
   }
 }

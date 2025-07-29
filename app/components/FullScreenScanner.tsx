@@ -212,15 +212,50 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
       const screenshot = canvas.toDataURL('image/jpeg', 0.9);
       
       // Analyze with backend
+      console.log('📤 Sending image for analysis...');
+      
       const response = await fetch('/api/analyze-batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: screenshot }),
       });
 
-      if (!response.ok) throw new Error('Analysis failed');
+      console.log('📥 Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('❌ API Error:', errorData);
+        
+        // Create fallback mock result for development/testing
+        const mockResult = {
+          totalFruits: 1,
+          analyzedFruits: [{
+            item: 'Unknown Fruit',
+            freshness: 75,
+            recommendation: 'check' as const,
+            details: 'Analysis service temporarily unavailable. Please try again later.',
+            confidence: 50,
+            characteristics: {
+              color: 'Natural color',
+              texture: 'Standard texture',
+              blemishes: 'Cannot assess',
+              ripeness: 'Cannot assess'
+            },
+            position: { x: 50, y: 50, width: 15, height: 20 },
+            storageRecommendation: 'Store in cool, dry place',
+            daysRemaining: 3
+          }],
+          averageFreshness: 75,
+          shoppingRecommendation: 'Analysis service is currently unavailable. Manual inspection recommended.',
+          analysisId: `fallback-${Date.now()}`,
+          timestamp: new Date().toISOString()
+        };
+        
+        throw new Error(`Analysis failed: ${errorData.error || 'Server error'}`);
+      }
 
       const result = await response.json();
+      console.log('✅ Analysis result:', result);
       
       // Process results
       const items: DetectedItem[] = result.analyzedFruits.map((fruit: any, index: number) => ({
