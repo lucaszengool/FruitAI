@@ -114,6 +114,9 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
       const screenshot = canvas.toDataURL('image/jpeg', 0.9);
       
       console.log('📤 Sending image for analysis...');
+      console.log('🔍 Image size:', screenshot.length);
+      console.log('📡 API endpoint: /api/analyze-batch');
+      console.log('🎯 Session type:', sessionType);
       
       // Create fallback result immediately for better UX
       const fallbackResult = {
@@ -149,9 +152,14 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
 
       // Try API call with timeout
       try {
+        console.log('⏰ Starting API call with 10s timeout...');
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => {
+          console.log('⏰ API call timed out after 10 seconds');
+          controller.abort();
+        }, 10000);
         
+        const requestStart = Date.now();
         const response = await fetch('/api/analyze-batch', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -160,9 +168,17 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
         });
         
         clearTimeout(timeoutId);
+        const requestTime = Date.now() - requestStart;
+        console.log(`📊 API call completed in ${requestTime}ms`);
+        console.log('📈 Response status:', response.status);
+        console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (response.ok) {
+          console.log('✅ API response OK, parsing JSON...');
           const result = await response.json();
+          console.log('🔍 API response keys:', Object.keys(result));
+          console.log('📊 Total fruits found:', result.totalFruits || 'undefined');
+          console.log('🍎 Analyzed fruits count:', result.analyzedFruits?.length || 'undefined');
           
           const items: DetectedItem[] = result.analyzedFruits?.map((fruit: any, index: number) => ({
             id: `${Date.now()}-${index}`,
@@ -195,9 +211,22 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
             sessionType
           });
         } else {
-          throw new Error('API failed');
+          console.error('❌ API response not OK');
+          console.error('📄 Status:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('📝 Error response body:', errorText);
+          throw new Error(`API failed with status ${response.status}: ${response.statusText}`);
         }
       } catch (apiError) {
+        console.error('🚨 API call failed with error:', apiError);
+        console.error('🔍 Error type:', typeof apiError);
+        console.error('📝 Error message:', apiError instanceof Error ? apiError.message : String(apiError));
+        console.error('📚 Error stack:', apiError instanceof Error ? apiError.stack : 'No stack trace');
+        
+        if (apiError instanceof Error && apiError.name === 'AbortError') {
+          console.log('⏰ Request was aborted due to timeout');
+        }
+        
         console.log('🔄 API failed, using fallback result');
         onComplete(fallbackResult);
       }

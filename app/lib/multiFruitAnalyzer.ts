@@ -49,6 +49,8 @@ interface BatchAnalysisResult {
 class MultiFruitAnalyzer {
   async analyzeBatch(base64Image: string): Promise<BatchAnalysisResult> {
     console.log('🍎🍌🍊 Analyzing multiple fruits in image...');
+    console.log('🔍 Image data length:', base64Image.length);
+    console.log('🔑 OpenAI API Key present:', !!process.env.OPENAI_API_KEY);
     
     try {
       if (!process.env.OPENAI_API_KEY) {
@@ -57,6 +59,8 @@ class MultiFruitAnalyzer {
 
       const openaiClient = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
+        timeout: 30000, // 30 second timeout
+        maxRetries: 2,  // Retry up to 2 times
       });
       
       const systemPrompt = `You are an expert fruit and vegetable individual item analyzer for smart shopping decisions.
@@ -106,6 +110,9 @@ Return a JSON object with this exact structure:
 
       const userPrompt = 'URGENT: Look at this image and count EVERY SINGLE individual fruit/vegetable. If you see 15 pears, I need 15 separate detailed analyses - not one general analysis. Each fruit must be numbered (#1, #2, #3, etc.) with individual positions and comprehensive information including nutrition, storage, selection criteria, preparation tips, variety info, cooking methods, health benefits, and sustainability notes. This is for smart shopping decisions.';
 
+      console.log('📡 Making OpenAI API call...');
+      const requestStart = Date.now();
+      
       const response = await openaiClient.chat.completions.create({
         model: 'gpt-4o',
         messages: [
@@ -123,7 +130,7 @@ Return a JSON object with this exact structure:
               {
                 type: "image_url",
                 image_url: {
-                  url: base64Image,
+                  url: base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`,
                   detail: "high"
                 }
               }
@@ -134,8 +141,16 @@ Return a JSON object with this exact structure:
         temperature: 0.1,
       });
 
+      const requestTime = Date.now() - requestStart;
+      console.log(`📊 OpenAI request completed in ${requestTime}ms`);
+      console.log('📊 OpenAI response usage:', response.usage);
+      
       const content = response.choices[0]?.message?.content;
+      console.log('🔍 Response content length:', content?.length || 0);
+      
       if (!content) {
+        console.error('❌ No content in OpenAI response');
+        console.error('📝 Full response:', JSON.stringify(response, null, 2));
         throw new Error('No response from OpenAI');
       }
 
@@ -259,6 +274,23 @@ Return a JSON object with this exact structure:
 
     } catch (error) {
       console.error('❌ Batch analysis failed:', error);
+      console.error('🔍 Error type:', typeof error);
+      console.error('📝 Error message:', error instanceof Error ? error.message : String(error));
+      console.error('📚 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      
+      // Check for specific OpenAI errors
+      if (error instanceof Error) {
+        if (error.message.includes('API key')) {
+          console.error('🔑 OpenAI API key issue detected');
+        } else if (error.message.includes('rate limit')) {
+          console.error('📈 OpenAI rate limit exceeded');
+        } else if (error.message.includes('timeout')) {
+          console.error('⏰ OpenAI request timeout');
+        } else if (error.message.includes('network')) {
+          console.error('🌐 Network connectivity issue');
+        }
+      }
+      
       throw new Error(`Batch analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

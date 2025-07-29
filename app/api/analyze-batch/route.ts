@@ -32,11 +32,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
+    // Validate image format
+    const isValidImageData = image.startsWith('data:image/') || (typeof image === 'string' && image.length > 100);
+    if (!isValidImageData) {
+      console.error('❌ Invalid image data format');
+      console.error('🔍 Image data preview:', image.substring(0, 100));
+      return NextResponse.json({ 
+        error: 'Invalid image data format',
+        details: 'Image must be a valid base64 data URL'
+      }, { status: 400 });
+    }
+
     console.log('🛒 Starting batch fruit analysis...');
     console.log('📸 Image data length:', image.length);
+    console.log('🔍 Image format check:', image.substring(0, 50));
+    console.log('📊 Request content-type:', request.headers.get('content-type'));
     
     // Analyze multiple fruits in the image
+    console.log('⚙️ Calling multiFruitAnalyzer.analyzeBatch...');
+    const analysisStart = Date.now();
+    
     const batchAnalysis = await multiFruitAnalyzer.analyzeBatch(image);
+    
+    const analysisTime = Date.now() - analysisStart;
+    console.log(`📊 Analysis completed in ${analysisTime}ms`);
+    console.log('📊 Analysis result keys:', Object.keys(batchAnalysis));
     
     // Create categories for shopping decisions
     const buyNow = batchAnalysis.analyzedFruits.filter(fruit => fruit.recommendation === 'buy');
