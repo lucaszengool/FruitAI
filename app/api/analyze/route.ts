@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { accurateFruitAnalyzer } from '../../lib/accurateLocalAI';
+import { openAIAnalyzer } from '../../lib/openaiAnalyzer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Use local AI model for fruit detection
-    const analysis = await analyzeImageWithLocalAI(image);
+    // Use OpenAI for fruit freshness analysis
+    const analysis = await analyzeImageWithOpenAI(image);
     
     return NextResponse.json(analysis);
   } catch (error) {
@@ -39,21 +39,26 @@ interface AnalysisResult {
   analysisId: string;
 }
 
-async function analyzeImageWithLocalAI(base64Image: string): Promise<AnalysisResult> {
-  console.log('Using accurate AI model for analysis');
+async function analyzeImageWithOpenAI(base64Image: string): Promise<AnalysisResult> {
+  console.log('Using OpenAI for fruit freshness analysis');
   
   try {
-    // Use accurate AI model
-    const analysis = await accurateFruitAnalyzer.analyzeImage(base64Image);
+    // Check if OpenAI is configured
+    if (!openAIAnalyzer.isConfigured()) {
+      throw new Error('OpenAI API key not configured');
+    }
     
-    console.log('Accurate AI analysis completed successfully');
+    // Use OpenAI analyzer (with fine-tuned model if available)
+    const analysis = await openAIAnalyzer.analyzeImage(base64Image);
+    
+    console.log('OpenAI analysis completed successfully');
     return analysis;
   } catch (error) {
-    console.error('Accurate AI analysis error:', error);
+    console.error('OpenAI analysis error:', error);
     console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
     
     // Fallback to enhanced analysis
-    console.log('Falling back to enhanced analysis due to AI error');
+    console.log('Falling back to enhanced analysis due to OpenAI error');
     return await analyzeImageFallback(base64Image);
   }
 }

@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local training data and models
+global-training-data/
+real-training-data/
+*.keras
+*.h5
+fine_tuning_jobs.json
+
+# Environment files
+.env.local
