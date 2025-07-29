@@ -4,8 +4,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Camera, Zap, AlertCircle, Check, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
-import { getTranslations, formatTranslation } from '../lib/i18n';
-import { useTranslation } from '../hooks/useTranslation';
 
 interface DetectedItem {
   id: string;
@@ -237,11 +235,18 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
       // Analyze with backend
       console.log('📤 Sending image for analysis...');
       
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
       const response = await fetch('/api/analyze-batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: screenshot }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       console.log('📥 Response status:', response.status);
 
@@ -369,7 +374,13 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
       
     } catch (err) {
       console.error('Analysis error:', err);
-      setError('Analysis failed. Please try again.');
+      
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Analysis timed out. Please try again.');
+      } else {
+        setError('Analysis failed. Please try again.');
+      }
+      
       setIsAnalyzing(false);
     }
   };
@@ -382,10 +393,10 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   };
 
   const getStatusText = () => {
-    if (isAnalyzing) return t.analyzing || 'Analyzing...';
-    if (autoCapturing) return formatTranslation(t.autoCapturing || 'Capturing in {seconds}...', { seconds: countdown.toString() });
-    if (isStable) return t.detectingItems || 'Detecting items...';
-    return t.stabilizeCamera || 'Hold camera steady';
+    if (isAnalyzing) return t.analyzing;
+    if (autoCapturing) return t.autoCapturing.replace('{seconds}', countdown.toString());
+    if (isStable) return t.detectingItems;
+    return t.stabilizeCamera;
   };
 
   // Don't render until mounted to avoid hydration issues

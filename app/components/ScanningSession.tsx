@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FullScreenScanner } from './FullScreenScanner';
+import { SimpleScanner } from './SimpleScanner';
 import { ScanResultSummary } from './ScanResultSummary';
 
 interface ScanResult {
@@ -57,7 +57,7 @@ export function ScanningSession({ sessionType, onClose }: ScanningSessionProps) 
   }
 
   return (
-    <FullScreenScanner
+    <SimpleScanner
       sessionType={sessionType}
       onClose={onClose}
       onComplete={handleScanComplete}
