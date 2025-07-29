@@ -59,6 +59,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   const [autoCapturing, setAutoCapturing] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -69,8 +70,15 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   
   const { t } = useTranslation();
 
+  // Set mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Start camera
   useEffect(() => {
+    if (!mounted) return;
+    
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -105,7 +113,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
         clearInterval(countdownTimerRef.current);
       }
     };
-  }, []);
+  }, [mounted]);
 
   // Motion detection
   const detectMotion = useCallback(() => {
@@ -113,7 +121,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
 
     const video = videoRef.current;
     const canvas = motionCanvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
     if (!ctx || video.videoWidth === 0) return;
 
@@ -209,7 +217,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       
       if (!ctx) throw new Error('Canvas context not available');
 
@@ -367,11 +375,20 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   };
 
   const getStatusText = () => {
-    if (isAnalyzing) return t.analyzing;
-    if (autoCapturing) return formatTranslation(t.autoCapturing, { seconds: countdown.toString() });
-    if (isStable) return t.detectingItems;
-    return 'Hold camera steady'; // More user-friendly message
+    if (isAnalyzing) return t.analyzing || 'Analyzing...';
+    if (autoCapturing) return formatTranslation(t.autoCapturing || 'Capturing in {seconds}...', { seconds: countdown.toString() });
+    if (isStable) return t.detectingItems || 'Detecting items...';
+    return t.stabilizeCamera || 'Hold camera steady';
   };
+
+  // Don't render until mounted to avoid hydration issues
+  if (!mounted) {
+    return (
+      <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white" />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
@@ -415,7 +432,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
               <div className="text-center text-white">
                 <Camera className="w-8 h-8 mx-auto mb-2 opacity-60" />
                 <p className="text-sm opacity-80">
-                  {isStable ? t.detectingItems : t.stabilizeCamera}
+                  {isStable ? (t.detectingItems || 'Detecting items...') : (t.stabilizeCamera || 'Hold camera steady')}
                 </p>
               </div>
             </div>
@@ -479,7 +496,7 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
                 size="lg"
               >
                 <Camera className="w-5 h-5 mr-2" />
-                {t.tapToCapture}
+                {t.tapToCapture || 'Tap to capture'}
               </Button>
             </div>
           </div>
