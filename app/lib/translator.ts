@@ -1,31 +1,57 @@
 import { getLanguageCode } from './languageDetector';
 
-// Translation function that works on both client and server
-export async function translateText(text: string, targetLanguage?: string, userAgent?: string): Promise<string> {
-  let language = targetLanguage;
-  
-  // If no target language specified, try to detect from user agent or default to browser detection
-  if (!language) {
-    if (userAgent) {
-      // Simple language detection from user agent
-      if (userAgent.includes('zh-CN') || userAgent.includes('zh')) {
-        language = 'zh';
-      } else if (userAgent.includes('es')) {
-        language = 'es';
-      } else if (userAgent.includes('fr')) {
-        language = 'fr';
-      } else {
-        language = 'en';
-      }
-    } else {
-      language = getLanguageCode();
-    }
+// Language name mapping for OpenAI translation
+const languageNames: Record<string, string> = {
+  'zh': 'Chinese (Simplified)',
+  'es': 'Spanish',
+  'fr': 'French',
+  'en': 'English'
+};
+
+// AI-powered translation using OpenAI
+async function translateWithAI(text: string, targetLanguage: string): Promise<string> {
+  try {
+    const openaiClient = new (await import('openai')).default({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const targetLanguageName = languageNames[targetLanguage] || targetLanguage;
+    
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: "system",
+          content: `You are a professional translator. Translate the following text to ${targetLanguageName}. 
+          
+          IMPORTANT RULES:
+          1. Maintain the original meaning and context
+          2. Use natural, fluent language in the target language
+          3. Keep technical terms accurate (fruit names, nutritional terms, etc.)
+          4. Preserve any numbers, percentages, or measurements exactly
+          5. Return ONLY the translated text, no explanations or additional content
+          6. If the text is already in the target language, return it unchanged`
+        },
+        {
+          role: "user",
+          content: text
+        }
+      ],
+      max_tokens: 1000,
+      temperature: 0.1,
+    });
+
+    const translatedText = response.choices[0]?.message?.content?.trim();
+    return translatedText || text;
+  } catch (error) {
+    console.error('AI translation failed:', error);
+    // Fallback to dictionary-based translation
+    return translateWithDictionary(text, targetLanguage);
   }
-  
-  // If already in target language or English, return as is
-  if (language === 'en' || !text) {
-    return text;
-  }
+}
+
+// Dictionary-based translation (fallback)
+function translateWithDictionary(text: string, targetLanguage: string): string {
 
   // Common fruit/vegetable analysis terms translation
   const translations: Record<string, Record<string, string>> = {
@@ -126,7 +152,7 @@ export async function translateText(text: string, targetLanguage?: string, userA
   };
 
   // Get translation map for target language
-  const translationMap = translations[language];
+  const translationMap = translations[targetLanguage];
   if (!translationMap) return text;
 
   // Replace words/phrases with translations
@@ -143,6 +169,37 @@ export async function translateText(text: string, targetLanguage?: string, userA
   }
 
   return translatedText;
+}
+
+// Main translation function that works on both client and server
+export async function translateText(text: string, targetLanguage?: string, userAgent?: string): Promise<string> {
+  let language = targetLanguage;
+  
+  // If no target language specified, try to detect from user agent or default to browser detection
+  if (!language) {
+    if (userAgent) {
+      // Simple language detection from user agent
+      if (userAgent.includes('zh-CN') || userAgent.includes('zh')) {
+        language = 'zh';
+      } else if (userAgent.includes('es')) {
+        language = 'es';
+      } else if (userAgent.includes('fr')) {
+        language = 'fr';
+      } else {
+        language = 'en';
+      }
+    } else {
+      language = getLanguageCode();
+    }
+  }
+  
+  // If already in target language or English, return as is
+  if (language === 'en' || !text) {
+    return text;
+  }
+
+  // Use AI translation for better results
+  return await translateWithAI(text, language);
 }
 
 // Translate an entire object's string values

@@ -56,53 +56,52 @@ class MultiFruitAnalyzer {
         apiKey: process.env.OPENAI_API_KEY,
       });
       
-      const systemPrompt = `You are an expert fruit and vegetable batch analyzer.
+      const systemPrompt = `You are an expert fruit and vegetable individual item analyzer for smart shopping decisions.
 
-CRITICAL INSTRUCTIONS:
-1. Count EVERY individual fruit/vegetable visible in the image
-2. If you see multiple of the same fruit (like 15 pears), analyze each one separately
-3. Give each fruit a unique number: "Pear #1", "Pear #2", "Pear #3", etc.
-4. Provide exact position coordinates for each individual item
-5. Be thorough with detailed analysis for each item
+CRITICAL REQUIREMENTS:
+1. COUNT EVERY SINGLE INDIVIDUAL ITEM - If you see 15 pears, analyze each one separately as "Pear #1", "Pear #2", etc.
+2. NEVER group items together - each physical fruit/vegetable gets its own analysis
+3. NUMBER each item uniquely even if they're the same type
+4. Provide comprehensive shopping-focused information for each item
+5. Give precise position coordinates for each individual item
+6. Include all details that help with purchasing decisions
 
-Return JSON:
+Return a JSON object with this exact structure:
 {
   "fruits": [
     {
-      "item": "Name with number (e.g., Green Pear #1)",
-      "freshness": "Score 0-100",
-      "recommendation": "buy/check/avoid",
-      "confidence": "0-100",
-      "position": {"x": "left percentage", "y": "top percentage", "width": 8, "height": 12},
+      "item": "Item Name #1",
+      "freshness": 85,
+      "recommendation": "buy|check|avoid",
+      "details": "Detailed visual analysis",
+      "confidence": 90,
       "characteristics": {
-        "color": "Specific color details",
-        "texture": "Surface texture",
-        "blemishes": "Any spots or marks",
-        "ripeness": "Ripeness stage"
+        "color": "description",
+        "texture": "description", 
+        "blemishes": "description",
+        "ripeness": "description"
       },
-      "details": "Detailed condition analysis",
-      "storageRecommendation": "Storage advice",
-      "daysRemaining": "Days until spoilage",
+      "position": {"x": 25, "y": 30, "width": 12, "height": 15},
+      "storageRecommendation": "specific storage advice",
+      "daysRemaining": 7,
       "nutritionInfo": {
-        "calories": "Per 100g calories",
-        "vitamins": "Key vitamins",
-        "fiber": "Fiber content",
-        "minerals": "Minerals",
-        "benefits": "Health benefits"
+        "calories": "per 100g info",
+        "vitamins": "key vitamins",
+        "fiber": "fiber content",
+        "minerals": "key minerals",
+        "benefits": "health benefits"
       },
-      "selectionTips": "Selection tips",
-      "seasonInfo": "Seasonal info",
-      "commonUses": "Common uses",
-      "ripeTiming": "Ripening timing",
-      "pairings": "Food pairings",
-      "medicinalUses": "Medicinal uses"
+      "selectionTips": "how to choose the best ones",
+      "seasonInfo": "peak season information",
+      "commonUses": "cooking and eating suggestions",
+      "ripeTiming": "when it will be perfect to eat",
+      "pairings": "what foods it goes well with",
+      "medicinalUses": "traditional health uses"
     }
   ]
-}
+}`;
 
-EXAMPLE: If you see 10 pears, list: Pear #1, Pear #2, Pear #3... Pear #10 with individual positions and analysis for each.`;
-
-      const userPrompt = 'CRITICAL: Analyze EVERY individual fruit/vegetable in this image separately. Count ALL items - if there are 15 pears, I need 15 separate analyses labeled as individual items. Provide precise position coordinates for each fruit. Provide comprehensive analysis including nutrition, selection tips, seasonal info, and usage recommendations.';
+      const userPrompt = 'URGENT: Look at this image and count EVERY SINGLE individual fruit/vegetable. If you see 15 pears, I need 15 separate detailed analyses - not one general analysis. Each fruit must be numbered (#1, #2, #3, etc.) with individual positions and comprehensive information including nutrition, storage, selection criteria, preparation tips, variety info, cooking methods, health benefits, and sustainability notes. This is for smart shopping decisions.';
 
       const response = await openaiClient.chat.completions.create({
         model: 'gpt-4o',
