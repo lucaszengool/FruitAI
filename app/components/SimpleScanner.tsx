@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Camera } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -52,12 +52,14 @@ interface SimpleScannerProps {
 export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScannerProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const startCamera = async () => {
     try {
+      console.log('Starting camera...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { 
           facingMode: 'environment',
@@ -68,12 +70,29 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Camera ready');
+          setCameraReady(true);
+        };
       }
     } catch (err) {
-      setError('Camera access denied or not available');
       console.error('Camera error:', err);
+      setError('Camera access denied or not available');
     }
   };
+
+  // Start camera when component mounts
+  useEffect(() => {
+    startCamera();
+    
+    return () => {
+      // Cleanup camera stream
+      if (videoRef.current?.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   const captureAndAnalyze = async () => {
     if (!videoRef.current || !canvasRef.current || isAnalyzing) return;
@@ -200,7 +219,6 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
           playsInline
           muted
           className="w-full h-full object-cover"
-          onLoadedMetadata={startCamera}
         />
         
         <canvas ref={canvasRef} className="hidden" />
@@ -209,9 +227,13 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
         <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent p-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isAnalyzing ? 'bg-blue-500 animate-pulse' : 'bg-green-500'}`} />
+              <div className={`w-3 h-3 rounded-full ${
+                isAnalyzing ? 'bg-blue-500 animate-pulse' : 
+                cameraReady ? 'bg-green-500' : 'bg-orange-400 animate-pulse'
+              }`} />
               <span className="text-white font-medium">
-                {isAnalyzing ? 'Analyzing...' : 'Ready to scan'}
+                {isAnalyzing ? 'Analyzing...' : 
+                 cameraReady ? 'Ready to scan' : 'Starting camera...'}
               </span>
             </div>
             <Button
@@ -254,12 +276,13 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
           <div className="flex justify-center">
             <Button
               onClick={captureAndAnalyze}
-              disabled={isAnalyzing}
-              className="bg-white/20 hover:bg-white/30 text-white border-2 border-white/50 backdrop-blur-sm"
+              disabled={isAnalyzing || !cameraReady}
+              className="bg-white/20 hover:bg-white/30 text-white border-2 border-white/50 backdrop-blur-sm disabled:opacity-50"
               size="lg"
             >
               <Camera className="w-5 h-5 mr-2" />
-              {isAnalyzing ? 'Analyzing...' : 'Capture & Analyze'}
+              {isAnalyzing ? 'Analyzing...' : 
+               cameraReady ? 'Capture & Analyze' : 'Starting camera...'}
             </Button>
           </div>
         </div>

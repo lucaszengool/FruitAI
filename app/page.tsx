@@ -9,7 +9,7 @@ import { ScanningSession } from './components/ScanningSession';
 import { UserHistory } from './components/UserHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { UserRewards } from './components/UserRewards';
-import { useTranslation } from './hooks/useTranslation';
+// Removed useTranslation to fix hydration issues
 
 // Single fruit analysis result
 interface AnalysisResult {
@@ -77,7 +77,18 @@ export default function Home() {
   const [sessionType, setSessionType] = useState<'shopping' | 'fridge-check' | 'pantry-check'>('shopping');
   const [showHistory, setShowHistory] = useState(false);
   
-  const { t } = useTranslation();
+  // Static translations to avoid hydration issues
+  const t = {
+    appTitle: 'FruitAI',
+    appSubtitle: 'AI-Powered Freshness Scanner',
+    storeSession: 'Store Session',
+    fridgeCheck: 'Fridge Check', 
+    pantryCheck: 'Pantry Scan',
+    dashboard: 'Dashboard',
+    storeSessionDesc: 'Scan multiple items while shopping to compare freshness and make the best choices',
+    fridgeCheckDesc: 'Monitor what needs to be used soon and track freshness of stored produce',
+    pantryCheckDesc: 'Keep track of stored items and get alerts when they need attention'
+  };
 
 
   return (

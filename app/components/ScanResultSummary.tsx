@@ -5,8 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Check, AlertTriangle, X, Download, Share2, TrendingUp, Package } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
-import { getTranslations, formatTranslation } from '../lib/i18n';
-import { useTranslation } from '../hooks/useTranslation';
+// Removed i18n imports to fix hydration issues
 
 interface DetectedItem {
   id: string;
@@ -56,7 +55,34 @@ export function ScanResultSummary({ result, onClose, onNewScan }: ScanResultSumm
   const [selectedItem, setSelectedItem] = useState<DetectedItem | null>(null);
   const [showAnnotations, setShowAnnotations] = useState(true);
   
-  const { t } = useTranslation();
+  // Static translations to avoid hydration issues
+  const t = {
+    sessionSummary: 'Session Summary',
+    foundItems: 'Found {count} items',
+    itemsScanned: 'Items Scanned',
+    averageFreshness: 'Average Freshness',
+    freshness: 'freshness',
+    confidence: 'Confidence',
+    shelfLife: 'Shelf Life', 
+    days: 'days',
+    storageAdvice: 'Storage Advice',
+    nutrition: 'Nutrition',
+    calories: 'Calories',
+    vitamins: 'Vitamins',
+    fiber: 'Fiber',
+    minerals: 'Minerals',
+    healthBenefits: 'Health Benefits',
+    selectionTips: 'Selection Tips',
+    seasonality: 'Seasonality',
+    commonUses: 'Common Uses',
+    ripeTiming: 'Ripe Timing',
+    pairings: 'Pairings',
+    medicinalUses: 'Medicinal Uses',
+    buyRecommended: 'Buy Recommended',
+    checkCarefully: 'Check Carefully',
+    avoidItem: 'Avoid Item',
+    completeSession: 'Complete Session'
+  };
 
   const saveToHistory = () => {
     // Save to localStorage
@@ -144,7 +170,7 @@ export function ScanResultSummary({ result, onClose, onNewScan }: ScanResultSumm
             <div>
               <h1 className="text-xl font-bold">{t.sessionSummary}</h1>
               <p className="text-gray-600 text-sm">
-                {formatTranslation(t.foundItems, { count: result.items.length.toString() })}
+                {t.foundItems.replace('{count}', result.items.length.toString())}
               </p>
             </div>
           </div>
