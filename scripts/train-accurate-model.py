@@ -168,7 +168,7 @@ class AccurateFreshnessTrainer:
                 verbose=1
             ),
             keras.callbacks.ModelCheckpoint(
-                str(self.model_dir / 'best_freshness_model.h5'),
+                str(self.model_dir / 'best_freshness_model.keras'),
                 monitor='val_accuracy',
                 save_best_only=True,
                 verbose=1
@@ -250,7 +250,7 @@ class AccurateFreshnessTrainer:
         self.model_dir.mkdir(parents=True, exist_ok=True)
         
         # Save in Keras format first
-        keras_model_path = self.model_dir / 'freshness_model.h5'
+        keras_model_path = self.model_dir / 'freshness_model.keras'
         self.model.save(keras_model_path)
         
         # Create a simple JavaScript-compatible model

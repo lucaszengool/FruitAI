@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-07-29",
+  "datasets": {
+    "kaggle": {
+      "name": "sriramr/fruits-fresh-and-rotten-for-classification",
+      "description": "13,599 images of apple, banana, and orange (fresh and rotten)",
+      "url": "https://www.kaggle.com/datasets/sriramr/fruits-fresh-and-rotten-for-classification",
+      "status": "pending_download"
+    },
+    "huggingface": {
+      "name": "Densu341/Fresh-rotten-fruit",
+      "description": "Fresh and rotten fruit classification dataset",
+      "url": "https://huggingface.co/datasets/Densu341/Fresh-rotten-fruit",
+      "status": "pending_check"
+    },
+    "existing": {
+      "name": "Current organized dataset",
+      "location": "real-training-data/organized",
+      "description": "Already organized fruit images (apple, banana, orange, strawberry, tomato)"
+    }
+  }
+}
