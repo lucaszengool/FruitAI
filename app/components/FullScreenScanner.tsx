@@ -21,6 +21,16 @@ interface DetectedItem {
   };
   storageRecommendation?: string;
   daysRemaining?: number;
+  nutritionInfo?: {
+    calories: string;
+    vitamins: string;
+    fiber: string;
+    minerals: string;
+    benefits: string;
+  };
+  selectionTips?: string;
+  seasonInfo?: string;
+  commonUses?: string;
 }
 
 interface ScanResult {
@@ -223,7 +233,11 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
           height: 20
         },
         storageRecommendation: fruit.storageRecommendation,
-        daysRemaining: fruit.daysRemaining
+        daysRemaining: fruit.daysRemaining,
+        nutritionInfo: fruit.nutritionInfo,
+        selectionTips: fruit.selectionTips,
+        seasonInfo: fruit.seasonInfo,
+        commonUses: fruit.commonUses
       }));
 
       const averageFreshness = Math.round(

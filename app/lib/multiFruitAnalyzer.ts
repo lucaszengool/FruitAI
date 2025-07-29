@@ -20,6 +20,16 @@ interface FruitAnalysisResult {
   };
   storageRecommendation?: string;
   daysRemaining?: number;
+  nutritionInfo?: {
+    calories: string;
+    vitamins: string;
+    fiber: string;
+    minerals: string;
+    benefits: string;
+  };
+  selectionTips?: string;
+  seasonInfo?: string;
+  commonUses?: string;
 }
 
 interface BatchAnalysisResult {
@@ -118,23 +128,32 @@ Focus on practical grocery shopping decisions. Be specific about which fruits to
       }
 
       // Process the results
-      const analyzedFruits: FruitAnalysisResult[] = analysisData.fruits?.map((fruit: any) => ({
+      const analyzedFruits: FruitAnalysisResult[] = analysisData.fruits?.map((fruit: any, index: number) => ({
         item: fruit.item || 'Unknown Fruit',
-        freshness: Math.max(0, Math.min(100, fruit.freshness || 50)),
+        freshness: Math.max(0, Math.min(100, parseInt(fruit.freshness) || 50)),
         recommendation: ['buy', 'check', 'avoid'].includes(fruit.recommendation) 
           ? fruit.recommendation 
           : 'check',
         details: fruit.details || 'Analysis completed',
-        confidence: Math.max(0, Math.min(100, fruit.confidence || 75)),
+        confidence: Math.max(0, Math.min(100, parseInt(fruit.confidence) || 75)),
         characteristics: {
           color: fruit.characteristics?.color || 'Natural',
           texture: fruit.characteristics?.texture || 'Standard',
           blemishes: fruit.characteristics?.blemishes || 'None visible',
           ripeness: fruit.characteristics?.ripeness || 'Good'
         },
-        position: fruit.position || { x: 0, y: 0, width: 100, height: 100 },
+        position: fruit.position || { 
+          x: 10 + (index % 5) * 18,
+          y: 10 + Math.floor(index / 5) * 20,
+          width: 15,
+          height: 15
+        },
         storageRecommendation: fruit.storageRecommendation || 'Store in cool, dry place',
-        daysRemaining: fruit.daysRemaining || 7
+        daysRemaining: parseInt(fruit.daysRemaining) || 7,
+        nutritionInfo: fruit.nutritionInfo,
+        selectionTips: fruit.selectionTips,
+        seasonInfo: fruit.seasonInfo,
+        commonUses: fruit.commonUses
       })) || [];
 
       // Calculate summary statistics

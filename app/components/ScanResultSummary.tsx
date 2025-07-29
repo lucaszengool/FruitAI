@@ -22,6 +22,16 @@ interface DetectedItem {
   };
   storageRecommendation?: string;
   daysRemaining?: number;
+  nutritionInfo?: {
+    calories: string;
+    vitamins: string;
+    fiber: string;
+    minerals: string;
+    benefits: string;
+  };
+  selectionTips?: string;
+  seasonInfo?: string;
+  commonUses?: string;
 }
 
 interface ScanResult {
@@ -286,13 +296,49 @@ export function ScanResultSummary({ result, onClose, onNewScan }: ScanResultSumm
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <span>{t.confidence}: {item.confidence}%</span>
                       {item.daysRemaining && (
-                        <span>Shelf life: {item.daysRemaining} days</span>
+                        <span>{t.shelfLife}: {item.daysRemaining} {t.days}</span>
                       )}
                     </div>
                     
                     {item.storageRecommendation && (
                       <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
-                        <span className="font-medium">Storage tip:</span> {item.storageRecommendation}
+                        <span className="font-medium">{t.storageAdvice}:</span> {item.storageRecommendation}
+                      </div>
+                    )}
+                    
+                    {item.nutritionInfo && (
+                      <div className="mt-3 p-3 bg-green-50 rounded text-sm">
+                        <h4 className="font-medium mb-2">{t.nutrition}</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div><span className="font-medium">{t.calories}:</span> {item.nutritionInfo.calories}</div>
+                          <div><span className="font-medium">{t.vitamins}:</span> {item.nutritionInfo.vitamins}</div>
+                          <div><span className="font-medium">{t.fiber}:</span> {item.nutritionInfo.fiber}</div>
+                          <div><span className="font-medium">{t.minerals}:</span> {item.nutritionInfo.minerals}</div>
+                        </div>
+                        {item.nutritionInfo.benefits && (
+                          <p className="mt-2"><span className="font-medium">{t.healthBenefits}:</span> {item.nutritionInfo.benefits}</p>
+                        )}
+                      </div>
+                    )}
+                    
+                    {item.selectionTips && (
+                      <div className="mt-2 p-2 bg-purple-50 rounded text-sm">
+                        <span className="font-medium">{t.selectionTips}:</span> {item.selectionTips}
+                      </div>
+                    )}
+                    
+                    {(item.seasonInfo || item.commonUses) && (
+                      <div className="mt-2 flex flex-wrap gap-2 text-sm">
+                        {item.seasonInfo && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{t.seasonality}:</span> {item.seasonInfo}
+                          </div>
+                        )}
+                        {item.commonUses && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{t.commonUses}:</span> {item.commonUses}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

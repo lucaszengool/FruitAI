@@ -55,6 +55,20 @@ export interface Translations {
   buyRecommended: string;
   checkCarefully: string;
   avoidItem: string;
+  
+  // Product Details
+  storageAdvice: string;
+  shelfLife: string;
+  nutrition: string;
+  calories: string;
+  vitamins: string;
+  fiber: string;
+  minerals: string;
+  healthBenefits: string;
+  selectionTips: string;
+  seasonality: string;
+  commonUses: string;
+  days: string;
 }
 
 const translations: Record<string, Translations> = {
@@ -115,6 +129,20 @@ const translations: Record<string, Translations> = {
     buyRecommended: 'Recommended to Buy',
     checkCarefully: 'Check Carefully',
     avoidItem: 'Avoid This Item',
+    
+    // Product Details
+    storageAdvice: 'Storage Advice',
+    shelfLife: 'Shelf Life',
+    nutrition: 'Nutrition',
+    calories: 'Calories',
+    vitamins: 'Vitamins',
+    fiber: 'Fiber',
+    minerals: 'Minerals',
+    healthBenefits: 'Health Benefits',
+    selectionTips: 'Selection Tips',
+    seasonality: 'Seasonality',
+    commonUses: 'Common Uses',
+    days: 'days',
   },
   
   'zh': {
@@ -173,7 +201,21 @@ const translations: Record<string, Translations> = {
     // Recommendations
     buyRecommended: '推荐购买',
     checkCarefully: '仔细检查',
-    avoidItem: '避免此物品',
+    avoidItem: '避免购买',
+    
+    // Product Details
+    storageAdvice: '储存建议',
+    shelfLife: '保质期',
+    nutrition: '营养成分',
+    calories: '卡路里',
+    vitamins: '维生素',
+    fiber: '纤维',
+    minerals: '矿物质',
+    healthBenefits: '健康益处',
+    selectionTips: '挑选技巧',
+    seasonality: '季节性',
+    commonUses: '常见用途',
+    days: '天',
   },
   
   'es': {
@@ -233,6 +275,20 @@ const translations: Record<string, Translations> = {
     buyRecommended: 'Recomendado Comprar',
     checkCarefully: 'Revisar Cuidadosamente',
     avoidItem: 'Evitar Este Artículo',
+    
+    // Product Details
+    storageAdvice: 'Consejos de Almacenamiento',
+    shelfLife: 'Vida Útil',
+    nutrition: 'Nutrición',
+    calories: 'Calorías',
+    vitamins: 'Vitaminas',
+    fiber: 'Fibra',
+    minerals: 'Minerales',
+    healthBenefits: 'Beneficios para la Salud',
+    selectionTips: 'Consejos de Selección',
+    seasonality: 'Temporada',
+    commonUses: 'Usos Comunes',
+    days: 'días',
   },
   
   'fr': {
@@ -292,6 +348,20 @@ const translations: Record<string, Translations> = {
     buyRecommended: 'Recommandé d\'Acheter',
     checkCarefully: 'Vérifier Soigneusement',
     avoidItem: 'Éviter Cet Article',
+    
+    // Product Details
+    storageAdvice: 'Conseils de Conservation',
+    shelfLife: 'Durée de Conservation',
+    nutrition: 'Nutrition',
+    calories: 'Calories',
+    vitamins: 'Vitamines',
+    fiber: 'Fibres',
+    minerals: 'Minéraux',
+    healthBenefits: 'Bienfaits pour la Santé',
+    selectionTips: 'Conseils de Sélection',
+    seasonality: 'Saisonnalité',
+    commonUses: 'Utilisations Courantes',
+    days: 'jours',
   }
 };
 
