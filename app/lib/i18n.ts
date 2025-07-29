@@ -421,7 +421,11 @@ const translations: Record<string, Translations> = {
 };
 
 // Get browser locale and return corresponding translations
-export function getTranslations(): Translations {
+export function getTranslations(language?: string): Translations {
+  if (language) {
+    return translations[language] || translations['en'];
+  }
+  
   if (typeof window === 'undefined') {
     return translations['en']; // Default for SSR
   }

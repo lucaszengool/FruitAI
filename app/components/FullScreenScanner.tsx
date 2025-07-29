@@ -68,7 +68,14 @@ export function FullScreenScanner({ sessionType, onClose, onComplete }: FullScre
   const stabilityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  const { t } = useTranslation();
+  // Use static translations to avoid hydration issues
+  const t = {
+    analyzing: 'Analyzing freshness...',
+    autoCapturing: 'Auto-capturing in {seconds}s',
+    detectingItems: 'Detecting items...',
+    stabilizeCamera: 'Hold camera steady',
+    tapToCapture: 'Tap to capture'
+  };
 
   // Set mounted state
   useEffect(() => {
