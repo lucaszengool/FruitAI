@@ -180,9 +180,82 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
         sessionType
       };
 
-      // Try API call with timeout
+      // Try quick analysis first for immediate response
+      let useQuickAnalysis = true;
+      
       try {
-        console.log('⏰ Starting API call with 45s timeout...');
+        console.log('🚀 Trying quick analysis for instant response...');
+        const quickStart = Date.now();
+        
+        const quickResponse = await fetch('/api/analyze-quick', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: screenshot })
+        });
+        
+        if (quickResponse.ok) {
+          const quickResult = await quickResponse.json();
+          const quickTime = Date.now() - quickStart;
+          console.log(`✅ Quick analysis completed in ${quickTime}ms`);
+          console.log('🔥 Using instant analysis mode for better performance');
+          
+          // Process the quick result
+          const items: DetectedItem[] = quickResult.analyzedFruits?.map((fruit: any, index: number) => ({
+            id: `${Date.now()}-${index}`,
+            item: fruit.item,
+            freshness: fruit.freshness,
+            recommendation: fruit.recommendation,
+            details: fruit.details,
+            confidence: fruit.confidence,
+            position: fruit.position || { x: 50, y: 50, width: 15, height: 20 },
+            storageRecommendation: fruit.storageRecommendation,
+            daysRemaining: fruit.daysRemaining,
+            nutritionInfo: fruit.nutritionInfo,
+            selectionTips: fruit.selectionTips,
+            seasonInfo: fruit.seasonInfo,
+            commonUses: fruit.commonUses,
+            ripeTiming: fruit.ripeTiming,
+            pairings: fruit.pairings,
+            medicinalUses: fruit.medicinalUses
+          })) || fallbackResult.items;
+
+          const averageFreshness = Math.round(
+            items.reduce((sum, item) => sum + item.freshness, 0) / items.length
+          );
+
+          onComplete({
+            screenshot,
+            items,
+            timestamp: new Date(),
+            averageFreshness,
+            sessionType
+          });
+          
+          // Optionally try OpenAI in background for better analysis
+          console.log('🔍 Quick analysis done. Attempting enhanced analysis in background...');
+          
+          // Don't wait for this, just log the result
+          fetch('/api/analyze-batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: screenshot })
+          }).then(response => {
+            if (response.ok) {
+              console.log('✨ Enhanced OpenAI analysis available');
+            }
+          }).catch(err => {
+            console.log('ℹ️ Enhanced analysis not available:', err.message);
+          });
+          
+          return; // Exit early with quick result
+        }
+      } catch (quickError) {
+        console.log('⚠️ Quick analysis failed, falling back to full analysis');
+      }
+      
+      // Fall back to regular API call with timeout
+      try {
+        console.log('⏰ Starting full API call with 45s timeout...');
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
           console.log('⏰ API call timed out after 45 seconds');

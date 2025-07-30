@@ -53,65 +53,98 @@ class MultiFruitAnalyzer {
     console.log('🔑 OpenAI API Key present:', !!process.env.OPENAI_API_KEY);
     
     try {
+      console.log('🔧 === OpenAI API DEBUGGING START ===');
+      console.log('🔑 Environment Variables Check:');
+      console.log('  - OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
+      console.log('  - OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length || 0);
+      console.log('  - OPENAI_API_KEY starts with:', process.env.OPENAI_API_KEY?.substring(0, 10) || 'N/A');
+      console.log('  - NODE_ENV:', process.env.NODE_ENV);
+      
       if (!process.env.OPENAI_API_KEY) {
+        console.error('❌ CRITICAL: OpenAI API key not found!');
         throw new Error('OpenAI API key not configured');
       }
 
+      console.log('🤖 Initializing OpenAI client...');
       const openaiClient = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
         timeout: 30000, // 30 second timeout
         maxRetries: 2,  // Retry up to 2 times
       });
+      console.log('✅ OpenAI client initialized successfully');
       
-      const systemPrompt = `You are an expert fruit and vegetable individual item analyzer for smart shopping decisions.
+      const systemPrompt = `You are an expert fruit and vegetable analyzer. You MUST respond with ONLY valid JSON, no additional text or explanations.
 
-CRITICAL REQUIREMENTS:
-1. COUNT EVERY SINGLE INDIVIDUAL ITEM - If you see 15 pears, analyze each one separately as "Pear #1", "Pear #2", etc.
-2. NEVER group items together - each physical fruit/vegetable gets its own analysis
-3. NUMBER each item uniquely even if they're the same type
-4. Provide comprehensive shopping-focused information for each item
-5. Give precise position coordinates for each individual item
-6. Include all details that help with purchasing decisions
+CRITICAL JSON REQUIREMENTS:
+- Your entire response must be a single valid JSON object
+- Do not include markdown code blocks (no \`\`\`json)
+- Do not include any text before or after the JSON
+- Start your response with { and end with }
 
-Return a JSON object with this exact structure:
+ANALYSIS REQUIREMENTS:
+1. COUNT EVERY INDIVIDUAL ITEM - analyze each fruit/vegetable separately
+2. NUMBER each item uniquely (e.g., "Apple #1", "Apple #2")
+3. Provide shopping-focused information for each item
+4. Give position coordinates for each item
+
+REQUIRED JSON STRUCTURE:
 {
   "fruits": [
     {
       "item": "Item Name #1",
       "freshness": 85,
-      "recommendation": "buy|check|avoid",
-      "details": "Detailed visual analysis",
+      "recommendation": "buy",
+      "details": "Visual analysis description",
       "confidence": 90,
       "characteristics": {
-        "color": "description",
-        "texture": "description", 
-        "blemishes": "description",
-        "ripeness": "description"
+        "color": "color description",
+        "texture": "texture description", 
+        "blemishes": "blemish description",
+        "ripeness": "ripeness description"
       },
       "position": {"x": 25, "y": 30, "width": 12, "height": 15},
-      "storageRecommendation": "specific storage advice",
+      "storageRecommendation": "storage advice",
       "daysRemaining": 7,
       "nutritionInfo": {
-        "calories": "per 100g info",
-        "vitamins": "key vitamins",
-        "fiber": "fiber content",
-        "minerals": "key minerals",
+        "calories": "calorie info",
+        "vitamins": "vitamin info",
+        "fiber": "fiber info",
+        "minerals": "mineral info",
         "benefits": "health benefits"
       },
-      "selectionTips": "how to choose the best ones",
-      "seasonInfo": "peak season information",
-      "commonUses": "cooking and eating suggestions",
-      "ripeTiming": "when it will be perfect to eat",
-      "pairings": "what foods it goes well with",
-      "medicinalUses": "traditional health uses"
+      "selectionTips": "selection tips",
+      "seasonInfo": "season info",
+      "commonUses": "usage suggestions",
+      "ripeTiming": "ripening timeline",
+      "pairings": "food pairings",
+      "medicinalUses": "health uses"
     }
   ]
-}`;
+}
 
-      const userPrompt = 'URGENT: Look at this image and count EVERY SINGLE individual fruit/vegetable. If you see 15 pears, I need 15 separate detailed analyses - not one general analysis. Each fruit must be numbered (#1, #2, #3, etc.) with individual positions and comprehensive information including nutrition, storage, selection criteria, preparation tips, variety info, cooking methods, health benefits, and sustainability notes. This is for smart shopping decisions.';
+IMPORTANT: If you cannot see clear fruits/vegetables, return a single generic item with freshness around 75 and recommendation "check".`;
 
-      console.log('📡 Making OpenAI API call...');
+      const userPrompt = 'Analyze this image for fruits/vegetables. Count each individual item and return the JSON structure specified in the system prompt. Each fruit must be numbered uniquely. Respond with ONLY valid JSON, no other text.';
+
+      console.log('📡 === MAKING OPENAI API CALL ===');
+      console.log('📸 Image data validation:');
+      console.log('  - Image length:', base64Image.length);
+      console.log('  - Image starts with data URL:', base64Image.startsWith('data:image'));
+      console.log('  - Image first 100 chars:', base64Image.substring(0, 100));
+      
+      const imageUrl = base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`;
+      console.log('  - Final image URL length:', imageUrl.length);
+      console.log('  - Final image URL preview:', imageUrl.substring(0, 100));
+      
+      console.log('⚙️ Request parameters:');
+      console.log('  - Model: gpt-4o');
+      console.log('  - Max tokens: 4000');
+      console.log('  - Temperature: 0.1');
+      console.log('  - System prompt length:', systemPrompt.length);
+      console.log('  - User prompt length:', userPrompt.length);
+      
       const requestStart = Date.now();
+      console.log('🚀 Sending request to OpenAI at:', new Date().toISOString());
       
       const response = await openaiClient.chat.completions.create({
         model: 'gpt-4o',
@@ -130,7 +163,7 @@ Return a JSON object with this exact structure:
               {
                 type: "image_url",
                 image_url: {
-                  url: base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`,
+                  url: imageUrl,
                   detail: "high"
                 }
               }
@@ -139,25 +172,43 @@ Return a JSON object with this exact structure:
         ],
         max_tokens: 4000,
         temperature: 0.1,
+        response_format: { type: "json_object" }
       });
 
       const requestTime = Date.now() - requestStart;
-      console.log(`📊 OpenAI request completed in ${requestTime}ms`);
-      console.log('📊 OpenAI response usage:', response.usage);
+      console.log('🎉 === OPENAI RESPONSE RECEIVED ===');
+      console.log(`⏱️ Request completed in ${requestTime}ms`);
+      console.log('📊 Response metadata:');
+      console.log('  - Response ID:', response.id);
+      console.log('  - Model used:', response.model);
+      console.log('  - Created:', new Date(response.created * 1000).toISOString());
+      console.log('  - Choices length:', response.choices?.length || 0);
+      console.log('📈 Usage stats:', JSON.stringify(response.usage, null, 2));
       
       const content = response.choices[0]?.message?.content;
-      console.log('🔍 Response content length:', content?.length || 0);
+      console.log('📝 Response content analysis:');
+      console.log('  - Content exists:', !!content);
+      console.log('  - Content length:', content?.length || 0);
+      console.log('  - Content preview (first 200 chars):', content?.substring(0, 200) || 'N/A');
+      console.log('  - Content preview (last 200 chars):', content?.substring(-200) || 'N/A');
       
       if (!content) {
-        console.error('❌ No content in OpenAI response');
-        console.error('📝 Full response:', JSON.stringify(response, null, 2));
+        console.error('❌ CRITICAL: No content in OpenAI response!');
+        console.error('📝 Full response object:');
+        console.error(JSON.stringify(response, null, 2));
         throw new Error('No response from OpenAI');
       }
 
       // Parse the response
+      console.log('🔍 === PARSING OPENAI RESPONSE ===');
+      console.log('📄 Raw AI response (full):');
+      console.log('--- START RESPONSE ---');
+      console.log(content);
+      console.log('--- END RESPONSE ---');
+      
       let analysisData;
       try {
-        console.log('Raw AI response:', content);
+        console.log('🔧 Attempting to parse JSON response...');
         
         // Try to extract JSON from markdown code blocks first
         const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
@@ -175,11 +226,54 @@ Return a JSON object with this exact structure:
           throw new Error('Response missing fruits array');
         }
         
-        console.log('Parsed analysis data:', analysisData);
+        console.log('✅ JSON parsing successful!');
+        console.log('📊 Parsed analysis data:');
+        console.log('  - Data type:', typeof analysisData);
+        console.log('  - Data keys:', Object.keys(analysisData || {}));
+        console.log('  - Has fruits array:', Array.isArray(analysisData?.fruits));
+        console.log('  - Fruits count:', analysisData?.fruits?.length || 0);
+        if (analysisData?.fruits?.length > 0) {
+          console.log('  - First fruit keys:', Object.keys(analysisData.fruits[0] || {}));
+          console.log('  - First fruit item:', analysisData.fruits[0]?.item);
+        }
+        console.log('📝 Complete parsed data:');
+        console.log(JSON.stringify(analysisData, null, 2));
         
       } catch (parseError) {
-        console.error('Failed to parse batch analysis response:', parseError);
-        console.error('Content that failed to parse:', content);
+        console.error('❌ === JSON PARSING FAILED ===');
+        console.error('🔍 Parse error details:');
+        console.error('  - Error type:', typeof parseError);
+        console.error('  - Error message:', parseError instanceof Error ? parseError.message : String(parseError));
+        console.error('  - Error stack:', parseError instanceof Error ? parseError.stack : 'N/A');
+        console.error('📄 Content that failed to parse (length: ' + content.length + '):');
+        console.error('--- START FAILED CONTENT ---');
+        console.error(content);
+        console.error('--- END FAILED CONTENT ---');
+        console.error('🔧 Trying different parsing approaches...');
+        
+        // Try to find JSON in different formats
+        const jsonRegexes = [
+          /```json\n([\s\S]*?)\n```/,
+          /```([\s\S]*?)```/,
+          /{[\s\S]*}/
+        ];
+        
+        for (let i = 0; i < jsonRegexes.length; i++) {
+          const regex = jsonRegexes[i];
+          const match = content.match(regex);
+          console.log(`🔍 Regex ${i + 1} match:`, !!match);
+          if (match) {
+            console.log(`📄 Regex ${i + 1} extracted:`, match[1] || match[0]);
+            try {
+              const testParsed = JSON.parse(match[1] || match[0]);
+              console.log(`✅ Regex ${i + 1} parsing successful!`);
+              analysisData = testParsed;
+              break;
+            } catch (e) {
+              console.log(`❌ Regex ${i + 1} parsing failed:`, e.message);
+            }
+          }
+        }
         
         // Create a fallback response structure
         analysisData = {
@@ -211,7 +305,10 @@ Return a JSON object with this exact structure:
           }]
         };
         
-        console.log('Using fallback analysis data due to parsing error');
+        if (!analysisData) {
+          console.log('🎯 Using fallback analysis data due to parsing error');
+          console.log('📋 Fallback data structure being created...');
+        }
       }
 
       // Process the results
@@ -269,27 +366,58 @@ Return a JSON object with this exact structure:
         timestamp: new Date().toISOString()
       };
 
+      console.log('🎉 === ANALYSIS SUCCESSFUL ===');
       console.log(`✅ Batch analysis complete: ${totalFruits} fruits analyzed`);
+      console.log('📈 Final result summary:');
+      console.log('  - Total fruits:', result.totalFruits);
+      console.log('  - Average freshness:', result.averageFreshness);
+      console.log('  - Best fruit:', result.bestFruit?.item || 'N/A');
+      console.log('  - Worst fruit:', result.worstFruit?.item || 'N/A');
+      console.log('📦 Returning result to caller...');
       return result;
 
     } catch (error) {
-      console.error('❌ Batch analysis failed:', error);
-      console.error('🔍 Error type:', typeof error);
-      console.error('📝 Error message:', error instanceof Error ? error.message : String(error));
-      console.error('📚 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error('❌ === OPENAI API ERROR OCCURRED ===');
+      console.error('🐛 Error analysis:');
+      console.error('  - Error type:', typeof error);
+      console.error('  - Error constructor:', error?.constructor?.name);
+      console.error('  - Error message:', error instanceof Error ? error.message : String(error));
+      console.error('  - Error code:', (error as any)?.code || 'N/A');
+      console.error('  - Error status:', (error as any)?.status || 'N/A');
+      console.error('  - Error response:', (error as any)?.response?.data || 'N/A');
+      console.error('📚 Full error object:');
+      console.error(JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+      console.error('📉 Error stack trace:');
+      console.error(error instanceof Error ? error.stack : 'No stack trace available');
       
       // Check for specific OpenAI errors and provide fallback
+      console.log('🔍 === ERROR CLASSIFICATION ===');
       if (error instanceof Error) {
-        if (error.message.includes('API key')) {
-          console.error('🔑 OpenAI API key issue detected');
-        } else if (error.message.includes('rate limit')) {
-          console.error('📈 OpenAI rate limit exceeded');
-        } else if (error.message.includes('timeout')) {
-          console.error('⏰ OpenAI request timeout');
-        } else if (error.message.includes('network')) {
-          console.error('🌐 Network connectivity issue');
-        } else if (error.message.includes('unsupported image') || error.message.includes('400')) {
-          console.error('🖼️ Image format issue with OpenAI');
+        const errorMessage = error.message.toLowerCase();
+        const errorString = String(error).toLowerCase();
+        
+        console.log('🔍 Checking error patterns...');
+        
+        if (errorMessage.includes('api key') || errorMessage.includes('unauthorized')) {
+          console.error('🔑 ❌ OpenAI API key issue detected');
+          console.error('  - This indicates authentication failure');
+          console.error('  - Check if API key is valid and has credits');
+        } else if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+          console.error('📈 ❌ OpenAI rate limit exceeded');
+          console.error('  - Too many requests sent to OpenAI');
+          console.error('  - Need to wait before retrying');
+        } else if (errorMessage.includes('timeout')) {
+          console.error('⏰ ❌ OpenAI request timeout');
+          console.error('  - Request took longer than 30 seconds');
+          console.error('  - OpenAI may be experiencing delays');
+        } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+          console.error('🌐 ❌ Network connectivity issue');
+          console.error('  - Could not reach OpenAI servers');
+          console.error('  - Check internet connection');
+        } else if (errorMessage.includes('unsupported image') || errorMessage.includes('400') || errorString.includes('400')) {
+          console.error('🖼️ ❌ Image format issue with OpenAI');
+          console.error('  - OpenAI rejected the image format');
+          console.error('  - Image may be corrupted or unsupported');
           console.log('🎯 Providing enhanced fallback analysis due to image format issue...');
           
           // Return enhanced fallback instead of throwing error
@@ -329,10 +457,23 @@ Return a JSON object with this exact structure:
             analysisId: `fallback-batch-${Date.now()}`,
             timestamp: new Date().toISOString()
           };
+        } else {
+          console.error('🤷 ❌ Unknown OpenAI error type');
+          console.error('  - Error does not match known patterns');
+          console.error('  - May be a new type of error');
+          console.error('  - Full error for debugging:', error);
         }
+      } else {
+        console.error('🤷 ❌ Non-Error object thrown');
+        console.error('  - Thrown value is not an Error instance');
+        console.error('  - Type:', typeof error);
+        console.error('  - Value:', error);
       }
       
-      throw new Error(`Batch analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('🚀 === THROWING ERROR TO CALLER ===');
+      const finalError = new Error(`Batch analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('📝 Final error message:', finalError.message);
+      throw finalError;
     }
   }
 }
