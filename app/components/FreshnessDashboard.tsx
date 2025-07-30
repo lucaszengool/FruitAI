@@ -69,27 +69,27 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
   const freshnessMetrics = [
     {
       title: 'Fresh Items',
-      value: '108g',
-      subtitle: 'Protein left',
+      value: '108',
+      subtitle: 'Items scanned',
       icon: Apple,
-      color: 'text-red-500',
-      progress: 0.7
+      color: 'text-green-500',
+      progress: 0.9
     },
     {
       title: 'Quality Score',
-      value: '128g', 
-      subtitle: 'Carbs left',
+      value: '85%', 
+      subtitle: 'Avg freshness',
       icon: Leaf,
-      color: 'text-orange-500',
-      progress: 0.8
+      color: 'text-green-500',
+      progress: 0.85
     },
     {
       title: 'Shelf Life',
-      value: '38g',
-      subtitle: 'Fat left', 
+      value: '7',
+      subtitle: 'Days remaining', 
       icon: Clock,
-      color: 'text-blue-500',
-      progress: 0.3
+      color: 'text-yellow-500',
+      progress: 0.7
     }
   ];
 
@@ -118,7 +118,7 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
           <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
             <Apple className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-black">FreshAI</h1>
+          <h1 className="text-2xl font-bold text-black">FruitAI</h1>
         </div>
         <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
           <Flame className="w-4 h-4 text-orange-500" />
@@ -161,7 +161,7 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
             <div className="text-8xl font-light text-black mb-2">
               {freshItemsLeft}
             </div>
-            <p className="text-lg text-gray-600 mb-4">Fresh items left</p>
+            <p className="text-lg text-gray-600 mb-4">Items analyzed this week</p>
             
             {/* Circular Progress Indicator */}
             <div className="relative inline-flex items-center justify-center">
@@ -279,7 +279,7 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
                   
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1">
-                      <Flame className="w-3 h-3 text-black" />
+                      <Flame className="w-3 h-3 text-green-600" />
                       <span className="text-black font-medium">{scan.averageScore}% fresh</span>
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">
@@ -287,12 +287,12 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
                       <span>{scan.itemCount} items</span>
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">
-                      <Droplets className="w-3 h-3" />
-                      <span>0g</span>
+                      <Clock className="w-3 h-3" />
+                      <span>7 days left</span>
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">
-                      <Leaf className="w-3 h-3" />
-                      <span>0g</span>
+                      <Target className="w-3 h-3" />
+                      <span>Buy recommended</span>
                     </div>
                   </div>
                 </div>

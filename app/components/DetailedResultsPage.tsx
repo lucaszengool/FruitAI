@@ -14,7 +14,8 @@ import {
   Leaf,
   Clock,
   Plus,
-  AlertTriangle
+  AlertTriangle,
+  Camera
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -52,6 +53,7 @@ interface DetailedResultsPageProps {
   results: FruitAnalysisResult[];
   onBack: () => void;
   onFreshnessScoreClick: (fruit: FruitAnalysisResult) => void;
+  onScanAnother: () => void;
   capturedImage?: string;
 }
 
@@ -59,6 +61,7 @@ export function DetailedResultsPage({
   results, 
   onBack, 
   onFreshnessScoreClick,
+  onScanAnother,
   capturedImage 
 }: DetailedResultsPageProps) {
   const [selectedFruit, setSelectedFruit] = useState<FruitAnalysisResult>(results[0]);
@@ -331,15 +334,16 @@ export function DetailedResultsPage({
             <Button 
               variant="outline" 
               className="flex-1 flex items-center justify-center gap-2"
+              onClick={onScanAnother}
             >
-              <AlertTriangle className="w-4 h-4" />
-              Fix Issue
+              <Camera className="w-4 h-4" />
+              Scan Another
             </Button>
             <Button 
               className="flex-1 bg-black hover:bg-gray-800 text-white"
               onClick={onBack}
             >
-              Done
+              Back to Main
             </Button>
           </div>
         </motion.div>

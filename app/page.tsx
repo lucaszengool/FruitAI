@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Scan, Refrigerator, Store, History } from 'lucide-react';
+import { Scan } from 'lucide-react';
 import { Button } from './components/ui/Button';
 import { Card } from './components/ui/Card';
 import { ScanningSession } from './components/ScanningSession';
@@ -88,6 +88,7 @@ export default function Home() {
   const [currentResults, setCurrentResults] = useState<FruitAnalysisResult[]>([]);
   const [selectedFruit, setSelectedFruit] = useState<FruitAnalysisResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   
   // Static translations to avoid hydration issues
   const t = {
@@ -109,45 +110,46 @@ export default function Home() {
   const handleCameraCapture = async (imageData: string) => {
     setCapturedImage(imageData);
     setShowCameraView(false);
+    setIsAnalyzing(true);
     
-    // Mock analysis results for demo - in real app this would call the API
-    const mockResults: FruitAnalysisResult[] = [
-      {
-        item: 'Apple #1',
-        freshness: 89,
-        recommendation: 'buy',
-        details: 'Excellent color and firmness. No visible blemishes.',
-        confidence: 92,
-        characteristics: {
-          color: 'Vibrant red with slight green',
-          texture: 'Firm and crisp',
-          blemishes: 'None visible',
-          ripeness: 'Perfect eating stage'
+    try {
+      console.log('Calling API with captured image...');
+      
+      const response = await fetch('/api/analyze-batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        position: { x: 25, y: 30, width: 15, height: 20 },
-        storageRecommendation: 'Store in refrigerator for up to 2 weeks',
-        daysRemaining: 14
-      },
-      {
-        item: 'Apple #2',
-        freshness: 76,
-        recommendation: 'check',
-        details: 'Good overall condition with minor soft spots.',
-        confidence: 87,
-        characteristics: {
-          color: 'Natural red with some brown spots',
-          texture: 'Mostly firm with soft areas',
-          blemishes: 'Small brown spots visible',
-          ripeness: 'Slightly overripe'
-        },
-        position: { x: 60, y: 45, width: 15, height: 20 },
-        storageRecommendation: 'Use within 3-5 days, store in cool place',
-        daysRemaining: 4
+        body: JSON.stringify({ image: imageData }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Analysis failed');
       }
-    ];
-    
-    setCurrentResults(mockResults);
-    setShowDetailedResults(true);
+
+      const batchResult = await response.json();
+      console.log('API response received:', batchResult);
+      
+      // Convert API response to expected format
+      const results: FruitAnalysisResult[] = batchResult.analyzedFruits || [];
+      
+      if (results.length === 0) {
+        throw new Error('No fruits detected in the image');
+      }
+      
+      setCurrentResults(results);
+      setIsAnalyzing(false);
+      setShowDetailedResults(true);
+      
+    } catch (error) {
+      console.error('Analysis error:', error);
+      setIsAnalyzing(false);
+      alert(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Return to camera view on error
+      setShowCameraView(true);
+    }
   };
 
   const handleFreshnessScoreClick = (fruit: FruitAnalysisResult) => {
@@ -157,11 +159,31 @@ export default function Home() {
 
   const handleBackFromResults = () => {
     setShowDetailedResults(false);
-    setShowDashboard(true);
+    setCurrentResults([]);
+    setCapturedImage('');
+  };
+
+  const handleScanAnother = () => {
+    setShowDetailedResults(false);
+    setCurrentResults([]);
+    setCapturedImage('');
+    setShowCameraView(true);
   };
 
 
   // Show different views based on state
+  if (isAnalyzing) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Analyzing your fruit...</h2>
+          <p className="text-gray-600">AI is scanning for freshness and quality</p>
+        </div>
+      </div>
+    );
+  }
+
   if (showDetailedResults && currentResults.length > 0) {
     return (
       <>
@@ -169,6 +191,7 @@ export default function Home() {
           results={currentResults}
           onBack={handleBackFromResults}
           onFreshnessScoreClick={handleFreshnessScoreClick}
+          onScanAnother={handleScanAnother}
           capturedImage={capturedImage}
         />
         {selectedFruit && (
@@ -215,100 +238,47 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Mode Selector */}
+        {/* Action Buttons */}
         <motion.div 
-          className="flex justify-center mb-8"
+          className="flex justify-center gap-4 mb-8"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="bg-white rounded-xl p-2 shadow-lg border-2 border-gray-100">
-            <div className="flex gap-2">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => {
-                  setSessionType('shopping');
-                  setShowScanningSession(true);
-                }}
-                className="flex items-center gap-2"
-              >
-                <Store className="w-5 h-5" />
-                <span className="font-semibold">{t.storeSession}</span>
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => {
-                  setSessionType('fridge-check');
-                  setShowScanningSession(true);
-                }}
-                className="flex items-center gap-2"
-              >
-                <Refrigerator className="w-5 h-5" />
-                <span className="font-semibold">{t.fridgeCheck}</span>
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => {
-                  setSessionType('pantry-check');
-                  setShowScanningSession(true);
-                }}
-                className="flex items-center gap-2"
-              >
-                <Scan className="w-5 h-5" />
-                <span className="font-semibold">{t.pantryCheck}</span>
-              </Button>
-              <Button
-                variant={showHistory ? 'primary' : 'ghost'}
-                size="lg"
-                onClick={() => {
-                  if (showHistory) {
-                    setShowHistory(false);
-                  } else {
-                    setShowDashboard(true);
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                <History className="w-5 h-5" />
-                <span className="font-semibold">{t.dashboard}</span>
-              </Button>
-            </div>
-          </div>
+          <Button
+            onClick={handleStartScan}
+            size="lg"
+            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-lg px-8 py-4"
+          >
+            📱 Quick Scan
+          </Button>
+          <Button
+            onClick={() => setShowDashboard(true)}
+            variant="secondary"
+            size="lg"
+            className="text-lg px-8 py-4"
+          >
+            📊 View Dashboard
+          </Button>
         </motion.div>
 
-        {/* Mode Descriptions */}
+        {/* App Description */}
         <motion.div 
-          className="text-center mb-8"
+          className="text-center mb-8 max-w-2xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-6">
-            <Card className="p-4 text-center">
-              <Store className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <h3 className="font-semibold mb-2">{t.storeSession}</h3>
-              <p className="text-sm text-gray-600">
-                {t.storeSessionDesc}
+          <Card className="p-6">
+            <div className="text-center">
+              <Scan className="w-12 h-12 mx-auto mb-4 text-green-600" />
+              <h3 className="text-xl font-semibold mb-3">AI-Powered Freshness Analysis</h3>
+              <p className="text-gray-600">
+                Use your camera to instantly analyze fruit freshness, get quality scores, 
+                and receive personalized recommendations for optimal selection and storage.
               </p>
-            </Card>
-            <Card className="p-4 text-center">
-              <Refrigerator className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <h3 className="font-semibold mb-2">{t.fridgeCheck}</h3>
-              <p className="text-sm text-gray-600">
-                {t.fridgeCheckDesc}
-              </p>
-            </Card>
-            <Card className="p-4 text-center">
-              <Scan className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <h3 className="font-semibold mb-2">{t.pantryCheck}</h3>
-              <p className="text-sm text-gray-600">
-                {t.pantryCheckDesc}
-              </p>
-            </Card>
-          </div>
+            </div>
+          </Card>
         </motion.div>
 
 

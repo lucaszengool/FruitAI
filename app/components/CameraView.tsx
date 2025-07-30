@@ -28,10 +28,7 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   const scanModes = [
-    { id: 'scan', label: 'Scan Freshness', icon: ScanLine },
-    { id: 'barcode', label: 'Barcode', icon: Camera },
-    { id: 'label', label: 'Food Label', icon: ImageIcon },
-    { id: 'library', label: 'Library', icon: ImageIcon }
+    { id: 'scan', label: 'Scan Freshness', icon: ScanLine }
   ];
 
   const stopCamera = useCallback(() => {
@@ -44,6 +41,15 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
 
   const startCamera = async () => {
     try {
+      console.log('Requesting camera permissions...');
+      
+      // Check if camera is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error('Camera not supported in this browser');
+        setHasPermission(false);
+        return;
+      }
+
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { 
           facingMode: 'environment',
@@ -52,6 +58,8 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
         }
       });
       
+      console.log('Camera permission granted');
+      
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         setStream(mediaStream);
@@ -59,7 +67,13 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.name, error.message);
+      }
       setHasPermission(false);
+      
+      // Show user-friendly error message
+      alert('Camera access is required to scan fruits. Please allow camera permissions and try again.');
     }
   };
 
