@@ -270,7 +270,7 @@ IMPORTANT: If you cannot see clear fruits/vegetables, return a single generic it
               analysisData = testParsed;
               break;
             } catch (e) {
-              console.log(`❌ Regex ${i + 1} parsing failed:`, e.message);
+              console.log(`❌ Regex ${i + 1} parsing failed:`, e instanceof Error ? e.message : String(e));
             }
           }
         }

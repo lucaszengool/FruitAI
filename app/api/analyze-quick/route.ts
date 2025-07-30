@@ -1,5 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface FruitAnalysisResult {
+  item: string;
+  freshness: number;
+  recommendation: 'buy' | 'avoid' | 'check';
+  details: string;
+  confidence: number;
+  characteristics: {
+    color: string;
+    texture: string;
+    blemishes: string;
+    ripeness: string;
+  };
+  position: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  storageRecommendation?: string;
+  daysRemaining?: number;
+  nutritionInfo?: {
+    calories: string;
+    vitamins: string;
+    fiber: string;
+    minerals: string;
+    benefits: string;
+  };
+  selectionTips?: string;
+  seasonInfo?: string;
+  commonUses?: string;
+  ripeTiming?: string;
+  pairings?: string;
+  medicinalUses?: string;
+}
+
 export async function POST(request: NextRequest) {
   console.log('🚀 Quick analysis endpoint called');
   
@@ -11,57 +46,55 @@ export async function POST(request: NextRequest) {
     }
 
     // Quick analysis without OpenAI - instant response
+    const analyzedFruit: FruitAnalysisResult = {
+      item: 'Fresh Produce',
+      freshness: 85,
+      recommendation: 'buy' as const,
+      details: 'This appears to be fresh produce in good condition. The color and texture indicators suggest it\'s suitable for purchase.',
+      confidence: 75,
+      characteristics: {
+        color: 'Vibrant and natural',
+        texture: 'Appears firm and fresh',
+        blemishes: 'Minimal to none visible',
+        ripeness: 'Optimal for consumption'
+      },
+      position: { x: 50, y: 50, width: 20, height: 20 },
+      storageRecommendation: 'Store in cool, dry place or refrigerate after opening',
+      daysRemaining: 5,
+      nutritionInfo: {
+        calories: '50-100 per serving',
+        vitamins: 'Rich in vitamins A, C, and K',
+        fiber: '2-4g per serving',
+        minerals: 'Contains potassium and folate',
+        benefits: 'Supports immune system and digestive health'
+      },
+      selectionTips: 'Choose items with bright colors and firm texture',
+      seasonInfo: 'Best quality when in season',
+      commonUses: 'Can be eaten fresh or used in cooking',
+      ripeTiming: '2-3 days at room temperature',
+      pairings: 'Pairs well with complementary produce',
+      medicinalUses: 'Contains antioxidants and anti-inflammatory compounds'
+    };
+
     const quickAnalysis = {
       totalFruits: 1,
-      analyzedFruits: [{
-        item: 'Fresh Produce',
-        freshness: 85,
-        recommendation: 'buy' as const,
-        details: 'This appears to be fresh produce in good condition. The color and texture indicators suggest it\'s suitable for purchase.',
-        confidence: 75,
-        characteristics: {
-          color: 'Vibrant and natural',
-          texture: 'Appears firm and fresh',
-          blemishes: 'Minimal to none visible',
-          ripeness: 'Optimal for consumption'
-        },
-        position: { x: 50, y: 50, width: 20, height: 20 },
-        storageRecommendation: 'Store in cool, dry place or refrigerate after opening',
-        daysRemaining: 5,
-        nutritionInfo: {
-          calories: '50-100 per serving',
-          vitamins: 'Rich in vitamins A, C, and K',
-          fiber: '2-4g per serving',
-          minerals: 'Contains potassium and folate',
-          benefits: 'Supports immune system and digestive health'
-        },
-        selectionTips: 'Choose items with bright colors and firm texture',
-        seasonInfo: 'Best quality when in season',
-        commonUses: 'Can be eaten fresh or used in cooking',
-        ripeTiming: '2-3 days at room temperature',
-        pairings: 'Pairs well with complementary produce',
-        medicinalUses: 'Contains antioxidants and anti-inflammatory compounds'
-      }],
+      analyzedFruits: [analyzedFruit],
       averageFreshness: 85,
       shoppingRecommendation: 'Good quality produce detected. Recommended for purchase.',
       analysisId: `quick-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      ranking: [],
+      ranking: [analyzedFruit],
       categories: {
-        buyNow: [],
-        checkFirst: [],
-        avoidThese: []
+        buyNow: [analyzedFruit],
+        checkFirst: [] as FruitAnalysisResult[],
+        avoidThese: [] as FruitAnalysisResult[]
       },
-      storageAdvice: []
+      storageAdvice: [{
+        item: analyzedFruit.item,
+        advice: analyzedFruit.storageRecommendation || ''
+      }]
     };
 
-    // Add the same fruit to categories
-    quickAnalysis.ranking = quickAnalysis.analyzedFruits;
-    quickAnalysis.categories.buyNow = quickAnalysis.analyzedFruits;
-    quickAnalysis.storageAdvice = quickAnalysis.analyzedFruits.map(f => ({
-      item: f.item,
-      advice: f.storageRecommendation || ''
-    }));
 
     console.log('✅ Quick analysis complete');
     return NextResponse.json(quickAnalysis);
