@@ -68,24 +68,50 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { 
           facingMode: 'environment',
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          width: { ideal: 1280, min: 640 },
+          height: { ideal: 720, min: 480 },
+          frameRate: { ideal: 30, min: 15 }
         }
       });
       
       console.log('Camera permission granted');
       
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play();
-          setIsVideoReady(true);
-          console.log('Video metadata loaded and playing');
+        const video = videoRef.current;
+        console.log('Setting video stream...');
+        
+        // Set the stream
+        video.srcObject = mediaStream;
+        
+        // Force play and handle metadata
+        video.onloadedmetadata = async () => {
+          console.log('Video metadata loaded');
+          try {
+            await video.play();
+            setIsVideoReady(true);
+            console.log('Video playing successfully');
+          } catch (playError) {
+            console.error('Video play error:', playError);
+          }
         };
-        videoRef.current.oncanplay = () => {
+        
+        video.oncanplay = () => {
           setIsVideoReady(true);
           console.log('Video can play - ready for capture');
         };
+        
+        video.onerror = (error) => {
+          console.error('Video element error:', error);
+        };
+        
+        // Set video properties
+        video.playsInline = true;
+        video.muted = true;
+        video.autoplay = true;
+        
+        // Force load
+        video.load();
+        
         setStream(mediaStream);
         setHasPermission(true);
         console.log('Video stream set successfully');
@@ -186,16 +212,38 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
         {/* Camera View */}
         <div className="relative w-full h-full overflow-hidden">
           {hasPermission ? (
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-              onLoadStart={() => console.log('Video load started')}
-              onCanPlay={() => console.log('Video can play')}
-              onError={(e) => console.error('Video error:', e)}
-            />
+            <div className="relative w-full h-full">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+                onLoadStart={() => console.log('Video load started')}
+                onCanPlay={() => console.log('Video can play')}
+                onError={(e) => console.error('Video error:', e)}
+                onPlay={() => console.log('Video started playing')}
+                onTimeUpdate={() => setIsVideoReady(true)}
+              />
+              {!isVideoReady && (
+                <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm mb-4">Loading camera feed...</p>
+                    <button
+                      onClick={() => {
+                        console.log('Retrying camera...');
+                        stopCamera();
+                        setTimeout(startCamera, 500);
+                      }}
+                      className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded hover:bg-opacity-30 transition-all"
+                    >
+                      Retry Camera
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="w-full h-full bg-gray-900 flex items-center justify-center">
               <div className="text-center text-white px-8">
@@ -304,14 +352,25 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
             </button>
 
             <div className="text-center">
-              <div className="w-3 h-3 bg-green-400 rounded-full mx-auto mb-1" />
-              <p className="text-white text-xs opacity-90">Recording</p>
+              <div className={`w-3 h-3 rounded-full mx-auto mb-1 ${isVideoReady ? 'bg-green-400' : 'bg-yellow-400'}`} />
+              <p className="text-white text-xs opacity-90">
+                {isVideoReady ? 'Ready' : 'Loading...'}
+              </p>
             </div>
 
             <button className="w-10 h-10 bg-black bg-opacity-30 backdrop-blur-sm rounded-full flex items-center justify-center">
               <HelpCircle className="w-5 h-5 text-white" />
             </button>
           </div>
+
+          {/* Debug Info */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="absolute top-20 left-4 bg-black bg-opacity-70 text-white text-xs p-2 rounded z-10">
+              <p>Permission: {hasPermission ? '✅' : '❌'}</p>
+              <p>Video Ready: {isVideoReady ? '✅' : '❌'}</p>
+              <p>Stream: {stream ? '✅' : '❌'}</p>
+            </div>
+          )}
 
           {/* Scan Mode Selector */}
           <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-10">
