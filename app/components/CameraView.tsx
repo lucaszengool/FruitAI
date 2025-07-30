@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '../contexts/TranslationContext';
 import { 
   X, 
   HelpCircle,
@@ -19,6 +20,7 @@ interface CameraViewProps {
 }
 
 export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -193,10 +195,10 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
                 className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-center"
               >
                 <p className="text-white text-sm opacity-90">
-                  Position fruits within the frame
+                  {t('positionFruits')}
                 </p>
                 <p className="text-white text-xs opacity-75 mt-1">
-                  Ensure good lighting for best results
+                  {t('ensureGoodLighting')}
                 </p>
               </motion.div>
             </div>
@@ -214,7 +216,7 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
             <div className="text-center">
               <div className={`w-3 h-3 rounded-full mx-auto mb-1 ${isVideoReady ? 'bg-green-400' : 'bg-yellow-400'}`} />
               <p className="text-white text-xs opacity-90">
-                {isVideoReady ? 'Ready' : 'Loading...'}
+                {isVideoReady ? t('ready') : t('loading')}
               </p>
             </div>
 
