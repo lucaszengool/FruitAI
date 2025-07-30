@@ -152,6 +152,9 @@ export default function Home() {
       setIsAnalyzing(false);
       setShowDetailedResults(true);
       
+      // Save to scan history
+      saveScanToHistory(results, capturedImage);
+      
     } catch (error) {
       console.error('Analysis error:', error);
       setIsAnalyzing(false);
@@ -178,6 +181,30 @@ export default function Home() {
     setCurrentResults([]);
     setCapturedImage('');
     setShowCameraView(true);
+  };
+
+  const saveScanToHistory = (results: FruitAnalysisResult[], image: string) => {
+    try {
+      const scanData = {
+        id: Date.now().toString(),
+        image: image,
+        title: results.length === 1 ? results[0].item : `${results.length} items analyzed`,
+        freshness: Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        itemCount: results.length,
+        averageScore: Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length),
+        date: new Date().toISOString().split('T')[0],
+        results: results
+      };
+
+      const existingScans = JSON.parse(localStorage.getItem('fruitai_scan_history') || '[]');
+      const updatedScans = [scanData, ...existingScans].slice(0, 50); // Keep last 50 scans
+      localStorage.setItem('fruitai_scan_history', JSON.stringify(updatedScans));
+      
+      console.log('Scan saved to history:', scanData);
+    } catch (error) {
+      console.error('Error saving scan to history:', error);
+    }
   };
 
 

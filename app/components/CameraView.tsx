@@ -113,8 +113,13 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
         video.load();
         
         setStream(mediaStream);
-        setHasPermission(true);
         console.log('Video stream set successfully');
+        
+        // Set permission after a short delay to ensure video element is ready
+        setTimeout(() => {
+          setHasPermission(true);
+          console.log('Camera permission state updated to true');
+        }, 100);
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -141,16 +146,19 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !hasPermission && !stream) {
+      console.log('Opening camera view - requesting permissions');
       startCamera();
-    } else {
+    } else if (!isOpen) {
       stopCamera();
     }
 
     return () => {
-      stopCamera();
+      if (!isOpen) {
+        stopCamera();
+      }
     };
-  }, [isOpen, stopCamera]);
+  }, [isOpen]);
 
   const captureImage = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return;

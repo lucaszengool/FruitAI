@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Apple, 
@@ -35,76 +35,56 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
   const [weeklyAverage, setWeeklyAverage] = useState(82);
   const [freshItemsLeft, setFreshItemsLeft] = useState(1290);
   
-  // Mock data for recent scans
-  const [recentScans, setRecentScans] = useState<RecentScan[]>([
-    {
-      id: '1',
-      image: '/api/placeholder/80/60',
-      title: 'Mixed Berries & Apples',
-      freshness: 89,
-      timestamp: '14:21',
-      itemCount: 5,
-      averageScore: 89
-    },
-    {
-      id: '2', 
-      image: '/api/placeholder/80/60',
-      title: 'Leafy Greens Bundle',
-      freshness: 76,
-      timestamp: '12:45',
-      itemCount: 3,
-      averageScore: 76
-    },
-    {
-      id: '3',
-      image: '/api/placeholder/80/60', 
-      title: 'Citrus Collection',
-      freshness: 94,
-      timestamp: '09:30',
-      itemCount: 4,
-      averageScore: 94
+  // Real scan history from localStorage
+  const [recentScans, setRecentScans] = useState<RecentScan[]>([]);
+  const [totalScans, setTotalScans] = useState(0);
+  const [averageFreshness, setAverageFreshness] = useState(0);
+
+  useEffect(() => {
+    // Load scan history from localStorage
+    try {
+      const savedScans = localStorage.getItem('fruitai_scan_history');
+      if (savedScans) {
+        const scans = JSON.parse(savedScans);
+        setRecentScans(scans.slice(0, 5)); // Show last 5 scans
+        setTotalScans(scans.length);
+        
+        // Calculate average freshness
+        const totalFreshness = scans.reduce((sum: number, scan: any) => sum + scan.averageScore, 0);
+        setAverageFreshness(scans.length > 0 ? Math.round(totalFreshness / scans.length) : 0);
+      }
+    } catch (error) {
+      console.error('Error loading scan history:', error);
     }
-  ]);
+  }, []);
 
   const freshnessMetrics = [
     {
-      title: 'Fresh Items',
-      value: '108',
-      subtitle: 'Items scanned',
+      title: 'Total Scans',
+      value: totalScans.toString(),
+      subtitle: 'Items analyzed',
       icon: Apple,
       color: 'text-green-500',
-      progress: 0.9
+      progress: Math.min(totalScans / 100, 1) // Progress based on scans up to 100
     },
     {
       title: 'Quality Score',
-      value: '85%', 
+      value: averageFreshness > 0 ? `${averageFreshness}%` : '0%', 
       subtitle: 'Avg freshness',
       icon: Leaf,
-      color: 'text-green-500',
-      progress: 0.85
+      color: averageFreshness >= 80 ? 'text-green-500' : averageFreshness >= 60 ? 'text-yellow-500' : 'text-red-500',
+      progress: averageFreshness / 100
     },
     {
-      title: 'Shelf Life',
-      value: '7',
-      subtitle: 'Days remaining', 
+      title: 'Recent Activity',
+      value: recentScans.length.toString(),
+      subtitle: 'Recent scans', 
       icon: Clock,
-      color: 'text-yellow-500',
-      progress: 0.7
+      color: 'text-blue-500',
+      progress: Math.min(recentScans.length / 10, 1) // Progress based on recent activity
     }
   ];
 
-  const getCurrentWeekDays = () => {
-    const days = ['F', 'S', 'S', 'M', 'T', 'W', 'T'];
-    const dates = [25, 26, 27, 28, 29, 30, 31];
-    const today = new Date().getDate();
-    
-    return days.map((day, index) => ({
-      day,
-      date: dates[index],
-      isToday: dates[index] === 30, // Mock today as 30th
-      hasActivity: index < 5 // First 5 days have activity
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -126,28 +106,6 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
         </div>
       </motion.div>
 
-      {/* Weekly Calendar */}
-      <motion.div 
-        className="flex justify-center gap-4 mb-8"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-      >
-        {getCurrentWeekDays().map((day, index) => (
-          <div key={index} className="text-center">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 border-2 ${
-              day.isToday 
-                ? 'border-black bg-black text-white' 
-                : day.hasActivity
-                ? 'border-gray-300 bg-white text-black'
-                : 'border-gray-200 bg-gray-50 text-gray-400'
-            }`}>
-              <span className="text-sm font-medium">{day.day}</span>
-            </div>
-            <span className="text-sm text-gray-600">{day.date}</span>
-          </div>
-        ))}
-      </motion.div>
 
       {/* Main Freshness Score */}
       <motion.div
@@ -159,9 +117,9 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
         <Card className="bg-white p-8 text-center relative overflow-hidden">
           <div className="relative z-10">
             <div className="text-8xl font-light text-black mb-2">
-              {freshItemsLeft}
+              {totalScans}
             </div>
-            <p className="text-lg text-gray-600 mb-4">Items analyzed this week</p>
+            <p className="text-lg text-gray-600 mb-4">Total items analyzed</p>
             
             {/* Circular Progress Indicator */}
             <div className="relative inline-flex items-center justify-center">
@@ -262,43 +220,59 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
         <h2 className="text-xl font-semibold text-black mb-4">Recently scanned</h2>
         
         <div className="space-y-3">
-          {recentScans.map((scan) => (
-            <Card key={scan.id} className="bg-white p-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full bg-gradient-to-br from-orange-200 to-orange-400 flex items-center justify-center">
-                    <Apple className="w-6 h-6 text-orange-800" />
-                  </div>
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-medium text-black truncate">{scan.title}</h3>
-                    <span className="text-sm text-gray-500">{scan.timestamp}</span>
+          {recentScans.length > 0 ? (
+            recentScans.map((scan) => (
+              <Card key={scan.id} className="bg-white p-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                    {scan.image ? (
+                      <img 
+                        src={scan.image} 
+                        alt={scan.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-orange-200 to-orange-400 flex items-center justify-center">
+                        <Apple className="w-6 h-6 text-orange-800" />
+                      </div>
+                    )}
                   </div>
                   
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Flame className="w-3 h-3 text-green-600" />
-                      <span className="text-black font-medium">{scan.averageScore}% fresh</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-medium text-black truncate">{scan.title}</h3>
+                      <span className="text-sm text-gray-500">{scan.timestamp}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-gray-500">
-                      <Apple className="w-3 h-3" />
-                      <span>{scan.itemCount} items</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-500">
-                      <Clock className="w-3 h-3" />
-                      <span>7 days left</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-500">
-                      <Target className="w-3 h-3" />
-                      <span>Buy recommended</span>
+                    
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-1">
+                        <Flame className="w-3 h-3 text-green-600" />
+                        <span className="text-black font-medium">{scan.averageScore}% fresh</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <Apple className="w-3 h-3" />
+                        <span>{scan.itemCount} items</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        <span>Fresh</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
+            ))
+          ) : (
+            <Card className="bg-white p-8 text-center">
+              <Apple className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">No scans yet</h3>
+              <p className="text-gray-500 mb-6">Start analyzing fruit freshness to see your history here</p>
+              <Button onClick={onStartScan} className="bg-green-600 hover:bg-green-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Start First Scan
+              </Button>
             </Card>
-          ))}
+          )}
         </div>
       </motion.div>
 
