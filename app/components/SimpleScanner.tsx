@@ -107,11 +107,41 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
       
       if (!ctx) throw new Error('Canvas context not available');
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
+      // Set canvas size to a reasonable resolution for API processing
+      const maxWidth = 1024;
+      const maxHeight = 768;
+      const videoAspectRatio = video.videoWidth / video.videoHeight;
       
-      const screenshot = canvas.toDataURL('image/jpeg', 0.9);
+      let canvasWidth, canvasHeight;
+      if (videoAspectRatio > maxWidth / maxHeight) {
+        canvasWidth = maxWidth;
+        canvasHeight = maxWidth / videoAspectRatio;
+      } else {
+        canvasHeight = maxHeight;
+        canvasWidth = maxHeight * videoAspectRatio;
+      }
+      
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      ctx.drawImage(video, 0, 0, canvasWidth, canvasHeight);
+      
+      const screenshot = canvas.toDataURL('image/jpeg', 0.8);
+      
+      console.log('📸 Image captured:');
+      console.log('  - Original video size:', video.videoWidth, 'x', video.videoHeight);
+      console.log('  - Canvas size:', canvasWidth, 'x', canvasHeight);
+      console.log('  - Screenshot data length:', screenshot.length);
+      console.log('  - Data URL prefix:', screenshot.substring(0, 50));
+      
+      // Validate the image is properly formatted
+      if (!screenshot.startsWith('data:image/jpeg;base64,')) {
+        throw new Error('Invalid image format generated');
+      }
+      
+      // Check minimum image size to ensure it's not corrupted
+      if (screenshot.length < 1000) {
+        throw new Error('Image too small, likely corrupted');
+      }
       
       console.log('📤 Sending image for analysis...');
       console.log('🔍 Image size:', screenshot.length);
@@ -152,12 +182,12 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
 
       // Try API call with timeout
       try {
-        console.log('⏰ Starting API call with 10s timeout...');
+        console.log('⏰ Starting API call with 45s timeout...');
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
-          console.log('⏰ API call timed out after 10 seconds');
+          console.log('⏰ API call timed out after 45 seconds');
           controller.abort();
-        }, 10000);
+        }, 45000);
         
         const requestStart = Date.now();
         const response = await fetch('/api/analyze-batch', {
