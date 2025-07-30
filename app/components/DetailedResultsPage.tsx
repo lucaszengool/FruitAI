@@ -107,11 +107,30 @@ export function DetailedResultsPage({
       {/* Header with background image */}
       <div className="relative h-64 bg-gradient-to-br from-orange-200 to-orange-400 overflow-hidden">
         {capturedImage && (
-          <img 
-            src={capturedImage} 
-            alt="Captured produce"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <>
+            <img 
+              src={capturedImage} 
+              alt="Captured produce"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Position indicators for each fruit */}
+            {results.map((fruit, index) => {
+              if (!fruit.position) return null;
+              return (
+                <div
+                  key={index}
+                  className="absolute flex items-center justify-center w-8 h-8 bg-white bg-opacity-90 rounded-full border-2 border-green-500 font-bold text-green-700 text-sm shadow-lg"
+                  style={{
+                    left: `${fruit.position.x}%`,
+                    top: `${fruit.position.y}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
+                  {index + 1}
+                </div>
+              );
+            })}
+          </>
         )}
         <div className="absolute inset-0 bg-black bg-opacity-30" />
         
@@ -248,8 +267,12 @@ export function DetailedResultsPage({
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-orange-200 to-orange-400 rounded-lg flex items-center justify-center">
+                        <div className="relative w-12 h-12 bg-gradient-to-br from-orange-200 to-orange-400 rounded-lg flex items-center justify-center">
                           <Apple className="w-6 h-6 text-orange-800" />
+                          {/* Number indicator */}
+                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                            {index + 1}
+                          </div>
                         </div>
                         
                         <div className="flex-1">

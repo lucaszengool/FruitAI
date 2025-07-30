@@ -26,6 +26,7 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
   const [selectedMode, setSelectedMode] = useState('scan');
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   const scanModes = [
     { id: 'scan', label: 'Scan Freshness', icon: ScanLine }
@@ -37,16 +38,30 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       setStream(null);
     }
     setHasPermission(false);
+    setIsVideoReady(false);
   }, [stream]);
 
   const startCamera = async () => {
     try {
       console.log('Requesting camera permissions...');
+      console.log('Location protocol:', window.location.protocol);
+      console.log('Location hostname:', window.location.hostname);
       
       // Check if camera is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('Camera not supported in this browser');
         setHasPermission(false);
+        alert('Camera API not supported in this browser. Please use a modern browser or upload an image instead.');
+        return;
+      }
+
+      // Check if we need HTTPS
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const isHttps = window.location.protocol === 'https:';
+      
+      if (!isLocalhost && !isHttps) {
+        console.warn('Camera requires HTTPS in production');
+        alert('Camera access requires HTTPS connection. Please use the upload option or access via HTTPS.');
         return;
       }
 
@@ -62,8 +77,18 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          setIsVideoReady(true);
+          console.log('Video metadata loaded and playing');
+        };
+        videoRef.current.oncanplay = () => {
+          setIsVideoReady(true);
+          console.log('Video can play - ready for capture');
+        };
         setStream(mediaStream);
         setHasPermission(true);
+        console.log('Video stream set successfully');
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -72,8 +97,20 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       }
       setHasPermission(false);
       
-      // Show user-friendly error message
-      alert('Camera access is required to scan fruits. Please allow camera permissions and try again.');
+      // Show user-friendly error message based on error type
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          alert('Camera permission denied. Please allow camera access and try again.');
+        } else if (error.name === 'NotFoundError') {
+          alert('No camera found. Please connect a camera or use the gallery option.');
+        } else if (error.name === 'NotSupportedError') {
+          alert('Camera not supported on this device. Please use the gallery option to upload an image.');
+        } else {
+          alert('Camera access failed. Please try again or use the gallery option to upload an image.');
+        }
+      } else {
+        alert('Camera access failed. Please try again or use the gallery option to upload an image.');
+      }
     }
   };
 
@@ -155,13 +192,44 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
               playsInline
               muted
               className="w-full h-full object-cover"
+              onLoadStart={() => console.log('Video load started')}
+              onCanPlay={() => console.log('Video can play')}
+              onError={(e) => console.error('Video error:', e)}
             />
           ) : (
             <div className="w-full h-full bg-gray-900 flex items-center justify-center">
-              <div className="text-center text-white">
+              <div className="text-center text-white px-8">
                 <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
                 <h3 className="text-lg font-semibold mb-2">Camera Access Required</h3>
-                <p className="text-sm opacity-75">Allow camera access to scan produce</p>
+                <p className="text-sm opacity-75 mb-2">Allow camera access to scan produce</p>
+                <p className="text-xs opacity-50 mb-6">
+                  {window.location.protocol} • {navigator.userAgent.includes('Chrome') ? 'Chrome' : 
+                   navigator.userAgent.includes('Firefox') ? 'Firefox' : 
+                   navigator.userAgent.includes('Safari') ? 'Safari' : 'Browser'}
+                </p>
+                
+                <div className="space-y-4">
+                  {/* Manual camera request button */}
+                  <button
+                    onClick={startCamera}
+                    className="inline-flex flex-col items-center gap-2 bg-green-600 hover:bg-green-700 rounded-lg px-6 py-4 transition-all"
+                  >
+                    <Camera className="w-8 h-8" />
+                    <span className="text-sm font-medium">Enable Camera</span>
+                  </button>
+                  
+                  {/* Fallback upload option */}
+                  <label className="inline-flex flex-col items-center gap-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-4 cursor-pointer hover:bg-opacity-30 transition-all">
+                    <ImageIcon className="w-8 h-8" />
+                    <span className="text-sm font-medium">Upload from Gallery</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           )}

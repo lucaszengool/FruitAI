@@ -47,6 +47,8 @@ class OpenAIFruitAnalyzer {
             role: "system",
             content: `You are an expert fruit and vegetable freshness analyzer. Analyze the provided image and identify EVERY INDIVIDUAL fruit/vegetable visible.
 
+IMPORTANT: Respond in ENGLISH ONLY. Use English names for all fruits and vegetables.
+
 CRITICAL REQUIREMENTS:
 1. COUNT EACH INDIVIDUAL ITEM - If you see 5 apples, analyze each one separately
 2. NUMBER each item uniquely (e.g., "Apple #1", "Apple #2", "Apple #3")
@@ -99,7 +101,7 @@ IMPORTANT: Analyze each visible fruit/vegetable individually. If you see multipl
             content: [
               {
                 type: "text",
-                text: "Analyze this image and identify EVERY individual fruit/vegetable visible. Count each item separately and provide detailed freshness analysis for each one. If you see multiple fruits of the same type, number them individually (Apple #1, Apple #2, etc.) and analyze each one's specific condition."
+                text: "Analyze this image and identify EVERY individual fruit/vegetable visible. Count each item separately and provide detailed freshness analysis for each one. If you see multiple fruits of the same type, number them individually (Apple #1, Apple #2, etc.) and analyze each one's specific condition. IMPORTANT: Respond in English only - use English names for all fruits and vegetables."
               },
               {
                 type: "image_url",

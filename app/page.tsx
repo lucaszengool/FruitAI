@@ -115,13 +115,23 @@ export default function Home() {
     try {
       console.log('Calling API with captured image...');
       
-      const response = await fetch('/api/analyze-batch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: imageData }),
-      });
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout - analysis taking too long')), 60000) // 60 second timeout
+      );
+      
+      // Race between fetch and timeout
+      const response = await Promise.race([
+        fetch('/api/analyze-batch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+          },
+          body: JSON.stringify({ image: imageData }),
+        }),
+        timeoutPromise
+      ]) as Response;
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -175,10 +185,21 @@ export default function Home() {
   if (isAnalyzing) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+        <div className="text-center max-w-md px-6">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+          </div>
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">Analyzing your fruit...</h2>
-          <p className="text-gray-600">AI is scanning for freshness and quality</p>
+          <p className="text-gray-600 mb-4">AI is scanning for freshness and quality</p>
+          <div className="text-sm text-gray-500">
+            <p>• Detecting individual fruits</p>
+            <p>• Analyzing color and texture</p>
+            <p>• Calculating freshness scores</p>
+            <p className="mt-2 font-medium">This may take 10-30 seconds</p>
+          </div>
         </div>
       </div>
     );
