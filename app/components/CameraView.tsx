@@ -22,11 +22,11 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState(true); // Always show camera interface
   const [selectedMode, setSelectedMode] = useState('scan');
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isVideoReady, setIsVideoReady] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(true); // Skip video loading states
 
   const scanModes = [
     { id: 'scan', label: 'Scan Freshness', icon: ScanLine }
@@ -42,121 +42,32 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
   }, [stream]);
 
   const startCamera = async () => {
+    // Simplified - just start the video stream without complex error handling
     try {
-      console.log('Requesting camera permissions...');
-      console.log('Location protocol:', window.location.protocol);
-      console.log('Location hostname:', window.location.hostname);
-      
-      // Check if camera is available
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error('Camera not supported in this browser');
-        setHasPermission(false);
-        alert('Camera API not supported in this browser. Please use a modern browser or upload an image instead.');
-        return;
-      }
-
-      // Check if we need HTTPS
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const isHttps = window.location.protocol === 'https:';
-      
-      if (!isLocalhost && !isHttps) {
-        console.warn('Camera requires HTTPS in production');
-        alert('Camera access requires HTTPS connection. Please use the upload option or access via HTTPS.');
-        return;
-      }
-
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          facingMode: 'environment',
-          width: { ideal: 1280, min: 640 },
-          height: { ideal: 720, min: 480 },
-          frameRate: { ideal: 30, min: 15 }
-        }
+        video: { facingMode: 'environment' }
       });
       
-      console.log('Camera permission granted');
-      
       if (videoRef.current) {
-        const video = videoRef.current;
-        console.log('Setting video stream...');
-        
-        // Set the stream
-        video.srcObject = mediaStream;
-        
-        // Force play and handle metadata
-        video.onloadedmetadata = async () => {
-          console.log('Video metadata loaded');
-          try {
-            await video.play();
-            setIsVideoReady(true);
-            console.log('Video playing successfully');
-          } catch (playError) {
-            console.error('Video play error:', playError);
-          }
-        };
-        
-        video.oncanplay = () => {
-          setIsVideoReady(true);
-          console.log('Video can play - ready for capture');
-        };
-        
-        video.onerror = (error) => {
-          console.error('Video element error:', error);
-        };
-        
-        // Set video properties
-        video.playsInline = true;
-        video.muted = true;
-        video.autoplay = true;
-        
-        // Force load
-        video.load();
-        
+        videoRef.current.srcObject = mediaStream;
+        videoRef.current.play();
         setStream(mediaStream);
-        console.log('Video stream set successfully');
-        
-        // Set permission after a short delay to ensure video element is ready
-        setTimeout(() => {
-          setHasPermission(true);
-          console.log('Camera permission state updated to true');
-        }, 100);
       }
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', error.name, error.message);
-      }
-      setHasPermission(false);
-      
-      // Show user-friendly error message based on error type
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          alert('Camera permission denied. Please allow camera access and try again.');
-        } else if (error.name === 'NotFoundError') {
-          alert('No camera found. Please connect a camera or use the gallery option.');
-        } else if (error.name === 'NotSupportedError') {
-          alert('Camera not supported on this device. Please use the gallery option to upload an image.');
-        } else {
-          alert('Camera access failed. Please try again or use the gallery option to upload an image.');
-        }
-      } else {
-        alert('Camera access failed. Please try again or use the gallery option to upload an image.');
-      }
+      console.log('Camera not available, using file input fallback');
+      // Don't show error - just rely on file input
     }
   };
 
   useEffect(() => {
-    if (isOpen && !hasPermission && !stream) {
-      console.log('Opening camera view - requesting permissions');
-      startCamera();
-    } else if (!isOpen) {
+    if (isOpen) {
+      startCamera(); // Always try to start camera when opened
+    } else {
       stopCamera();
     }
 
     return () => {
-      if (!isOpen) {
-        stopCamera();
-      }
+      stopCamera();
     };
   }, [isOpen]);
 
@@ -219,76 +130,17 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
       >
         {/* Camera View */}
         <div className="relative w-full h-full overflow-hidden">
-          {hasPermission ? (
-            <div className="relative w-full h-full">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-                onLoadStart={() => console.log('Video load started')}
-                onCanPlay={() => console.log('Video can play')}
-                onError={(e) => console.error('Video error:', e)}
-                onPlay={() => console.log('Video started playing')}
-                onTimeUpdate={() => setIsVideoReady(true)}
-              />
-              {!isVideoReady && (
-                <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                    <p className="text-sm mb-4">Loading camera feed...</p>
-                    <button
-                      onClick={() => {
-                        console.log('Retrying camera...');
-                        stopCamera();
-                        setTimeout(startCamera, 500);
-                      }}
-                      className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded hover:bg-opacity-30 transition-all"
-                    >
-                      Retry Camera
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="w-full h-full bg-gray-900 flex items-center justify-center">
-              <div className="text-center text-white px-8">
-                <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Camera Access Required</h3>
-                <p className="text-sm opacity-75 mb-2">Allow camera access to scan produce</p>
-                <p className="text-xs opacity-50 mb-6">
-                  {window.location.protocol} • {navigator.userAgent.includes('Chrome') ? 'Chrome' : 
-                   navigator.userAgent.includes('Firefox') ? 'Firefox' : 
-                   navigator.userAgent.includes('Safari') ? 'Safari' : 'Browser'}
-                </p>
-                
-                <div className="space-y-4">
-                  {/* Manual camera request button */}
-                  <button
-                    onClick={startCamera}
-                    className="inline-flex flex-col items-center gap-2 bg-green-600 hover:bg-green-700 rounded-lg px-6 py-4 transition-all"
-                  >
-                    <Camera className="w-8 h-8" />
-                    <span className="text-sm font-medium">Enable Camera</span>
-                  </button>
-                  
-                  {/* Fallback upload option */}
-                  <label className="inline-flex flex-col items-center gap-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-4 cursor-pointer hover:bg-opacity-30 transition-all">
-                    <ImageIcon className="w-8 h-8" />
-                    <span className="text-sm font-medium">Upload from Gallery</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Background video (if camera works) */}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          
+          {/* Always show camera interface overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
           {/* Scanning Frame Overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -414,25 +266,37 @@ export function CameraView({ isOpen, onClose, onCapture }: CameraViewProps) {
                 <Zap className="w-5 h-5" />
               </button>
 
-              {/* Capture button */}
-              <motion.button
-                onClick={captureImage}
-                disabled={!hasPermission || isCapturing}
-                className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg disabled:opacity-50"
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                {isCapturing ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              {/* Capture button with file input fallback */}
+              <div className="relative">
+                {stream ? (
+                  // Use video capture if stream is available
+                  <motion.button
+                    onClick={captureImage}
+                    disabled={isCapturing}
+                    className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg"
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.05 }}
                   >
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                  </motion.div>
+                    {isCapturing ? (
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    ) : (
+                      <div className="w-16 h-16 bg-white border-4 border-gray-300 rounded-full" />
+                    )}
+                  </motion.button>
                 ) : (
-                  <div className="w-16 h-16 bg-white border-4 border-gray-300 rounded-full" />
+                  // Use file input if no stream
+                  <label className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                    <div className="w-16 h-16 bg-white border-4 border-gray-300 rounded-full" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
                 )}
-              </motion.button>
+              </div>
 
               {/* Gallery/Upload */}
               <label className="w-12 h-12 rounded-full bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center cursor-pointer">
