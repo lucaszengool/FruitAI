@@ -180,85 +180,12 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
         sessionType
       };
 
-      // Try quick analysis first for immediate response
-      let useQuickAnalysis = true;
-      
+      // Try OpenAI analysis first (primary method)
       try {
-        console.log('🚀 Trying quick analysis for instant response...');
-        const quickStart = Date.now();
-        
-        const quickResponse = await fetch('/api/analyze-quick', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: screenshot })
-        });
-        
-        if (quickResponse.ok) {
-          const quickResult = await quickResponse.json();
-          const quickTime = Date.now() - quickStart;
-          console.log(`✅ Quick analysis completed in ${quickTime}ms`);
-          console.log('🔥 Using instant analysis mode for better performance');
-          
-          // Process the quick result
-          const items: DetectedItem[] = quickResult.analyzedFruits?.map((fruit: any, index: number) => ({
-            id: `${Date.now()}-${index}`,
-            item: fruit.item,
-            freshness: fruit.freshness,
-            recommendation: fruit.recommendation,
-            details: fruit.details,
-            confidence: fruit.confidence,
-            position: fruit.position || { x: 50, y: 50, width: 15, height: 20 },
-            storageRecommendation: fruit.storageRecommendation,
-            daysRemaining: fruit.daysRemaining,
-            nutritionInfo: fruit.nutritionInfo,
-            selectionTips: fruit.selectionTips,
-            seasonInfo: fruit.seasonInfo,
-            commonUses: fruit.commonUses,
-            ripeTiming: fruit.ripeTiming,
-            pairings: fruit.pairings,
-            medicinalUses: fruit.medicinalUses
-          })) || fallbackResult.items;
-
-          const averageFreshness = Math.round(
-            items.reduce((sum, item) => sum + item.freshness, 0) / items.length
-          );
-
-          onComplete({
-            screenshot,
-            items,
-            timestamp: new Date(),
-            averageFreshness,
-            sessionType
-          });
-          
-          // Optionally try OpenAI in background for better analysis
-          console.log('🔍 Quick analysis done. Attempting enhanced analysis in background...');
-          
-          // Don't wait for this, just log the result
-          fetch('/api/analyze-batch', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: screenshot })
-          }).then(response => {
-            if (response.ok) {
-              console.log('✨ Enhanced OpenAI analysis available');
-            }
-          }).catch(err => {
-            console.log('ℹ️ Enhanced analysis not available:', err.message);
-          });
-          
-          return; // Exit early with quick result
-        }
-      } catch (quickError) {
-        console.log('⚠️ Quick analysis failed, falling back to full analysis');
-      }
-      
-      // Fall back to regular API call with timeout
-      try {
-        console.log('⏰ Starting full API call with 45s timeout...');
+        console.log('🤖 Starting OpenAI analysis with fine-tuned model...');
         const controller = new AbortController();
         const timeoutId = setTimeout(() => {
-          console.log('⏰ API call timed out after 45 seconds');
+          console.log('⏰ OpenAI API call timed out after 45 seconds');
           controller.abort();
         }, 45000);
         
@@ -272,12 +199,12 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
         
         clearTimeout(timeoutId);
         const requestTime = Date.now() - requestStart;
-        console.log(`📊 API call completed in ${requestTime}ms`);
+        console.log(`📊 OpenAI API call completed in ${requestTime}ms`);
         console.log('📈 Response status:', response.status);
         console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (response.ok) {
-          console.log('✅ API response OK, parsing JSON...');
+          console.log('✅ OpenAI analysis successful!');
           const result = await response.json();
           console.log('🔍 API response keys:', Object.keys(result));
           console.log('📊 Total fruits found:', result.totalFruits || 'undefined');
@@ -300,12 +227,17 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
             ripeTiming: fruit.ripeTiming,
             pairings: fruit.pairings,
             medicinalUses: fruit.medicinalUses
-          })) || fallbackResult.items;
+          })) || [];
+
+          if (items.length === 0) {
+            throw new Error('No fruits detected in analysis');
+          }
 
           const averageFreshness = Math.round(
             items.reduce((sum, item) => sum + item.freshness, 0) / items.length
           );
 
+          console.log('🎉 Analysis complete! Using OpenAI results.');
           onComplete({
             screenshot,
             items,
@@ -314,24 +246,36 @@ export function SimpleScanner({ sessionType, onClose, onComplete }: SimpleScanne
             sessionType
           });
         } else {
-          console.error('❌ API response not OK');
+          console.error('❌ OpenAI API failed');
           console.error('📄 Status:', response.status, response.statusText);
           const errorText = await response.text();
           console.error('📝 Error response body:', errorText);
-          throw new Error(`API failed with status ${response.status}: ${response.statusText}`);
+          throw new Error(`OpenAI API failed with status ${response.status}: ${response.statusText}`);
         }
       } catch (apiError) {
-        console.error('🚨 API call failed with error:', apiError);
+        console.error('🚨 OpenAI analysis failed:', apiError);
         console.error('🔍 Error type:', typeof apiError);
         console.error('📝 Error message:', apiError instanceof Error ? apiError.message : String(apiError));
         console.error('📚 Error stack:', apiError instanceof Error ? apiError.stack : 'No stack trace');
         
-        if (apiError instanceof Error && apiError.name === 'AbortError') {
-          console.log('⏰ Request was aborted due to timeout');
+        let errorMessage = 'Analysis temporarily unavailable. Please try again later.';
+        
+        if (apiError instanceof Error) {
+          if (apiError.name === 'AbortError') {
+            console.log('⏰ Request timed out after 45 seconds');
+            errorMessage = 'Analysis timed out. Please try again with better lighting or a clearer image.';
+          } else if (apiError.message.includes('500')) {
+            errorMessage = 'Server error occurred. Please try again in a moment.';
+          } else if (apiError.message.includes('400')) {
+            errorMessage = 'Image format issue. Please try capturing the image again.';
+          } else if (apiError.message.includes('network') || apiError.message.includes('fetch')) {
+            errorMessage = 'Network connection issue. Please check your internet and try again.';
+          }
         }
         
-        console.log('🔄 API failed, using fallback result');
-        onComplete(fallbackResult);
+        // Show error to user instead of fallback
+        setError(errorMessage);
+        console.log('❌ Showing error to user:', errorMessage);
       }
       
     } catch (err) {

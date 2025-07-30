@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { openAIAnalyzer } from './openaiAnalyzer';
 
 interface FruitAnalysisResult {
   item: string;
@@ -58,292 +58,97 @@ class MultiFruitAnalyzer {
       console.log('  - OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
       console.log('  - OPENAI_API_KEY length:', process.env.OPENAI_API_KEY?.length || 0);
       console.log('  - OPENAI_API_KEY starts with:', process.env.OPENAI_API_KEY?.substring(0, 10) || 'N/A');
+      console.log('  - OPENAI_FINETUNED_MODEL_ID:', process.env.OPENAI_FINETUNED_MODEL_ID || 'Not configured');
       console.log('  - NODE_ENV:', process.env.NODE_ENV);
       
-      if (!process.env.OPENAI_API_KEY) {
-        console.error('❌ CRITICAL: OpenAI API key not found!');
+      if (!openAIAnalyzer.isConfigured()) {
+        console.error('❌ CRITICAL: OpenAI API key not configured!');
         throw new Error('OpenAI API key not configured');
       }
 
-      console.log('🤖 Initializing OpenAI client...');
-      const openaiClient = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        timeout: 30000, // 30 second timeout
-        maxRetries: 2,  // Retry up to 2 times
-      });
-      console.log('✅ OpenAI client initialized successfully');
+      console.log('🤖 Using configured OpenAI analyzer with fine-tuned model support...');
+      console.log('✅ OpenAI analyzer ready');
       
-      const systemPrompt = `You are an expert fruit and vegetable analyzer. You MUST respond with ONLY valid JSON, no additional text or explanations.
-
-CRITICAL JSON REQUIREMENTS:
-- Your entire response must be a single valid JSON object
-- Do not include markdown code blocks (no \`\`\`json)
-- Do not include any text before or after the JSON
-- Start your response with { and end with }
-
-ANALYSIS REQUIREMENTS:
-1. COUNT EVERY INDIVIDUAL ITEM - analyze each fruit/vegetable separately
-2. NUMBER each item uniquely (e.g., "Apple #1", "Apple #2")
-3. Provide shopping-focused information for each item
-4. Give position coordinates for each item
-
-REQUIRED JSON STRUCTURE:
-{
-  "fruits": [
-    {
-      "item": "Item Name #1",
-      "freshness": 85,
-      "recommendation": "buy",
-      "details": "Visual analysis description",
-      "confidence": 90,
-      "characteristics": {
-        "color": "color description",
-        "texture": "texture description", 
-        "blemishes": "blemish description",
-        "ripeness": "ripeness description"
-      },
-      "position": {"x": 25, "y": 30, "width": 12, "height": 15},
-      "storageRecommendation": "storage advice",
-      "daysRemaining": 7,
-      "nutritionInfo": {
-        "calories": "calorie info",
-        "vitamins": "vitamin info",
-        "fiber": "fiber info",
-        "minerals": "mineral info",
-        "benefits": "health benefits"
-      },
-      "selectionTips": "selection tips",
-      "seasonInfo": "season info",
-      "commonUses": "usage suggestions",
-      "ripeTiming": "ripening timeline",
-      "pairings": "food pairings",
-      "medicinalUses": "health uses"
-    }
-  ]
-}
-
-IMPORTANT: If you cannot see clear fruits/vegetables, return a single generic item with freshness around 75 and recommendation "check".`;
-
-      const userPrompt = 'Analyze this image for fruits/vegetables. Count each individual item and return the JSON structure specified in the system prompt. Each fruit must be numbered uniquely. Respond with ONLY valid JSON, no other text.';
-
-      console.log('📡 === MAKING OPENAI API CALL ===');
-      console.log('📸 Image data validation:');
-      console.log('  - Image length:', base64Image.length);
-      console.log('  - Image starts with data URL:', base64Image.startsWith('data:image'));
-      console.log('  - Image first 100 chars:', base64Image.substring(0, 100));
+      // Use the openAIAnalyzer for multi-fruit analysis
+      console.log('🔄 Delegating to openAIAnalyzer for individual fruit analysis...');
+      const analysisResult = await openAIAnalyzer.analyzeImage(base64Image);
       
-      const imageUrl = base64Image.startsWith('data:image') ? base64Image : `data:image/jpeg;base64,${base64Image}`;
-      console.log('  - Final image URL length:', imageUrl.length);
-      console.log('  - Final image URL preview:', imageUrl.substring(0, 100));
+      console.log('✅ OpenAI analysis completed, processing results...');
       
-      console.log('⚙️ Request parameters:');
-      console.log('  - Model: gpt-4o');
-      console.log('  - Max tokens: 4000');
-      console.log('  - Temperature: 0.1');
-      console.log('  - System prompt length:', systemPrompt.length);
-      console.log('  - User prompt length:', userPrompt.length);
+      // Check if we have multi-fruit data from OpenAI
+      let analyzedFruits: FruitAnalysisResult[] = [];
       
-      const requestStart = Date.now();
-      console.log('🚀 Sending request to OpenAI at:', new Date().toISOString());
-      
-      const response = await openaiClient.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt
+      if ((analysisResult as any).allFruits && Array.isArray((analysisResult as any).allFruits)) {
+        console.log('🎯 Multi-fruit data detected, processing individual fruits...');
+        const allFruits = (analysisResult as any).allFruits;
+        
+        analyzedFruits = allFruits.map((fruit: any, index: number) => ({
+          item: fruit.item || `Item #${index + 1}`,
+          freshness: Math.max(0, Math.min(100, fruit.freshness || 50)),
+          recommendation: ['buy', 'check', 'avoid'].includes(fruit.recommendation) 
+            ? fruit.recommendation as 'buy' | 'check' | 'avoid'
+            : 'check',
+          details: fruit.details || 'Individual fruit analysis',
+          confidence: Math.max(0, Math.min(100, fruit.confidence || 75)),
+          characteristics: {
+            color: fruit.characteristics?.color || 'Natural color',
+            texture: fruit.characteristics?.texture || 'Standard texture',
+            blemishes: fruit.characteristics?.blemishes || 'None visible',
+            ripeness: fruit.characteristics?.ripeness || 'Good ripeness'
           },
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: userPrompt
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: imageUrl,
-                  detail: "high"
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 4000,
-        temperature: 0.1,
-        response_format: { type: "json_object" }
-      });
-
-      const requestTime = Date.now() - requestStart;
-      console.log('🎉 === OPENAI RESPONSE RECEIVED ===');
-      console.log(`⏱️ Request completed in ${requestTime}ms`);
-      console.log('📊 Response metadata:');
-      console.log('  - Response ID:', response.id);
-      console.log('  - Model used:', response.model);
-      console.log('  - Created:', new Date(response.created * 1000).toISOString());
-      console.log('  - Choices length:', response.choices?.length || 0);
-      console.log('📈 Usage stats:', JSON.stringify(response.usage, null, 2));
-      
-      const content = response.choices[0]?.message?.content;
-      console.log('📝 Response content analysis:');
-      console.log('  - Content exists:', !!content);
-      console.log('  - Content length:', content?.length || 0);
-      console.log('  - Content preview (first 200 chars):', content?.substring(0, 200) || 'N/A');
-      console.log('  - Content preview (last 200 chars):', content?.substring(-200) || 'N/A');
-      
-      if (!content) {
-        console.error('❌ CRITICAL: No content in OpenAI response!');
-        console.error('📝 Full response object:');
-        console.error(JSON.stringify(response, null, 2));
-        throw new Error('No response from OpenAI');
+          position: fruit.position || { 
+            x: 20 + (index % 3) * 30, 
+            y: 20 + Math.floor(index / 3) * 30, 
+            width: 15, 
+            height: 15 
+          },
+          storageRecommendation: fruit.storageRecommendation || 'Store according to fruit type',
+          daysRemaining: fruit.daysRemaining || Math.floor((fruit.freshness || 50) / 10),
+          nutritionInfo: {
+            calories: 'Varies by fruit type',
+            vitamins: 'Rich in vitamins',
+            fiber: 'Good source of fiber',
+            minerals: 'Contains essential minerals',
+            benefits: 'Provides antioxidants and nutrients'
+          },
+          selectionTips: 'Choose based on color, firmness, and absence of blemishes',
+          seasonInfo: 'Check seasonal availability',
+          commonUses: 'Fresh consumption or cooking',
+          ripeTiming: 'Best when properly ripe',
+          pairings: 'Pairs well with complementary foods',
+          medicinalUses: 'Contains beneficial compounds'
+        }));
+        
+        console.log(`✅ Processed ${analyzedFruits.length} individual fruits from OpenAI response`);
+      } else {
+        console.log('🍎 Single fruit response, converting to batch format...');
+        // Convert single analysis result to batch format
+        analyzedFruits = [{
+          item: analysisResult.item,
+          freshness: analysisResult.freshness,
+          recommendation: analysisResult.recommendation,
+          details: analysisResult.details,
+          confidence: analysisResult.confidence,
+          characteristics: analysisResult.characteristics,
+          position: { x: 50, y: 50, width: 20, height: 20 },
+          storageRecommendation: 'Store according to fruit type requirements',
+          daysRemaining: Math.floor(analysisResult.freshness / 10),
+          nutritionInfo: {
+            calories: 'Varies by fruit type',
+            vitamins: 'Rich in vitamins',
+            fiber: 'Good source of fiber',
+            minerals: 'Contains essential minerals',
+            benefits: 'Provides antioxidants and nutrients'
+          },
+          selectionTips: 'Choose based on color, firmness, and absence of blemishes',
+          seasonInfo: 'Check seasonal availability',
+          commonUses: 'Fresh consumption or cooking',
+          ripeTiming: 'Best when properly ripe',
+          pairings: 'Pairs well with complementary foods',
+          medicinalUses: 'Contains beneficial compounds'
+        }];
       }
-
-      // Parse the response
-      console.log('🔍 === PARSING OPENAI RESPONSE ===');
-      console.log('📄 Raw AI response (full):');
-      console.log('--- START RESPONSE ---');
-      console.log(content);
-      console.log('--- END RESPONSE ---');
       
-      let analysisData;
-      try {
-        console.log('🔧 Attempting to parse JSON response...');
-        
-        // Try to extract JSON from markdown code blocks first
-        const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
-        let jsonStr = jsonMatch ? jsonMatch[1] : content;
-        
-        // Clean up the JSON string
-        jsonStr = jsonStr.trim();
-        
-        // Try parsing the cleaned JSON
-        analysisData = JSON.parse(jsonStr);
-        
-        // Validate that the response has the expected structure
-        if (!analysisData.fruits || !Array.isArray(analysisData.fruits)) {
-          console.error('Invalid response structure - no fruits array:', analysisData);
-          throw new Error('Response missing fruits array');
-        }
-        
-        console.log('✅ JSON parsing successful!');
-        console.log('📊 Parsed analysis data:');
-        console.log('  - Data type:', typeof analysisData);
-        console.log('  - Data keys:', Object.keys(analysisData || {}));
-        console.log('  - Has fruits array:', Array.isArray(analysisData?.fruits));
-        console.log('  - Fruits count:', analysisData?.fruits?.length || 0);
-        if (analysisData?.fruits?.length > 0) {
-          console.log('  - First fruit keys:', Object.keys(analysisData.fruits[0] || {}));
-          console.log('  - First fruit item:', analysisData.fruits[0]?.item);
-        }
-        console.log('📝 Complete parsed data:');
-        console.log(JSON.stringify(analysisData, null, 2));
-        
-      } catch (parseError) {
-        console.error('❌ === JSON PARSING FAILED ===');
-        console.error('🔍 Parse error details:');
-        console.error('  - Error type:', typeof parseError);
-        console.error('  - Error message:', parseError instanceof Error ? parseError.message : String(parseError));
-        console.error('  - Error stack:', parseError instanceof Error ? parseError.stack : 'N/A');
-        console.error('📄 Content that failed to parse (length: ' + content.length + '):');
-        console.error('--- START FAILED CONTENT ---');
-        console.error(content);
-        console.error('--- END FAILED CONTENT ---');
-        console.error('🔧 Trying different parsing approaches...');
-        
-        // Try to find JSON in different formats
-        const jsonRegexes = [
-          /```json\n([\s\S]*?)\n```/,
-          /```([\s\S]*?)```/,
-          /{[\s\S]*}/
-        ];
-        
-        for (let i = 0; i < jsonRegexes.length; i++) {
-          const regex = jsonRegexes[i];
-          const match = content.match(regex);
-          console.log(`🔍 Regex ${i + 1} match:`, !!match);
-          if (match) {
-            console.log(`📄 Regex ${i + 1} extracted:`, match[1] || match[0]);
-            try {
-              const testParsed = JSON.parse(match[1] || match[0]);
-              console.log(`✅ Regex ${i + 1} parsing successful!`);
-              analysisData = testParsed;
-              break;
-            } catch (e) {
-              console.log(`❌ Regex ${i + 1} parsing failed:`, e instanceof Error ? e.message : String(e));
-            }
-          }
-        }
-        
-        // Create a fallback response structure
-        analysisData = {
-          fruits: [{
-            item: 'Detected Item',
-            freshness: 75,
-            recommendation: 'check',
-            details: 'AI analysis temporarily unavailable. Manual inspection recommended.',
-            confidence: 50,
-            characteristics: {
-              color: 'Check for uniform color',
-              texture: 'Feel for firmness',
-              blemishes: 'Look for spots or damage',
-              ripeness: 'Assess visually and by touch'
-            },
-            position: { x: 50, y: 50, width: 15, height: 20 },
-            storageRecommendation: 'Store in cool, dry place',
-            daysRemaining: 3,
-            nutritionInfo: {
-              calories: 'Varies by item',
-              vitamins: 'Check nutrition labels',
-              fiber: 'Good source typically',
-              minerals: 'Varies by type',
-              benefits: 'Fresh produce provides nutrients'
-            },
-            selectionTips: 'Choose items that feel firm and look fresh',
-            seasonInfo: 'Seasonal availability varies',
-            commonUses: 'Follow standard preparation methods'
-          }]
-        };
-        
-        if (!analysisData) {
-          console.log('🎯 Using fallback analysis data due to parsing error');
-          console.log('📋 Fallback data structure being created...');
-        }
-      }
-
-      // Process the results
-      const analyzedFruits: FruitAnalysisResult[] = analysisData.fruits?.map((fruit: any, index: number) => ({
-        item: fruit.item || 'Unknown Fruit',
-        freshness: Math.max(0, Math.min(100, parseInt(fruit.freshness) || 50)),
-        recommendation: ['buy', 'check', 'avoid'].includes(fruit.recommendation) 
-          ? fruit.recommendation
-          : 'check',
-        details: fruit.details || 'Analysis completed',
-        confidence: Math.max(0, Math.min(100, parseInt(fruit.confidence) || 75)),
-        characteristics: {
-          color: fruit.characteristics?.color || 'Natural',
-          texture: fruit.characteristics?.texture || 'Standard',
-          blemishes: fruit.characteristics?.blemishes || 'None visible',
-          ripeness: fruit.characteristics?.ripeness || 'Good'
-        },
-        position: fruit.position || { 
-          x: 15 + (index % 4) * 20,
-          y: 15 + Math.floor(index / 4) * 25,
-          width: 12,
-          height: 15
-        },
-        storageRecommendation: fruit.storageRecommendation || 'Store in cool, dry place',
-        daysRemaining: parseInt(fruit.daysRemaining) || 7,
-        nutritionInfo: fruit.nutritionInfo,
-        selectionTips: fruit.selectionTips,
-        seasonInfo: fruit.seasonInfo,
-        commonUses: fruit.commonUses,
-        ripeTiming: fruit.ripeTiming,
-        pairings: fruit.pairings,
-        medicinalUses: fruit.medicinalUses
-      })) || [];
-
-      // Calculate summary statistics
       const totalFruits = analyzedFruits.length;
       const averageFreshness = totalFruits > 0 
         ? Math.round(analyzedFruits.reduce((sum, fruit) => sum + fruit.freshness, 0) / totalFruits)
@@ -354,27 +159,29 @@ IMPORTANT: If you cannot see clear fruits/vegetables, return a single generic it
       
       const worstFruit = analyzedFruits.reduce((worst, current) => 
         current.freshness < worst.freshness ? current : worst, analyzedFruits[0]);
-
-      const result: BatchAnalysisResult = {
+      
+      const batchAnalysis: BatchAnalysisResult = {
         totalFruits,
         analyzedFruits,
         bestFruit,
         worstFruit,
         averageFreshness,
-        shoppingRecommendation: `Found ${totalFruits} items with ${averageFreshness}% average freshness. Prioritize items with higher freshness scores.`,
-        analysisId: `batch-${Date.now()}`,
-        timestamp: new Date().toISOString()
+        shoppingRecommendation: totalFruits === 1 
+          ? `Item freshness: ${averageFreshness}%. ${analyzedFruits[0].recommendation === 'buy' ? 'Recommended for purchase.' : analyzedFruits[0].recommendation === 'check' ? 'Inspect carefully before buying.' : 'Consider avoiding this item.'}`
+          : `Found ${totalFruits} items with ${averageFreshness}% average freshness. Best: ${bestFruit?.item} (${bestFruit?.freshness}%), Worst: ${worstFruit?.item} (${worstFruit?.freshness}%).`,
+        analysisId: analysisResult.analysisId,
+        timestamp: analysisResult.timestamp
       };
-
+      
       console.log('🎉 === ANALYSIS SUCCESSFUL ===');
-      console.log(`✅ Batch analysis complete: ${totalFruits} fruits analyzed`);
+      console.log(`✅ Batch analysis complete: ${batchAnalysis.totalFruits} fruits analyzed`);
       console.log('📈 Final result summary:');
-      console.log('  - Total fruits:', result.totalFruits);
-      console.log('  - Average freshness:', result.averageFreshness);
-      console.log('  - Best fruit:', result.bestFruit?.item || 'N/A');
-      console.log('  - Worst fruit:', result.worstFruit?.item || 'N/A');
+      console.log('  - Total fruits:', batchAnalysis.totalFruits);
+      console.log('  - Average freshness:', batchAnalysis.averageFreshness);
+      console.log('  - Item:', batchAnalysis.analyzedFruits[0]?.item || 'N/A');
+      console.log('  - Using fine-tuned model:', !!process.env.OPENAI_FINETUNED_MODEL_ID);
       console.log('📦 Returning result to caller...');
-      return result;
+      return batchAnalysis;
 
     } catch (error) {
       console.error('❌ === OPENAI API ERROR OCCURRED ===');
@@ -389,7 +196,7 @@ IMPORTANT: If you cannot see clear fruits/vegetables, return a single generic it
       console.error(JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
       console.error('📉 Error stack trace:');
       console.error(error instanceof Error ? error.stack : 'No stack trace available');
-      
+
       // Check for specific OpenAI errors and provide fallback
       console.log('🔍 === ERROR CLASSIFICATION ===');
       if (error instanceof Error) {

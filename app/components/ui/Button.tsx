@@ -4,7 +4,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
 }
@@ -17,7 +17,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: 'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500',
       secondary: 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-500',
       ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-      danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500'
+      danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
+      outline: 'bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500'
     };
     
     const sizes = {

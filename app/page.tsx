@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Scan, Refrigerator, Store, History } from 'lucide-react';
 import { Button } from './components/ui/Button';
@@ -9,6 +9,10 @@ import { ScanningSession } from './components/ScanningSession';
 import { UserHistory } from './components/UserHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { UserRewards } from './components/UserRewards';
+import { FreshnessDashboard } from './components/FreshnessDashboard';
+import { DetailedResultsPage } from './components/DetailedResultsPage';
+import { FreshnessScoreModal } from './components/FreshnessScoreModal';
+import { CameraView } from './components/CameraView';
 // Removed useTranslation to fix hydration issues
 
 
@@ -77,6 +81,13 @@ export default function Home() {
   const [showScanningSession, setShowScanningSession] = useState(false);
   const [sessionType, setSessionType] = useState<'shopping' | 'fridge-check' | 'pantry-check'>('shopping');
   const [showHistory, setShowHistory] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [showDetailedResults, setShowDetailedResults] = useState(false);
+  const [showFreshnessModal, setShowFreshnessModal] = useState(false);
+  const [showCameraView, setShowCameraView] = useState(false);
+  const [currentResults, setCurrentResults] = useState<FruitAnalysisResult[]>([]);
+  const [selectedFruit, setSelectedFruit] = useState<FruitAnalysisResult | null>(null);
+  const [capturedImage, setCapturedImage] = useState<string>('');
   
   // Static translations to avoid hydration issues
   const t = {
@@ -91,6 +102,98 @@ export default function Home() {
     pantryCheckDesc: 'Keep track of stored items and get alerts when they need attention'
   };
 
+  const handleStartScan = () => {
+    setShowCameraView(true);
+  };
+
+  const handleCameraCapture = async (imageData: string) => {
+    setCapturedImage(imageData);
+    setShowCameraView(false);
+    
+    // Mock analysis results for demo - in real app this would call the API
+    const mockResults: FruitAnalysisResult[] = [
+      {
+        item: 'Apple #1',
+        freshness: 89,
+        recommendation: 'buy',
+        details: 'Excellent color and firmness. No visible blemishes.',
+        confidence: 92,
+        characteristics: {
+          color: 'Vibrant red with slight green',
+          texture: 'Firm and crisp',
+          blemishes: 'None visible',
+          ripeness: 'Perfect eating stage'
+        },
+        position: { x: 25, y: 30, width: 15, height: 20 },
+        storageRecommendation: 'Store in refrigerator for up to 2 weeks',
+        daysRemaining: 14
+      },
+      {
+        item: 'Apple #2',
+        freshness: 76,
+        recommendation: 'check',
+        details: 'Good overall condition with minor soft spots.',
+        confidence: 87,
+        characteristics: {
+          color: 'Natural red with some brown spots',
+          texture: 'Mostly firm with soft areas',
+          blemishes: 'Small brown spots visible',
+          ripeness: 'Slightly overripe'
+        },
+        position: { x: 60, y: 45, width: 15, height: 20 },
+        storageRecommendation: 'Use within 3-5 days, store in cool place',
+        daysRemaining: 4
+      }
+    ];
+    
+    setCurrentResults(mockResults);
+    setShowDetailedResults(true);
+  };
+
+  const handleFreshnessScoreClick = (fruit: FruitAnalysisResult) => {
+    setSelectedFruit(fruit);
+    setShowFreshnessModal(true);
+  };
+
+  const handleBackFromResults = () => {
+    setShowDetailedResults(false);
+    setShowDashboard(true);
+  };
+
+
+  // Show different views based on state
+  if (showDetailedResults && currentResults.length > 0) {
+    return (
+      <>
+        <DetailedResultsPage
+          results={currentResults}
+          onBack={handleBackFromResults}
+          onFreshnessScoreClick={handleFreshnessScoreClick}
+          capturedImage={capturedImage}
+        />
+        {selectedFruit && (
+          <FreshnessScoreModal
+            isOpen={showFreshnessModal}
+            onClose={() => setShowFreshnessModal(false)}
+            fruit={selectedFruit}
+          />
+        )}
+      </>
+    );
+  }
+
+  if (showDashboard) {
+    return (
+      <>
+        <FreshnessDashboard onStartScan={handleStartScan} />
+        <CameraView
+          isOpen={showCameraView}
+          onClose={() => setShowCameraView(false)}
+          onCapture={handleCameraCapture}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
@@ -160,7 +263,13 @@ export default function Home() {
               <Button
                 variant={showHistory ? 'primary' : 'ghost'}
                 size="lg"
-                onClick={() => setShowHistory(!showHistory)}
+                onClick={() => {
+                  if (showHistory) {
+                    setShowHistory(false);
+                  } else {
+                    setShowDashboard(true);
+                  }
+                }}
                 className="flex items-center gap-2"
               >
                 <History className="w-5 h-5" />
@@ -243,25 +352,19 @@ export default function Home() {
             </p>
             <div className="flex justify-center gap-4">
               <Button
-                onClick={() => {
-                  setSessionType('shopping');
-                  setShowScanningSession(true);
-                }}
+                onClick={handleStartScan}
                 size="lg"
                 className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-lg px-8 py-4"
               >
-                🛒 Start Shopping Session
+                📱 Quick Scan
               </Button>
               <Button
-                onClick={() => {
-                  setSessionType('fridge-check');
-                  setShowScanningSession(true);
-                }}
+                onClick={() => setShowDashboard(true)}
                 variant="secondary"
                 size="lg"
                 className="text-lg px-8 py-4"
               >
-                🥶 Check My Fridge
+                📊 View Dashboard
               </Button>
             </div>
           </motion.div>
@@ -273,6 +376,22 @@ export default function Home() {
         <ScanningSession
           sessionType={sessionType}
           onClose={() => setShowScanningSession(false)}
+        />
+      )}
+
+      {/* Camera View */}
+      <CameraView
+        isOpen={showCameraView}
+        onClose={() => setShowCameraView(false)}
+        onCapture={handleCameraCapture}
+      />
+
+      {/* Freshness Score Modal */}
+      {selectedFruit && (
+        <FreshnessScoreModal
+          isOpen={showFreshnessModal}
+          onClose={() => setShowFreshnessModal(false)}
+          fruit={selectedFruit}
         />
       )}
     </div>
