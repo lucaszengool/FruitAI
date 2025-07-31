@@ -10,13 +10,15 @@ import {
   Droplets,
   Leaf,
   Target,
-  Plus
+  Plus,
+  ArrowLeft
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 
 interface FreshnessDashboardProps {
   onStartScan: () => void;
+  onBack?: () => void;
 }
 
 interface RecentScan {
@@ -29,7 +31,7 @@ interface RecentScan {
   averageScore: number;
 }
 
-export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
+export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardProps) {
   const [currentStreak, setCurrentStreak] = useState(1);
   const [todayScans, setTodayScans] = useState(0);
   const [weeklyAverage, setWeeklyAverage] = useState(82);
@@ -98,10 +100,20 @@ export function FreshnessDashboard({ onStartScan }: FreshnessDashboardProps) {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
+          {onBack && (
+            <motion.button
+              onClick={onBack}
+              className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-shadow"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </motion.button>
+          )}
           <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
             <Apple className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-black">FruitAI</h1>
+          <h1 className="text-2xl font-bold text-black">FruitAI Dashboard</h1>
         </div>
         <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
           <Flame className="w-4 h-4 text-orange-500" />

@@ -12,14 +12,14 @@ export const translations: Translations = {
   en: {
     // Main App
     appTitle: 'FruitAI',
-    appSubtitle: 'AI-Powered Freshness Scanner',
-    quickScan: 'Quick Scan',
+    appSubtitle: 'Smart Shopping Assistant',
+    quickScan: 'Scan Produce',
     viewDashboard: 'View Dashboard',
     viewAnalytics: 'View Analytics',
     startScanningNow: 'Start Scanning Now',
-    aiPoweredAnalysis: 'AI-Powered Freshness Analysis',
-    smartShopping: 'Smart shopping decisions and waste reduction through AI scanning',
-    readyToReduce: 'Ready to reduce food waste and make smarter choices?',
+    aiPoweredAnalysis: 'Smart Grocery Shopping',
+    smartShopping: 'Never buy spoiled groceries again! Scan fruits and vegetables while shopping to instantly check freshness and get smart recommendations. Perfect for checking what\'s in your refrigerator too.',
+    readyToReduce: 'Ready to make smarter grocery choices?',
     startSession: 'Start a scanning session to analyze freshness and get personalized recommendations',
     
     // Camera
@@ -79,20 +79,25 @@ export const translations: Translations = {
     
     // Time
     daysLeft: 'days left',
-    items: 'items'
+    items: 'items',
+    
+    // Feature Labels
+    smartShoppingFeature: 'Smart Shopping',
+    instantCheckFeature: 'Instant Check',
+    fridgeHelperFeature: 'Fridge Helper'
   },
   
   es: {
     // Main App
     appTitle: 'FruitAI',
-    appSubtitle: 'Escáner de Frescura con IA',
-    quickScan: 'Escaneo Rápido',
+    appSubtitle: 'Asistente de Compras Inteligente',
+    quickScan: 'Escanear Productos',
     viewDashboard: 'Ver Panel',
     viewAnalytics: 'Ver Análisis',
     startScanningNow: 'Comenzar Escaneo Ahora',
-    aiPoweredAnalysis: 'Análisis de Frescura con IA',
-    smartShopping: 'Decisiones inteligentes de compra y reducción de desperdicios mediante escaneo con IA',
-    readyToReduce: '¿Listo para reducir el desperdicio de alimentos y tomar decisiones más inteligentes?',
+    aiPoweredAnalysis: 'Compras Inteligentes',
+    smartShopping: '¡Nunca más compres productos en mal estado! Escanea frutas y verduras mientras compras para verificar la frescura al instante y obtener recomendaciones inteligentes. Perfecto también para verificar lo que tienes en el refrigerador.',
+    readyToReduce: '¿Listo para tomar decisiones de compra más inteligentes?',
     startSession: 'Inicia una sesión de escaneo para analizar la frescura y obtener recomendaciones personalizadas',
     
     // Camera
@@ -152,7 +157,12 @@ export const translations: Translations = {
     
     // Time
     daysLeft: 'días restantes',
-    items: 'artículos'
+    items: 'artículos',
+    
+    // Feature Labels
+    smartShoppingFeature: 'Compras Inteligentes',
+    instantCheckFeature: 'Verificación Instantánea',
+    fridgeHelperFeature: 'Asistente de Refrigerador'
   },
   
   fr: {
@@ -225,7 +235,12 @@ export const translations: Translations = {
     
     // Time
     daysLeft: 'jours restants',
-    items: 'articles'
+    items: 'articles',
+    
+    // Feature Labels
+    smartShoppingFeature: 'Achat Intelligent',
+    instantCheckFeature: 'Vérification Instantanée',
+    fridgeHelperFeature: 'Assistant Frigo'
   },
   
   zh: {
@@ -298,7 +313,12 @@ export const translations: Translations = {
     
     // Time
     daysLeft: '剩余天数',
-    items: '项目'
+    items: '项目',
+    
+    // Feature Labels
+    smartShoppingFeature: '智能购物',
+    instantCheckFeature: '即时检查',
+    fridgeHelperFeature: '冰箱助手'
   },
   
   ja: {
@@ -371,7 +391,12 @@ export const translations: Translations = {
     
     // Time
     daysLeft: '残り日数',
-    items: 'アイテム'
+    items: 'アイテム',
+    
+    // Feature Labels
+    smartShoppingFeature: 'スマート買い物',
+    instantCheckFeature: '即時チェック',
+    fridgeHelperFeature: '冷蔵庫アシスタント'
   }
 };
 
