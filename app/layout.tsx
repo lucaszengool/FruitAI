@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { TranslationProvider } from "./contexts/TranslationContext";
+import { LocalizedClerkProvider } from "./components/LocalizedClerkProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <LocalizedClerkProvider>
       <html lang="en">
         <head>
           {/* Google tag (gtag.js) */}
@@ -50,6 +50,6 @@ export default function RootLayout({
           </TranslationProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </LocalizedClerkProvider>
   );
 }

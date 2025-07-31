@@ -160,6 +160,14 @@ export const translations: Translations = {
     deepRed: 'Deep red',
     smoothAndFirm: 'Smooth and firm',
     perfectlyRipe: 'Perfectly ripe',
+    fullyRipe: 'Fully ripe',
+    andGlossy: 'and glossy',
+    processed: 'Processed',
+    minimalAdditives: 'Contains minimal additives or preservatives, no artificial sweeteners, dyes, or seed oils.',
+    smoothAndGlossy: 'Smooth and glossy',
+    glossy: 'glossy',
+    needsAttention: 'Needs Attention',
+    qualityDeclining: 'Quality is declining. Inspect carefully before consuming or consider avoiding.',
     
     // Fruit and vegetable names
     apple: 'Apple',
@@ -684,7 +692,17 @@ export const translations: Translations = {
     continueWithFreeScans: '继续使用 {count} 次免费扫描',
     unlimitedScans: '无限制水果扫描',
     detailedNutrition: '详细营养分析',
-    personalHistory: '个人扫描历史和洞察'
+    personalHistory: '个人扫描历史和洞察',
+    
+    // Additional quality scores and storage
+    fullyRipe: '完全成熟',
+    andGlossy: '和有光泽',
+    processed: '加工度',
+    minimalAdditives: '含有最少的添加剂或防腐剂，无人工甜味剂、染料或种子油。',
+    smoothAndGlossy: '光滑有光泽',
+    glossy: '有光泽',
+    needsAttention: '需要注意',
+    qualityDeclining: '品质正在下降。请仔细检查后再食用或考虑避免。'
   },
   
   ja: {
@@ -1111,7 +1129,17 @@ export function translateAnalysisValue(language: string, value: string): string 
     'Store in a cool, dry place or refrigerate to extend freshness.': 'storeCoolDry',
     'Deep red': 'deepRed',
     'Smooth and firm': 'smoothAndFirm',
-    'Perfectly ripe': 'perfectlyRipe'
+    'Perfectly ripe': 'perfectlyRipe',
+    'Fully ripe': 'fullyRipe',
+    'and glossy': 'andGlossy',
+    'Processed': 'processed',
+    'Contains minimal additives or preservatives, no artificial sweeteners, dyes, or seed oils.': 'minimalAdditives',
+    
+    // Compound phrases that might be partially translated
+    'Smooth and glossy': 'smoothAndGlossy',
+    'glossy': 'glossy',
+    'Needs Attention': 'needsAttention',
+    'Quality is declining. Inspect carefully before consuming or consider avoiding.': 'qualityDeclining'
   };
   
   // Check if we have a translation key for this value

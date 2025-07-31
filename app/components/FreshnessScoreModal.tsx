@@ -13,6 +13,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { Card } from './ui/Card';
+import { useTranslation } from '../contexts/TranslationContext';
 
 interface FruitAnalysisResult {
   item: string;
@@ -42,10 +43,12 @@ interface FreshnessScoreModalProps {
 }
 
 export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreModalProps) {
+  const { t } = useTranslation();
+  
   const getFreshnessLevel = (score: number) => {
-    if (score >= 80) return { level: 'Very Good!', color: 'text-green-600', description: 'High in beneficial nutrients and very supportive of overall health. It can be a regular part of a healthy diet.' };
-    if (score >= 60) return { level: 'Good', color: 'text-yellow-600', description: 'Decent quality with some beneficial nutrients. Consider consuming soon for best quality.' };
-    return { level: 'Needs Attention', color: 'text-red-600', description: 'Quality is declining. Inspect carefully before consuming or consider avoiding.' };
+    if (score >= 80) return { level: t('veryGood'), color: 'text-green-600', description: t('highNutrients') };
+    if (score >= 60) return { level: t('good'), color: 'text-yellow-600', description: t('decentQuality') };
+    return { level: t('needsAttention'), color: 'text-red-600', description: t('qualityDeclining') };
   };
 
   const freshnessInfo = getFreshnessLevel(fruit.freshness);
@@ -53,28 +56,28 @@ export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreMo
   const qualityMetrics = [
     {
       icon: Droplets,
-      label: 'Fiber',
+      label: t('fiber'),
       value: '0g',
       status: 'poor',
       color: 'text-red-500'
     },
     {
       icon: Apple,
-      label: 'Net Carbs', 
+      label: t('netCarbs'), 
       value: '25g',
       status: 'good',
       color: 'text-green-500'
     },
     {
       icon: Leaf,
-      label: 'Sugar',
+      label: t('sugar'),
       value: '24g', 
       status: 'good',
       color: 'text-green-500'
     },
     {
       icon: Flame,
-      label: 'Sodium',
+      label: t('sodium'),
       value: '10mg',
       status: 'good', 
       color: 'text-green-500'
@@ -227,12 +230,12 @@ export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreMo
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <AlertCircle className="w-5 h-5 text-gray-600" />
-                      <span className="font-medium text-gray-800">Processed</span>
+                      <span className="font-medium text-gray-800">{t('processed')}</span>
                     </div>
                     <span className="font-semibold text-green-600">{processedScore}/10</span>
                   </div>
                   <p className="text-xs text-gray-600">
-                    Contains minimal additives or preservatives, no artificial sweeteners, dyes, or seed oils.
+                    {t('minimalAdditives')}
                   </p>
                 </Card>
               </motion.div>

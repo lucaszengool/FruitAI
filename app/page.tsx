@@ -512,35 +512,6 @@ function PhoneDemoPlayer() {
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 4, repeat: Infinity }}
       >
-        <div className="flex items-center gap-2">
-          <Camera className="w-3 h-3 text-emerald-500" />
-          <div>
-            {demoStage === 'ready' && (
-              <>
-                <p className="text-xs font-medium">Ready to Scan</p>
-                <p className="text-xs text-gray-600">Watch the demo</p>
-              </>
-            )}
-            {demoStage === 'scanning' && (
-              <>
-                <p className="text-xs font-medium">Scanning...</p>
-                <p className="text-xs text-gray-600">Detecting fruits</p>
-              </>
-            )}
-            {demoStage === 'analyzing' && (
-              <>
-                <p className="text-xs font-medium">AI Analysis</p>
-                <p className="text-xs text-gray-600">Processing image</p>
-              </>
-            )}
-            {demoStage === 'results' && (
-              <>
-                <p className="text-xs font-medium">Analysis Complete</p>
-                <p className="text-xs text-gray-600">92% fresh</p>
-              </>
-            )}
-          </div>
-        </div>
       </motion.div>
     </div>
   );

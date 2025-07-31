@@ -67,9 +67,15 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
   }, [isInitialized]);
 
   const setLanguage = (lang: string) => {
+    console.log(`🌐 Language changed to: ${lang}`);
     setLanguageState(lang);
     if (typeof window !== 'undefined') {
       localStorage.setItem('fruitai_language', lang);
+      
+      // Dispatch a custom event to notify Clerk about language change
+      window.dispatchEvent(new CustomEvent('languageChanged', { 
+        detail: { language: lang } 
+      }));
     }
   };
 
