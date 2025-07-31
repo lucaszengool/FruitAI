@@ -184,7 +184,7 @@ const translations: Record<string, Translations> = {
     storeSession: '商店扫描',
     fridgeCheck: '冰箱检查',
     pantryCheck: '储藏室扫描',
-    dashboard: '仪表板',
+    dashboard: '扫描历史',
     
     // Mode Descriptions
     storeSessionDesc: '购物时扫描多个水果和蔬菜，比较新鲜度，做出最佳选择',

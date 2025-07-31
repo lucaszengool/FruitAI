@@ -507,7 +507,7 @@ export const translations: Translations = {
     appTitle: 'FruitAI',
     appSubtitle: 'AI驱动的蔬果新鲜度助手',
     quickScan: '快速扫描',
-    viewDashboard: '查看仪表板',
+    viewDashboard: '扫描历史',
     viewAnalytics: '查看分析',
     startScanningNow: '现在开始扫描',
     aiPoweredAnalysis: 'AI驱动的新鲜度分析',
@@ -547,7 +547,7 @@ export const translations: Translations = {
     ripeness: '成熟度',
     
     // Dashboard
-    dashboard: '仪表板',
+    dashboard: '扫描历史',
     totalScans: '总扫描次数',
     itemsAnalyzedShort: '已分析项目',
     qualityScore: '质量分数',
@@ -599,7 +599,7 @@ export const translations: Translations = {
     perfect: '完美',
     
     // Dashboard specific
-    fruitaiDashboard: 'FruitAI 仪表板',
+    fruitaiDashboard: 'FruitAI 扫描历史',
     totalItemsAnalyzed: '分析的项目总数',
     
     // Specific analysis values
