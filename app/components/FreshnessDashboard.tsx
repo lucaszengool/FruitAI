@@ -20,6 +20,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 interface FreshnessDashboardProps {
   onStartScan: () => void;
   onBack?: () => void;
+  onViewScanResults?: (scanData: RecentScan) => void;
 }
 
 interface RecentScan {
@@ -30,9 +31,11 @@ interface RecentScan {
   timestamp: string;
   itemCount: number;
   averageScore: number;
+  results?: any[];
+  date?: string;
 }
 
-export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardProps) {
+export function FreshnessDashboard({ onStartScan, onBack, onViewScanResults }: FreshnessDashboardProps) {
   const { t } = useTranslation();
   const [currentStreak, setCurrentStreak] = useState(1);
   const [todayScans, setTodayScans] = useState(0);
@@ -259,7 +262,11 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
               };
               
               return (
-                <Card key={scan.id} className={`bg-white p-4 border-l-4 ${getRankColor(scan.averageScore)} hover:shadow-md transition-shadow`}>
+                <Card 
+                  key={scan.id} 
+                  className={`bg-white p-4 border-l-4 ${getRankColor(scan.averageScore)} hover:shadow-md transition-shadow cursor-pointer`}
+                  onClick={() => onViewScanResults?.(scan)}
+                >
                   <div className="flex items-center gap-4">
                     <div className="relative">
                       <div className="w-16 h-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">

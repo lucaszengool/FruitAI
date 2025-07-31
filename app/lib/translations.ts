@@ -189,12 +189,12 @@ export const translations: Translations = {
     
     // Scan limit messages
     unlockMoreScans: 'Unlock More Scans!',
-    freeScansUsedUp: 'Free Scans Used Up!',
-    remainingScansMessage: 'You have {count} free scans remaining. Sign up to get unlimited scans and more features!',
-    freeScansUsedMessage: 'You\'ve used all {count} free scans. Sign up to continue scanning and unlock premium features!',
+    freeScansUsedUp: 'Daily Scans Used Up!',
+    remainingScansMessage: 'You have {count} non-user scans remaining. Sign up to get unlimited scans and more features!',
+    freeScansUsedMessage: 'You\'ve used all {count} non-user scans. Sign up to continue unlimited scanning and unlock premium features!',
     signUpFree: 'Sign Up - It\'s Free!',
     alreadyHaveAccount: 'Already have an account? Sign In',
-    continueWithFreeScans: 'Continue with {count} free scans',
+    continueWithFreeScans: 'Continue with {count} unlimited scans',
     unlimitedScans: 'Unlimited fruit scans',
     detailedNutrition: 'Detailed nutrition analysis',
     personalHistory: 'Personal scan history & insights',
@@ -212,7 +212,19 @@ export const translations: Translations = {
     estimatedShelfLife: 'Estimated Shelf Life',
     consumeBy: 'Best Consumed By',
     consumeSoon: 'Consume soon for best quality',
-    healthBenefits: 'Health Benefits'
+    healthBenefits: 'Health Benefits',
+    
+    // Health benefits
+    providesAntioxidants: 'Provides antioxidants and nutrients',
+    richInVitamins: 'Rich in vitamins and minerals that support immune system and overall health',
+    highFiberBenefits: 'High fiber content aids digestion and helps maintain healthy cholesterol levels',
+    naturalEnergySource: 'Natural source of energy from healthy sugars and carbohydrates',
+    
+    // Complex descriptive phrases
+    withA: 'with a',
+    finish: 'finish',
+    deepRedGlossy: 'Deep red with a glossy finish',
+    howScoreCalculated: 'Click to see how the freshness score is calculated'
   },
   
   es: {
@@ -416,7 +428,19 @@ export const translations: Translations = {
     estimatedShelfLife: 'Vida Útil Estimada',
     consumeBy: 'Mejor Consumir Antes de',
     consumeSoon: 'Consumir pronto para mejor calidad',
-    healthBenefits: 'Beneficios para la Salud'
+    healthBenefits: 'Beneficios para la Salud',
+    
+    // Health benefits
+    providesAntioxidants: 'Proporciona antioxidantes y nutrientes',
+    richInVitamins: 'Rico en vitaminas y minerales que apoyan el sistema inmunológico y la salud general',
+    highFiberBenefits: 'El alto contenido de fibra ayuda a la digestión y mantiene niveles saludables de colesterol',
+    naturalEnergySource: 'Fuente natural de energía de azúcares y carbohidratos saludables',
+    
+    // Complex descriptive phrases
+    withA: 'con un',
+    finish: 'acabado',
+    deepRedGlossy: 'Rojo intenso con acabado brillante',
+    howScoreCalculated: 'Haz clic para ver cómo se calcula la puntuación de frescura'
   },
   
   fr: {
@@ -620,7 +644,19 @@ export const translations: Translations = {
     estimatedShelfLife: 'Durée de Conservation Estimée',
     consumeBy: 'Meilleur Avant',
     consumeSoon: 'Consommer bientôt pour la meilleure qualité',
-    healthBenefits: 'Bénéfices pour la Santé'
+    healthBenefits: 'Bénéfices pour la Santé',
+    
+    // Health benefits
+    providesAntioxidants: 'Fournit des antioxydants et des nutriments',
+    richInVitamins: 'Riche en vitamines et minéraux qui soutiennent le système immunitaire et la santé générale',
+    highFiberBenefits: 'La teneur élevée en fibres aide à la digestion et maintient des niveaux de cholestérol sains',
+    naturalEnergySource: 'Source naturelle d\'énergie provenant de sucres et glucides sains',
+    
+    // Complex descriptive phrases
+    withA: 'avec une',
+    finish: 'finition',
+    deepRedGlossy: 'Rouge profond avec finition brillante',
+    howScoreCalculated: 'Cliquez pour voir comment le score de fraîcheur est calculé'
   },
   
   zh: {
@@ -785,12 +821,12 @@ export const translations: Translations = {
     
     // Scan limit messages
     unlockMoreScans: '解锁更多扫描！',
-    freeScansUsedUp: '免费扫描已用完！',
-    remainingScansMessage: '您还有 {count} 次免费扫描。注册获得无限扫描和更多功能！',
-    freeScansUsedMessage: '您已用完所有 {count} 次免费扫描。注册继续扫描并解锁高级功能！',
+    freeScansUsedUp: '免费注册继续无限制扫描！',
+    remainingScansMessage: '您今日还有 {count} 次扫描。注册获得无限制扫描和更多功能！',
+    freeScansUsedMessage: '免费注册继续无限制扫描并解锁高级功能！',
     signUpFree: '免费注册！',
     alreadyHaveAccount: '已有账户？登录',
-    continueWithFreeScans: '继续使用 {count} 次免费扫描',
+    continueWithFreeScans: '继续使用 {count} 次扫描',
     unlimitedScans: '无限制水果扫描',
     detailedNutrition: '详细营养分析',
     personalHistory: '个人扫描历史和洞察',
@@ -826,7 +862,19 @@ export const translations: Translations = {
     estimatedShelfLife: '预计保存期',
     consumeBy: '最佳食用日期',
     consumeSoon: '尽快食用以获得最佳品质',
-    healthBenefits: '健康益处'
+    healthBenefits: '健康益处',
+    
+    // Health benefits
+    providesAntioxidants: '提供抗氧化剂和营养素',
+    richInVitamins: '富含维生素和矿物质，支持免疫系统和整体健康',
+    highFiberBenefits: '高纤维含量有助于消化，帮助维持健康的胆固醇水平',
+    naturalEnergySource: '来自健康糖分和碳水化合物的天然能量来源',
+    
+    // Complex descriptive phrases
+    withA: '具有',
+    finish: '质感',
+    deepRedGlossy: '深红色，具有光泽质感',
+    howScoreCalculated: '点击查看新鲜度分数是如何计算的'
   },
   
   ja: {
@@ -1030,7 +1078,19 @@ export const translations: Translations = {
     estimatedShelfLife: '推定保存期間',
     consumeBy: '消費期限',
     consumeSoon: '最高の品質のためにすぐに消費する',
-    healthBenefits: '健康効果'
+    healthBenefits: '健康効果',
+    
+    // Health benefits
+    providesAntioxidants: '抗酸化物質と栄養素を提供',
+    richInVitamins: '免疫システムと全体的な健康をサポートするビタミンとミネラルが豊富',
+    highFiberBenefits: '高い食物繊維含有量が消化を助け、健康的なコレステロールレベルを維持',
+    naturalEnergySource: '健康的な糖分と炭水化物からの自然なエネルギー源',
+    
+    // Complex descriptive phrases
+    withA: 'と',
+    finish: '仕上がり',
+    deepRedGlossy: '深い赤色で光沢のある仕上がり',
+    howScoreCalculated: 'フレッシュネススコアの計算方法を見るにはクリック'
   }
 };
 
@@ -1315,12 +1375,17 @@ export function translateAnalysisValue(language: string, value: string): string 
     return getTranslation(language, translationKey);
   }
   
-  // If no direct match, try to translate individual words
+  // Handle compound phrases more carefully
+  // First try to match longer phrases before individual words
+  const sortedEntries = Object.entries(valueMap).sort((a, b) => b[0].length - a[0].length);
+  
   let translatedValue = value;
-  for (const [englishWord, key] of Object.entries(valueMap)) {
-    if (value.includes(englishWord)) {
-      const translatedWord = getTranslation(language, key);
-      translatedValue = translatedValue.replace(englishWord, translatedWord);
+  for (const [englishPhrase, key] of sortedEntries) {
+    // Use case-insensitive matching and word boundaries where appropriate
+    const regex = new RegExp(`\\b${englishPhrase.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\b`, 'gi');
+    if (regex.test(translatedValue)) {
+      const translatedPhrase = getTranslation(language, key);
+      translatedValue = translatedValue.replace(regex, translatedPhrase);
     }
   }
   

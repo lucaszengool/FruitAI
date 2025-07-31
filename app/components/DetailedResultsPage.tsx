@@ -146,12 +146,16 @@ export function DetailedResultsPage({
     <div className="min-h-screen bg-gray-50">
       {/* Header with background image */}
       <div className="relative h-64 bg-gradient-to-br from-orange-200 to-orange-400 overflow-hidden">
-        {capturedImage && (
+        {capturedImage ? (
           <>
             <img 
               src={capturedImage} 
               alt="Captured produce"
               className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => {
+                console.warn('Failed to load captured image, using fallback');
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
             />
             {/* Position indicators for each fruit */}
             {results.map((fruit, index) => {
@@ -171,6 +175,14 @@ export function DetailedResultsPage({
               );
             })}
           </>
+        ) : (
+          /* Fallback design when no image is available */
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center text-white">
+              <Apple className="w-16 h-16 mx-auto mb-2 opacity-60" />
+              <p className="text-sm opacity-80">{t('scanHistoryView')}</p>
+            </div>
+          </div>
         )}
         <div className="absolute inset-0 bg-black bg-opacity-30" />
         
@@ -492,23 +504,34 @@ export function DetailedResultsPage({
             </motion.div>
 
             {/* Health Benefits */}
-            {selectedFruit.nutritionInfo?.benefits && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-6"
-              >
-                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-red-500" />
-                  {t('healthBenefits')}
-                </h3>
-                <Card className="p-4 bg-gradient-to-br from-red-50 to-white">
-                  <p className="text-sm text-gray-700">
-                    {translateAnalysisValue(language, selectedFruit.nutritionInfo.benefits)}
-                  </p>
-                </Card>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-500" />
+                {t('healthBenefits')}
+              </h3>
+              <Card className="p-4 bg-gradient-to-br from-red-50 to-white">
+                <div className="space-y-2 text-sm text-gray-700">
+                  {selectedFruit.nutritionInfo?.benefits ? (
+                    <p>{translateAnalysisValue(language, selectedFruit.nutritionInfo.benefits)}</p>
+                  ) : (
+                    <>
+                      <p>• {t('richInVitamins')}</p>
+                      <p>• {t('providesAntioxidants')}</p>
+                      {selectedFruit.freshness >= 80 && (
+                        <>
+                          <p>• {t('highFiberBenefits')}</p>
+                          <p>• {t('naturalEnergySource')}</p>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
           </div>
 
           {/* Bottom Actions */}

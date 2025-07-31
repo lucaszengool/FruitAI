@@ -579,7 +579,7 @@ export default function Home() {
       setIsAnalyzing(false);
       setShowDetailedResults(true);
       
-      // Save to scan history
+      // Save to scan history (async, but don't await to avoid blocking UI)
       saveScanToHistory(results, capturedImage);
       
       // Show sign-up prompt after 2nd scan for guests
@@ -621,11 +621,38 @@ export default function Home() {
     setShowCameraView(true);
   };
 
-  const saveScanToHistory = (results: FruitAnalysisResult[], image: string) => {
+  const compressImage = (imageDataUrl: string, quality: number = 0.7): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions (max 800px width while maintaining aspect ratio)
+        const maxWidth = 800;
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      
+      img.onerror = () => resolve(imageDataUrl); // Fallback to original
+      img.src = imageDataUrl;
+    });
+  };
+
+  const saveScanToHistory = async (results: FruitAnalysisResult[], image: string) => {
     try {
+      // Compress image to save localStorage space
+      const compressedImage = await compressImage(image);
+      
       const scanData = {
         id: Date.now().toString(),
-        image: image,
+        image: compressedImage,
         title: results.length === 1 ? results[0].item : `${results.length} items analyzed`,
         freshness: Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -636,12 +663,69 @@ export default function Home() {
       };
 
       const existingScans = JSON.parse(localStorage.getItem('fruitai_scan_history') || '[]');
-      const updatedScans = [scanData, ...existingScans].slice(0, 50); // Keep last 50 scans
-      localStorage.setItem('fruitai_scan_history', JSON.stringify(updatedScans));
+      const updatedScans = [scanData, ...existingScans].slice(0, 20); // Reduce to 20 scans to save space
       
-      console.log('Scan saved to history:', scanData);
+      try {
+        localStorage.setItem('fruitai_scan_history', JSON.stringify(updatedScans));
+        console.log('✅ Scan saved to history with compressed image:', {
+          id: scanData.id,
+          title: scanData.title,
+          imageSize: `${Math.round(compressedImage.length / 1024)}KB`,
+          originalSize: `${Math.round(image.length / 1024)}KB`
+        });
+      } catch (storageError) {
+        // If localStorage is full, try with fewer scans
+        console.warn('localStorage full, reducing history size...');
+        const reducedScans = [scanData, ...existingScans].slice(0, 10);
+        localStorage.setItem('fruitai_scan_history', JSON.stringify(reducedScans));
+        console.log('✅ Scan saved with reduced history size');
+      }
     } catch (error) {
-      console.error('Error saving scan to history:', error);
+      console.error('❌ Error saving scan to history:', error);
+      // Save without image as fallback
+      try {
+        const scanDataWithoutImage = {
+          id: Date.now().toString(),
+          image: '', // Empty image as fallback
+          title: results.length === 1 ? results[0].item : `${results.length} items analyzed`,
+          freshness: Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length),
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          itemCount: results.length,
+          averageScore: Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length),
+          date: new Date().toISOString().split('T')[0],
+          results: results
+        };
+        
+        const existingScans = JSON.parse(localStorage.getItem('fruitai_scan_history') || '[]');
+        const updatedScans = [scanDataWithoutImage, ...existingScans].slice(0, 20);
+        localStorage.setItem('fruitai_scan_history', JSON.stringify(updatedScans));
+        console.log('⚠️ Scan saved without image due to storage constraints');
+      } catch (fallbackError) {
+        console.error('❌ Failed to save scan even without image:', fallbackError);
+      }
+    }
+  };
+
+  const handleViewScanFromDashboard = (scanData: any) => {
+    console.log('🔍 Viewing scan from dashboard:', {
+      id: scanData.id,
+      title: scanData.title,
+      hasResults: !!scanData.results,
+      resultCount: scanData.results?.length || 0,
+      hasImage: !!scanData.image,
+      imageSize: scanData.image ? `${Math.round(scanData.image.length / 1024)}KB` : 'No image'
+    });
+    
+    if (scanData.results && scanData.results.length > 0) {
+      // Navigate to detailed results page with historical data
+      setCurrentResults(scanData.results);
+      setCapturedImage(scanData.image || ''); // Ensure we handle missing images gracefully
+      setShowDetailedResults(true);
+      setShowDashboard(false);
+      
+      console.log('✅ Successfully navigated to detailed results page');
+    } else {
+      console.warn('⚠️ Cannot view scan: missing results data');
     }
   };
 
@@ -697,6 +781,7 @@ export default function Home() {
         <FreshnessDashboard 
           onStartScan={handleStartScan} 
           onBack={() => setShowDashboard(false)}
+          onViewScanResults={handleViewScanFromDashboard}
         />
         <CameraView
           isOpen={showCameraView}
