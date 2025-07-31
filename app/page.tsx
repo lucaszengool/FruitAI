@@ -562,7 +562,12 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleStartScan = () => {
-    // App is now completely free - no limits or prompts
+    // Check if user has exceeded scan limit
+    if (scanLimit.hasExceededLimit) {
+      setShowSignUpPrompt(true);
+      return;
+    }
+    
     setShowCameraView(true);
   };
 
@@ -571,7 +576,8 @@ export default function Home() {
     setShowCameraView(false);
     setIsAnalyzing(true);
     
-    // No scan counting needed - app is free
+    // Increment scan count for guests
+    const newScanCount = scanLimit.incrementScanCount();
     
     try {
       console.log('Calling API with captured image...');
@@ -608,6 +614,14 @@ export default function Home() {
       // Save to scan history
       saveScanToHistory(results, capturedImage);
       
+      // Show sign-up prompt after 2nd scan for guests
+      if (!scanLimit.isSignedIn && newScanCount >= scanLimit.scanLimit) {
+        // Delay showing the prompt to allow user to see results first
+        setTimeout(() => {
+          setShowSignUpPrompt(true);
+        }, 3000);
+      }
+      
     } catch (error) {
       console.error('Analysis error:', error);
       setIsAnalyzing(false);
@@ -633,6 +647,13 @@ export default function Home() {
     setShowDetailedResults(false);
     setCurrentResults([]);
     setCapturedImage('');
+    
+    // Check if user has exceeded scan limit
+    if (scanLimit.hasExceededLimit) {
+      setShowSignUpPrompt(true);
+      return;
+    }
+    
     setShowCameraView(true);
   };
 

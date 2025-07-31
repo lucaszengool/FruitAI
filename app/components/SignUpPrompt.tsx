@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { SignUpButton, SignInButton } from '@clerk/nextjs';
 import { X, Sparkles, Zap, Target } from 'lucide-react';
 import { Button } from './ui/Button';
+import { useTranslation } from '../contexts/TranslationContext';
 
 interface SignUpPromptProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ interface SignUpPromptProps {
 }
 
 export function SignUpPrompt({ isOpen, onClose, remainingScans, totalScans }: SignUpPromptProps) {
+  const { t } = useTranslation();
+  
   if (!isOpen) return null;
 
   return (
@@ -37,12 +40,12 @@ export function SignUpPrompt({ isOpen, onClose, remainingScans, totalScans }: Si
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {remainingScans > 0 ? 'Unlock More Scans!' : 'Free Scans Used Up!'}
+            {remainingScans > 0 ? t('unlockMoreScans') : t('freeScansUsedUp')}
           </h2>
           <p className="text-gray-600">
             {remainingScans > 0 
-              ? `You have ${remainingScans} free scans remaining. Sign up to get unlimited scans and more features!`
-              : `You've used all ${totalScans} free scans. Sign up to continue scanning and unlock premium features!`
+              ? t('remainingScansMessage').replace('{count}', remainingScans.toString())
+              : t('freeScansUsedMessage').replace('{count}', totalScans.toString())
             }
           </p>
         </div>
@@ -53,19 +56,19 @@ export function SignUpPrompt({ isOpen, onClose, remainingScans, totalScans }: Si
             <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
               <Zap className="w-4 h-4 text-emerald-600" />
             </div>
-            <span className="text-gray-700">Unlimited fruit scans</span>
+            <span className="text-gray-700">{t('unlimitedScans')}</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <Target className="w-4 h-4 text-blue-600" />
             </div>
-            <span className="text-gray-700">Detailed nutrition analysis</span>
+            <span className="text-gray-700">{t('detailedNutrition')}</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-purple-600" />
             </div>
-            <span className="text-gray-700">Personal scan history & insights</span>
+            <span className="text-gray-700">{t('personalHistory')}</span>
           </div>
         </div>
 
@@ -73,13 +76,13 @@ export function SignUpPrompt({ isOpen, onClose, remainingScans, totalScans }: Si
         <div className="space-y-3">
           <SignUpButton mode="modal">
             <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-semibold">
-              Sign Up - It's Free!
+              {t('signUpFree')}
             </Button>
           </SignUpButton>
           
           <SignInButton mode="modal">
             <Button variant="outline" className="w-full border-gray-300 text-gray-700 py-3 rounded-xl">
-              Already have an account? Sign In
+              {t('alreadyHaveAccount')}
             </Button>
           </SignInButton>
         </div>
@@ -89,7 +92,7 @@ export function SignUpPrompt({ isOpen, onClose, remainingScans, totalScans }: Si
             onClick={onClose}
             className="w-full mt-3 text-gray-500 text-sm hover:text-gray-700 transition-colors"
           >
-            Continue with {remainingScans} free scans
+            {t('continueWithFreeScans').replace('{count}', remainingScans.toString())}
           </button>
         )}
       </motion.div>

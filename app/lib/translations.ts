@@ -177,7 +177,19 @@ export const translations: Translations = {
     fruitsAndVegetables: 'Fruits & Vegetables',
     analyzeProduceInstantly: 'Analyze produce instantly',
     fruitVegetableScanning: 'Fruit & Vegetable Scanning',
-    scanProduce: 'Scan Produce'
+    scanProduce: 'Scan Produce',
+    
+    // Scan limit messages
+    unlockMoreScans: 'Unlock More Scans!',
+    freeScansUsedUp: 'Free Scans Used Up!',
+    remainingScansMessage: 'You have {count} free scans remaining. Sign up to get unlimited scans and more features!',
+    freeScansUsedMessage: 'You\'ve used all {count} free scans. Sign up to continue scanning and unlock premium features!',
+    signUpFree: 'Sign Up - It\'s Free!',
+    alreadyHaveAccount: 'Already have an account? Sign In',
+    continueWithFreeScans: 'Continue with {count} free scans',
+    unlimitedScans: 'Unlimited fruit scans',
+    detailedNutrition: 'Detailed nutrition analysis',
+    personalHistory: 'Personal scan history & insights'
   },
   
   es: {
@@ -660,7 +672,19 @@ export const translations: Translations = {
     fruitsAndVegetables: '水果和蔬菜',
     analyzeProduceInstantly: '即时分析农产品',
     fruitVegetableScanning: '水果蔬菜扫描',
-    scanProduce: '扫描农产品'
+    scanProduce: '扫描农产品',
+    
+    // Scan limit messages
+    unlockMoreScans: '解锁更多扫描！',
+    freeScansUsedUp: '免费扫描已用完！',
+    remainingScansMessage: '您还有 {count} 次免费扫描。注册获得无限扫描和更多功能！',
+    freeScansUsedMessage: '您已用完所有 {count} 次免费扫描。注册继续扫描并解锁高级功能！',
+    signUpFree: '免费注册！',
+    alreadyHaveAccount: '已有账户？登录',
+    continueWithFreeScans: '继续使用 {count} 次免费扫描',
+    unlimitedScans: '无限制水果扫描',
+    detailedNutrition: '详细营养分析',
+    personalHistory: '个人扫描历史和洞察'
   },
   
   ja: {
