@@ -21,6 +21,7 @@ import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useTranslation } from '../contexts/TranslationContext';
 import { translateAnalysisValue } from '../lib/translations';
+import { CheckCircle, XCircle, ShoppingCart, Package2, Calendar, Heart, Shield, DollarSign } from 'lucide-react';
 
 interface FruitAnalysisResult {
   item: string;
@@ -48,21 +49,22 @@ interface FruitAnalysisResult {
     fiber: string;
     minerals: string;
     benefits: string;
+    netCarbs?: string;
+    sugar?: string;
+    sodium?: string;
   };
 }
 
 interface DetailedResultsPageProps {
   results: FruitAnalysisResult[];
   onBack: () => void;
-  onFreshnessScoreClick: (fruit: FruitAnalysisResult) => void;
   onScanAnother: () => void;
   capturedImage?: string;
 }
 
 export function DetailedResultsPage({ 
   results, 
-  onBack, 
-  onFreshnessScoreClick,
+  onBack,
   onScanAnother,
   capturedImage 
 }: DetailedResultsPageProps) {
@@ -84,26 +86,61 @@ export function DetailedResultsPage({
     return 'text-red-600';
   };
 
-  const macroNutrients = [
+  // Nutrition metrics for the selected fruit
+  const nutritionMetrics = [
+    {
+      icon: Droplets,
+      label: t('fiber'),
+      value: selectedFruit.nutritionInfo?.fiber?.replace(/[^0-9.]/g, '') || '0',
+      status: selectedFruit.nutritionInfo?.fiber?.includes('0') ? 'poor' : 'good',
+      color: selectedFruit.nutritionInfo?.fiber?.includes('0') ? 'text-red-500' : 'text-green-500'
+    },
     {
       icon: Apple,
-      label: t('protein'),
-      value: '0g',
-      color: 'text-red-500'
+      label: t('netCarbs'), 
+      value: selectedFruit.nutritionInfo?.netCarbs?.replace(/[^0-9.]/g, '') || '25',
+      status: 'good',
+      color: 'text-green-500'
     },
     {
       icon: Leaf,
-      label: t('carbs'), 
-      value: '23g',
-      color: 'text-orange-500'
+      label: t('sugar'),
+      value: selectedFruit.nutritionInfo?.sugar?.replace(/[^0-9.]/g, '') || '24', 
+      status: 'good',
+      color: 'text-green-500'
     },
     {
-      icon: Droplets,
-      label: t('fats'),
-      value: '0g',
-      color: 'text-blue-500'
+      icon: Flame,
+      label: t('sodium'),
+      value: selectedFruit.nutritionInfo?.sodium?.replace(/[^0-9.]/g, '') || '10',
+      status: 'good', 
+      color: 'text-green-500'
     }
   ];
+
+  const getFreshnessLevel = (score: number) => {
+    if (score >= 80) return { level: t('veryGood'), color: 'text-green-600', description: t('highNutrients') };
+    if (score >= 60) return { level: t('good'), color: 'text-yellow-600', description: t('decentQuality') };
+    return { level: t('needsAttention'), color: 'text-red-600', description: t('qualityDeclining') };
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'good': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'poor': return <XCircle className="w-4 h-4 text-red-500" />;
+      default: return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'good': return 'bg-green-50';
+      case 'poor': return 'bg-red-50';
+      default: return 'bg-yellow-50';
+    }
+  };
+
+  const processedScore = Math.min(10, Math.max(0, Math.round((100 - selectedFruit.freshness) / 10)));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -185,63 +222,87 @@ export function DetailedResultsPage({
               </Button>
             </div>
 
-            <h2 className="text-2xl font-bold text-black mb-2">
+            <h2 className="text-2xl font-bold text-black mb-4">
               {results.length === 1 ? translateAnalysisValue(language, selectedFruit.item) : `${results.length} ${t('itemsAnalyzed')}`}
             </h2>
 
-            {/* Main freshness score */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <Flame className="w-5 h-5 text-black" />
-                <span className="text-lg font-semibold text-black">
-                  {Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length)}% {t('fresh')}
-                </span>
+            {/* Freshness Score Section - Now Directly Displayed */}
+            <Card className="p-6 border border-green-200 bg-gradient-to-br from-green-50 to-white">
+              {/* Score Circle */}
+              <div className="text-center mb-6">
+                <div className="relative inline-flex items-center justify-center mb-4">
+                  <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="currentColor"
+                      strokeWidth="6"
+                      fill="none"
+                      className="text-gray-200"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="currentColor"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeLinecap="round"
+                      className="text-green-500"
+                      strokeDasharray={`${(selectedFruit.freshness / 100) * 282.6} 282.6`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-black">
+                        {selectedFruit.freshness}/100
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <h3 className={`text-xl font-semibold mb-2 ${getFreshnessLevel(selectedFruit.freshness).color}`}>
+                  {getFreshnessLevel(selectedFruit.freshness).level}
+                </h3>
+                <p className="text-sm text-gray-600 max-w-xs mx-auto">
+                  {getFreshnessLevel(selectedFruit.freshness).description}
+                </p>
               </div>
-            </div>
 
-            {/* Macro nutrients display */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {macroNutrients.map((macro, index) => (
-                <div key={index} className="text-center">
-                  <macro.icon className={`w-5 h-5 mx-auto mb-1 ${macro.color}`} />
-                  <div className="text-lg font-semibold text-black">{macro.value}</div>
-                  <div className="text-sm text-gray-500">{macro.label}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Freshness Score Clickable Section */}
-            <button
-              onClick={() => onFreshnessScoreClick(selectedFruit)}
-              className="w-full"
-            >
-              <Card className="p-4 border border-green-200 hover:border-green-300 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
-                      <Flame className="w-4 h-4 text-pink-600" />
-                    </div>
-                    <div className="text-left">
-                      <div className="font-medium text-black">{t('freshnessScore')}</div>
-                      <div className="text-sm text-gray-500">{t('tapForDetails')}</div>
+              {/* Nutrition Metrics */}
+              <div className="space-y-3">
+                {nutritionMetrics.map((metric, index) => (
+                  <div key={metric.label} className={`p-3 rounded-lg ${getStatusColor(metric.status)}`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <metric.icon className={`w-5 h-5 ${metric.color}`} />
+                        <span className="font-medium text-gray-800">{metric.label}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-800">{metric.value}{metric.label === t('sodium') ? 'mg' : 'g'}</span>
+                        {getStatusIcon(metric.status)}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-semibold text-green-600">
-                      {Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length)}/100
+                ))}
+              </div>
+
+              {/* Processing Score */}
+              <div className="mt-4">
+                <Card className="p-4 border-0 bg-gray-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-gray-600" />
+                      <span className="font-medium text-gray-800">{t('processed')}</span>
                     </div>
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-green-500 transition-all duration-500"
-                        style={{ 
-                          width: `${Math.round(results.reduce((sum, r) => sum + r.freshness, 0) / results.length)}%` 
-                        }}
-                      />
-                    </div>
+                    <span className="font-semibold text-green-600">{processedScore}/10</span>
                   </div>
-                </div>
-              </Card>
-            </button>
+                  <p className="text-xs text-gray-600">
+                    {t('minimalAdditives')}
+                  </p>
+                </Card>
+              </div>
+            </Card>
           </div>
 
           {/* Individual Fruits List */}
@@ -325,7 +386,7 @@ export function DetailedResultsPage({
               </motion.div>
             )}
 
-            {/* Item Details */}
+            {/* Quality Assessment */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -353,6 +414,101 @@ export function DetailedResultsPage({
                 </div>
               </Card>
             </motion.div>
+
+            {/* Shopping Decision Helper */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                {t('shoppingDecision')}
+              </h3>
+              <Card className="p-4 bg-gradient-to-br from-blue-50 to-white">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">{t('recommendation')}:</span>
+                    <span className={`font-semibold ${getRecommendationColor(selectedFruit.recommendation)}`}>
+                      {t(selectedFruit.recommendation).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">{t('priceValue')}:</span>
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="w-4 h-4 text-green-600" />
+                      <span className="font-medium">{selectedFruit.freshness >= 80 ? t('goodValue') : t('considerPrice')}</span>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-gray-700">
+                      {selectedFruit.freshness >= 80 
+                        ? t('perfectForPurchase')
+                        : selectedFruit.freshness >= 60 
+                        ? t('inspectBeforeBuying')
+                        : t('notRecommendedToBuy')
+                      }
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Refrigerator Management */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                <Package2 className="w-5 h-5" />
+                {t('fridgeManagement')}
+              </h3>
+              <Card className="p-4 bg-gradient-to-br from-purple-50 to-white">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-purple-600" />
+                      <span className="text-gray-600">{t('estimatedShelfLife')}:</span>
+                    </div>
+                    <span className="font-semibold text-purple-700">
+                      {selectedFruit.daysRemaining || Math.round(selectedFruit.freshness / 20)} {t('daysLeft')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">{t('consumeBy')}:</span>
+                    <span className="font-medium">
+                      {new Date(Date.now() + (selectedFruit.daysRemaining || Math.round(selectedFruit.freshness / 20)) * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                    </span>
+                  </div>
+                  {selectedFruit.daysRemaining && selectedFruit.daysRemaining <= 3 && (
+                    <div className="flex items-center gap-2 p-2 bg-yellow-100 rounded-lg">
+                      <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                      <span className="text-sm text-yellow-800">{t('consumeSoon')}</span>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Health Benefits */}
+            {selectedFruit.nutritionInfo?.benefits && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6"
+              >
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-red-500" />
+                  {t('healthBenefits')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-red-50 to-white">
+                  <p className="text-sm text-gray-700">
+                    {translateAnalysisValue(language, selectedFruit.nutritionInfo.benefits)}
+                  </p>
+                </Card>
+              </motion.div>
+            )}
           </div>
 
           {/* Bottom Actions */}

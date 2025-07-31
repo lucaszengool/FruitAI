@@ -7,7 +7,6 @@ import { Button } from './components/ui/Button';
 import { ScanningSession } from './components/ScanningSession';
 import { FreshnessDashboard } from './components/FreshnessDashboard';
 import { DetailedResultsPage } from './components/DetailedResultsPage';
-import { FreshnessScoreModal } from './components/FreshnessScoreModal';
 import { CameraView } from './components/CameraView';
 import { LanguageSelector } from './components/LanguageSelector';
 import { useTranslation } from './contexts/TranslationContext';
@@ -524,11 +523,9 @@ export default function Home() {
   const [sessionType] = useState<'shopping' | 'fridge-check' | 'pantry-check'>('shopping');
   const [showDashboard, setShowDashboard] = useState(false);
   const [showDetailedResults, setShowDetailedResults] = useState(false);
-  const [showFreshnessModal, setShowFreshnessModal] = useState(false);
   const [showCameraView, setShowCameraView] = useState(false);
   const [showSignUpPrompt, setShowSignUpPrompt] = useState(false);
   const [currentResults, setCurrentResults] = useState<FruitAnalysisResult[]>([]);
-  const [selectedFruit, setSelectedFruit] = useState<FruitAnalysisResult | null>(null);
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -603,10 +600,6 @@ export default function Home() {
     }
   };
 
-  const handleFreshnessScoreClick = (fruit: FruitAnalysisResult) => {
-    setSelectedFruit(fruit);
-    setShowFreshnessModal(true);
-  };
 
   const handleBackFromResults = () => {
     setShowDetailedResults(false);
@@ -691,17 +684,9 @@ export default function Home() {
         <DetailedResultsPage
           results={currentResults}
           onBack={handleBackFromResults}
-          onFreshnessScoreClick={handleFreshnessScoreClick}
           onScanAnother={handleScanAnother}
           capturedImage={capturedImage}
         />
-        {selectedFruit && (
-          <FreshnessScoreModal
-            isOpen={showFreshnessModal}
-            onClose={() => setShowFreshnessModal(false)}
-            fruit={selectedFruit}
-          />
-        )}
       </>
     );
   }
@@ -887,14 +872,6 @@ export default function Home() {
         onClose={() => setShowCameraView(false)}
         onCapture={handleCameraCapture}
       />
-
-      {selectedFruit && (
-        <FreshnessScoreModal
-          isOpen={showFreshnessModal}
-          onClose={() => setShowFreshnessModal(false)}
-          fruit={selectedFruit}
-        />
-      )}
 
       <SignUpPrompt
         isOpen={showSignUpPrompt}

@@ -43,7 +43,7 @@ interface FreshnessScoreModalProps {
 }
 
 export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreModalProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   
   const getFreshnessLevel = (score: number) => {
     if (score >= 80) return { level: t('veryGood'), color: 'text-green-600', description: t('highNutrients') };
@@ -128,7 +128,7 @@ export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreMo
                 <ArrowLeft className="w-4 h-4 text-gray-600" />
               </button>
               
-              <h2 className="text-xl font-semibold text-black">Freshness Score</h2>
+              <h2 className="text-xl font-semibold text-black">{t('freshnessScore')}</h2>
             </div>
 
             {/* Main Score Display */}
@@ -249,7 +249,7 @@ export function FreshnessScoreModal({ isOpen, onClose, fruit }: FreshnessScoreMo
               >
                 <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors mx-auto">
                   <Info className="w-4 h-4" />
-                  <span className="underline">Click to see how the freshness score is calculated</span>
+                  <span className="underline">{t('howScoreCalculated')}</span>
                 </button>
               </motion.div>
             </div>

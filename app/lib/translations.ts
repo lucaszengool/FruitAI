@@ -17,8 +17,8 @@ export const translations: Translations = {
     viewDashboard: 'View Dashboard',
     viewAnalytics: 'View Analytics',
     startScanningNow: 'Start Scanning Now',
-    aiPoweredAnalysis: 'Smart Grocery Shopping',
-    smartShopping: 'Never buy spoiled groceries again! Scan fruits and vegetables while shopping to instantly check freshness and get smart recommendations. Perfect for checking what\'s in your refrigerator too.',
+    aiPoweredAnalysis: 'Start Scanning Your Fruits and Vegetables',
+    smartShopping: 'Never buy spoiled groceries again! Use our AI model to scan fruits and vegetables while shopping to instantly check freshness and get smart recommendations. Perfect for checking what\'s in your refrigerator too.',
     readyToReduce: 'Ready to make smarter grocery choices?',
     startSession: 'Start a scanning session to analyze freshness and get personalized recommendations',
     
@@ -197,7 +197,22 @@ export const translations: Translations = {
     continueWithFreeScans: 'Continue with {count} free scans',
     unlimitedScans: 'Unlimited fruit scans',
     detailedNutrition: 'Detailed nutrition analysis',
-    personalHistory: 'Personal scan history & insights'
+    personalHistory: 'Personal scan history & insights',
+    
+    // Shopping and fridge management
+    shoppingDecision: 'Shopping Decision',
+    recommendation: 'Recommendation',
+    priceValue: 'Price Value',
+    goodValue: 'Good Value',
+    considerPrice: 'Consider Price',
+    perfectForPurchase: 'Perfect quality for purchase. This item will provide excellent value and last well.',
+    inspectBeforeBuying: 'Acceptable quality. Inspect carefully and plan to use within a few days.',
+    notRecommendedToBuy: 'Quality concerns detected. Consider looking for fresher alternatives.',
+    fridgeManagement: 'Fridge Management',
+    estimatedShelfLife: 'Estimated Shelf Life',
+    consumeBy: 'Best Consumed By',
+    consumeSoon: 'Consume soon for best quality',
+    healthBenefits: 'Health Benefits'
   },
   
   es: {
@@ -358,7 +373,50 @@ export const translations: Translations = {
     fruitsAndVegetables: 'Frutas y Verduras',
     analyzeProduceInstantly: 'Analizar productos al instante',
     fruitVegetableScanning: 'Escaneo de Frutas y Verduras',
-    scanProduce: 'Escanear Productos'
+    scanProduce: 'Escanear Productos',
+    
+    // Scan limit messages  
+    unlockMoreScans: '¡Desbloquea Más Escaneos!',
+    freeScansUsedUp: '¡Escaneos Gratuitos Agotados!',
+    remainingScansMessage: 'Te quedan {count} escaneos gratuitos. ¡Regístrate para obtener escaneos ilimitados y más funciones!',
+    freeScansUsedMessage: 'Has usado todos los {count} escaneos gratuitos. ¡Regístrate para continuar escaneando y desbloquear funciones premium!',
+    signUpFree: '¡Regístrate - Es Gratis!',
+    alreadyHaveAccount: '¿Ya tienes una cuenta? Inicia Sesión',
+    continueWithFreeScans: 'Continuar con {count} escaneos gratuitos',
+    unlimitedScans: 'Escaneos ilimitados de frutas',
+    detailedNutrition: 'Análisis nutricional detallado',
+    personalHistory: 'Historial personal de escaneos e información',
+    
+    // Additional quality scores and storage
+    veryGood: '¡Muy Bueno!',
+    highNutrients: 'Alto en nutrientes beneficiosos y muy favorable para la salud general. Puede ser parte regular de una dieta saludable.',
+    storeCoolDry: 'Almacenar en un lugar fresco y seco o refrigerar para extender la frescura.',
+    deepRed: 'Rojo intenso',
+    smoothAndFirm: 'Suave y firme',
+    perfectlyRipe: 'Perfectamente maduro',
+    fullyRipe: 'Completamente maduro',
+    andGlossy: 'y brillante',
+    processed: 'Procesado',
+    minimalAdditives: 'Contiene aditivos o conservantes mínimos, sin edulcorantes artificiales, colorantes o aceites de semillas.',
+    smoothAndGlossy: 'Suave y brillante',
+    glossy: 'brillante',
+    needsAttention: 'Necesita Atención',
+    qualityDeclining: 'La calidad está disminuyendo. Inspeccione cuidadosamente antes de consumir o considere evitar.',
+    
+    // Shopping and fridge management
+    shoppingDecision: 'Decisión de Compra',
+    recommendation: 'Recomendación',
+    priceValue: 'Relación Calidad-Precio',
+    goodValue: 'Buen Valor',
+    considerPrice: 'Considerar Precio',
+    perfectForPurchase: 'Calidad perfecta para comprar. Este artículo proporcionará un excelente valor y durará bien.',
+    inspectBeforeBuying: 'Calidad aceptable. Inspeccione cuidadosamente y planee usar dentro de unos días.',
+    notRecommendedToBuy: 'Se detectaron problemas de calidad. Considere buscar alternativas más frescas.',
+    fridgeManagement: 'Gestión del Refrigerador',
+    estimatedShelfLife: 'Vida Útil Estimada',
+    consumeBy: 'Mejor Consumir Antes de',
+    consumeSoon: 'Consumir pronto para mejor calidad',
+    healthBenefits: 'Beneficios para la Salud'
   },
   
   fr: {
@@ -519,7 +577,50 @@ export const translations: Translations = {
     fruitsAndVegetables: 'Fruits et Légumes',
     analyzeProduceInstantly: 'Analyser les produits instantanément',
     fruitVegetableScanning: 'Scan de Fruits et Légumes',
-    scanProduce: 'Scanner les Produits'
+    scanProduce: 'Scanner les Produits',
+    
+    // Scan limit messages  
+    unlockMoreScans: 'Débloquez Plus de Scans!',
+    freeScansUsedUp: 'Scans Gratuits Épuisés!',
+    remainingScansMessage: 'Il vous reste {count} scans gratuits. Inscrivez-vous pour obtenir des scans illimités et plus de fonctionnalités!',
+    freeScansUsedMessage: 'Vous avez utilisé tous les {count} scans gratuits. Inscrivez-vous pour continuer à scanner et débloquer des fonctionnalités premium!',
+    signUpFree: 'S\'inscrire - C\'est Gratuit!',
+    alreadyHaveAccount: 'Vous avez déjà un compte? Se Connecter',
+    continueWithFreeScans: 'Continuer avec {count} scans gratuits',
+    unlimitedScans: 'Scans de fruits illimités',
+    detailedNutrition: 'Analyse nutritionnelle détaillée',
+    personalHistory: 'Historique personnel de scan et informations',
+    
+    // Additional quality scores and storage
+    veryGood: 'Très Bien!',
+    highNutrients: 'Riche en nutriments bénéfiques et très favorable à la santé générale. Peut faire partie régulière d\'une alimentation saine.',
+    storeCoolDry: 'Conserver dans un endroit frais et sec ou réfrigérer pour prolonger la fraîcheur.',
+    deepRed: 'Rouge profond',
+    smoothAndFirm: 'Lisse et ferme',
+    perfectlyRipe: 'Parfaitement mûr',
+    fullyRipe: 'Complètement mûr',
+    andGlossy: 'et brillant',
+    processed: 'Transformé',
+    minimalAdditives: 'Contient un minimum d\'additifs ou de conservateurs, pas d’édulcorants artificiels, de colorants ou d\'huiles de graines.',
+    smoothAndGlossy: 'Lisse et brillant',
+    glossy: 'brillant',
+    needsAttention: 'Nécessite une Attention',
+    qualityDeclining: 'La qualité diminue. Inspectez soigneusement avant de consommer ou envisagez d’éviter.',
+    
+    // Shopping and fridge management
+    shoppingDecision: 'Décision d\'Achat',
+    recommendation: 'Recommandation',
+    priceValue: 'Rapport Qualité-Prix',
+    goodValue: 'Bon Rapport',
+    considerPrice: 'Considérer le Prix',
+    perfectForPurchase: 'Qualité parfaite pour l\'achat. Cet article offrira une excellente valeur et durera bien.',
+    inspectBeforeBuying: 'Qualité acceptable. Inspectez soigneusement et prévoyez d\'utiliser dans quelques jours.',
+    notRecommendedToBuy: 'Problèmes de qualité détectés. Envisagez de chercher des alternatives plus fraîches.',
+    fridgeManagement: 'Gestion du Réfrigérateur',
+    estimatedShelfLife: 'Durée de Conservation Estimée',
+    consumeBy: 'Meilleur Avant',
+    consumeSoon: 'Consommer bientôt pour la meilleure qualité',
+    healthBenefits: 'Bénéfices pour la Santé'
   },
   
   zh: {
@@ -530,8 +631,8 @@ export const translations: Translations = {
     viewDashboard: '扫描历史',
     viewAnalytics: '查看分析',
     startScanningNow: '现在开始扫描',
-    aiPoweredAnalysis: 'AI驱动的新鲜度分析',
-    smartShopping: '通过AI扫描判断蔬果新鲜度 做出明智的购物决策并减少浪费',
+    aiPoweredAnalysis: '开始扫描身边的蔬菜和水果',
+    smartShopping: '通过我们最新的AI视觉模型判断蔬果新鲜度 做出明智的购物决策并减少浪费',
     readyToReduce: '准备好减少食物浪费并做出更明智的选择了吗？',
     startSession: '开始扫描 分析新鲜度并获得个性化建议',
     
@@ -702,7 +803,30 @@ export const translations: Translations = {
     smoothAndGlossy: '光滑有光泽',
     glossy: '有光泽',
     needsAttention: '需要注意',
-    qualityDeclining: '品质正在下降。请仔细检查后再食用或考虑避免。'
+    qualityDeclining: '品质正在下降。请仔细检查后再食用或考虑避免。',
+    
+    // New additions for Chinese
+    veryGood: '非常好！',
+    highNutrients: '富含有益营养素，对整体健康非常有利。可以成为健康饮食的常规部分。',
+    storeCoolDry: '存放在阴凉干燥的地方或冷藏以延长新鲜度。',
+    deepRed: '深红色',
+    smoothAndFirm: '光滑紧实',
+    perfectlyRipe: '完美成熟',
+    
+    // Shopping and fridge management
+    shoppingDecision: '购买决策',
+    recommendation: '推荐',
+    priceValue: '性价比',
+    goodValue: '物有所值',
+    considerPrice: '考虑价格',
+    perfectForPurchase: '质量完美，适合购买。这个物品将提供极佳价值并保存良好。',
+    inspectBeforeBuying: '质量可接受。仔细检查并计划在几天内使用。',
+    notRecommendedToBuy: '检测到质量问题。考虑寻找更新鲜的替代品。',
+    fridgeManagement: '冰箱管理',
+    estimatedShelfLife: '预计保存期',
+    consumeBy: '最佳食用日期',
+    consumeSoon: '尽快食用以获得最佳品质',
+    healthBenefits: '健康益处'
   },
   
   ja: {
@@ -863,7 +987,50 @@ export const translations: Translations = {
     fruitsAndVegetables: '果物と野菜',
     analyzeProduceInstantly: '農産物を即座に分析',
     fruitVegetableScanning: '果物・野菜スキャン',
-    scanProduce: '農産物をスキャン'
+    scanProduce: '農産物をスキャン',
+    
+    // Scan limit messages
+    unlockMoreScans: 'もっとスキャンをアンロック！',
+    freeScansUsedUp: '無料スキャンを使い切りました！',
+    remainingScansMessage: '残り{count}回の無料スキャンがあります。サインアップして無制限スキャンと更なる機能を取得！',
+    freeScansUsedMessage: 'すべての{count}回の無料スキャンを使用しました。サインアップしてスキャンを続け、プレミアム機能をアンロック！',
+    signUpFree: 'サインアップ - 無料！',
+    alreadyHaveAccount: '既にアカウントをお持ちですか？サインイン',
+    continueWithFreeScans: '{count}回の無料スキャンで続ける',
+    unlimitedScans: '無制限のフルーツスキャン',
+    detailedNutrition: '詳細な栄養分析',
+    personalHistory: '個人のスキャン履歴と洞察',
+    
+    // Additional quality scores and storage
+    veryGood: 'とても良い！',
+    highNutrients: '有益な栄養素が豊富で、全体的な健康を強くサポートします。健康的な食事の定期的な一部になることができます。',
+    storeCoolDry: '涼しく乾燥した場所に保管するか、冷蔵して新鮮さを延長する。',
+    deepRed: '深い赤',
+    smoothAndFirm: '滑らかで硬い',
+    perfectlyRipe: '完璧に熟した',
+    fullyRipe: '完全に熟した',
+    andGlossy: 'と光沢のある',
+    processed: '加工度',
+    minimalAdditives: '添加物や保存料が最小限で、人工甘味料、染料、種子油が含まれていません。',
+    smoothAndGlossy: '滑らかで光沢のある',
+    glossy: '光沢のある',
+    needsAttention: '注意が必要',
+    qualityDeclining: '品質が低下しています。消費前に注意深く検査するか、避けることを検討してください。',
+    
+    // Shopping and fridge management
+    shoppingDecision: '買い物の判断',
+    recommendation: '推奨',
+    priceValue: '価格対価値',
+    goodValue: '良い価値',
+    considerPrice: '価格を考慮',
+    perfectForPurchase: '購入に最適な品質。この商品は優れた価値を提供し、長持ちします。',
+    inspectBeforeBuying: '許容できる品質。注意深く検査し、数日以内に使用する予定。',
+    notRecommendedToBuy: '品質の問題が検出されました。より新鮮な代替品を探すことを検討してください。',
+    fridgeManagement: '冷蔵庫管理',
+    estimatedShelfLife: '推定保存期間',
+    consumeBy: '消費期限',
+    consumeSoon: '最高の品質のためにすぐに消費する',
+    healthBenefits: '健康効果'
   }
 };
 
