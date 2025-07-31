@@ -142,11 +142,38 @@ export function DetailedResultsPage({
 
   const processedScore = Math.min(10, Math.max(0, Math.round((100 - selectedFruit.freshness) / 10)));
 
+  // Check if this is an unknown produce case
+  const isUnknownProduce = selectedFruit.item === 'Unknown Produce' || selectedFruit.freshness === 0;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with background image */}
-      <div className="relative h-64 bg-gradient-to-br from-orange-200 to-orange-400 overflow-hidden">
-        {capturedImage ? (
+    <div className={`min-h-screen ${isUnknownProduce ? 'bg-white' : 'bg-gray-50'}`}>
+      {/* Header with background image or white background for unknown produce */}
+      <div className={`relative h-64 overflow-hidden ${
+        isUnknownProduce 
+          ? 'bg-white' 
+          : 'bg-gradient-to-br from-orange-200 to-orange-400'
+      }`}>
+        {isUnknownProduce ? (
+          /* White background with friendly message for unknown produce */
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <Camera className="w-20 h-20 mx-auto mb-4 text-gray-400" />
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('noProduceDetected')}</h2>
+              <p className="text-gray-600 mb-6 max-w-sm mx-auto">{t('scanFruitsVegetables')}</p>
+              
+              <div className="bg-blue-50 p-4 rounded-lg max-w-sm mx-auto">
+                <h3 className="font-semibold text-blue-800 mb-2">{t('improveImageQuality')}</h3>
+                <div className="text-sm text-blue-700 text-left space-y-1">
+                  <p>{t('betterLightingTip')}</p>
+                  <p>{t('clearImageTip')}</p>
+                  <p>{t('closerDistanceTip')}</p>
+                  <p>{t('multipleAnglesTip')}</p>
+                  <p>{t('removeObstructionsTip')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : capturedImage ? (
           <>
             <img 
               src={capturedImage} 
@@ -184,7 +211,7 @@ export function DetailedResultsPage({
             </div>
           </div>
         )}
-        <div className="absolute inset-0 bg-black bg-opacity-30" />
+        {!isUnknownProduce && <div className="absolute inset-0 bg-black bg-opacity-30" />}
         
         {/* Header controls */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
@@ -384,16 +411,110 @@ export function DetailedResultsPage({
               ))}
             </div>
 
-            {/* Storage Recommendations */}
-            {selectedFruit.storageRecommendation && (
+            {/* Storage Recommendations - Expanded */}
+            {!isUnknownProduce && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6"
               >
-                <h3 className="text-lg font-semibold text-black mb-3">{t('storageTips')}</h3>
-                <Card className="p-4 bg-blue-50 border-blue-200">
-                  <p className="text-sm text-blue-800">{translateAnalysisValue(language, selectedFruit.storageRecommendation || '')}</p>
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Package2 className="w-5 h-5 text-blue-600" />
+                  {t('expandedStorageTips')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-blue-50 to-white">
+                  <div className="space-y-4">
+                    {/* Storage categories */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Droplets className="w-4 h-4" />
+                            {t('temperatureControl')}
+                          </h4>
+                          <p className="text-sm text-blue-700">{t('temperatureRange')}</p>
+                        </div>
+                        
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Droplets className="w-4 h-4" />
+                            {t('humidityManagement')}
+                          </h4>
+                          <p className="text-sm text-blue-700">{t('humidityLevel')}</p>
+                        </div>
+                        
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Leaf className="w-4 h-4" />
+                            {t('gasManagement')}
+                          </h4>
+                          <div className="text-sm text-blue-700 space-y-1">
+                            <p>• {t('ethyleneProducers')}</p>
+                            <p>• {t('ethyleneSensitive')}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Package2 className="w-4 h-4" />
+                            {t('containerGuidance')}
+                          </h4>
+                          <div className="text-sm text-blue-700 space-y-1">
+                            <p>• {t('ventilatedContainers')}</p>
+                            <p>• {t('airtightStorage')}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Apple className="w-4 h-4" />
+                            {t('locationRecommendations')}
+                          </h4>
+                          <div className="text-sm text-blue-700 space-y-1">
+                            <p>• {t('refrigeratorCrisper')}</p>
+                            <p>• {t('counterRipening')}</p>
+                            <p>• {t('avoidDirectSunlight')}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-white p-3 rounded-lg border border-blue-200">
+                          <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+                            <Clock className="w-4 h-4" />
+                            Maintenance
+                          </h4>
+                          <p className="text-sm text-blue-700">{t('checkRegularly')}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Custom storage recommendation if available */}
+                    {selectedFruit.storageRecommendation && (
+                      <div className="pt-3 border-t border-blue-200">
+                        <h4 className="font-medium text-blue-800 mb-2">Specific Recommendation:</h4>
+                        <p className="text-sm text-blue-700 italic">
+                          "{translateAnalysisValue(language, selectedFruit.storageRecommendation)}"
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Freshness-dependent storage advice */}
+                    <div className="pt-3 border-t border-blue-200">
+                      <h4 className="font-medium text-blue-800 mb-2">
+                        {selectedFruit.freshness >= 80 ? '🟢 Optimal Storage:' :
+                         selectedFruit.freshness >= 60 ? '🟡 Priority Storage:' : '🔴 Immediate Use:'}
+                      </h4>
+                      <p className="text-sm text-blue-700">
+                        {selectedFruit.freshness >= 80 
+                          ? 'High quality produce - follow standard storage guidelines for maximum shelf life extension.'
+                          : selectedFruit.freshness >= 60
+                          ? 'Good quality but aging - store properly and use within recommended timeframe.'
+                          : 'Lower quality - consume soon and store in optimal conditions to prevent further deterioration.'
+                        }
+                      </p>
+                    </div>
+                  </div>
                 </Card>
               </motion.div>
             )}
@@ -503,53 +624,310 @@ export function DetailedResultsPage({
               </Card>
             </motion.div>
 
-            {/* Health Benefits */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6"
-            >
-              <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
-                <Heart className="w-5 h-5 text-red-500" />
-                {t('healthBenefits')}
-              </h3>
-              <Card className="p-4 bg-gradient-to-br from-red-50 to-white">
-                <div className="space-y-2 text-sm text-gray-700">
-                  {selectedFruit.nutritionInfo?.benefits ? (
-                    <p>{translateAnalysisValue(language, selectedFruit.nutritionInfo.benefits)}</p>
-                  ) : (
-                    <>
-                      <p>• {t('richInVitamins')}</p>
-                      <p>• {t('providesAntioxidants')}</p>
-                      {selectedFruit.freshness >= 80 && (
-                        <>
+            {/* Nutritional Breakdown */}
+            {!isUnknownProduce && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6"
+              >
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Apple className="w-5 h-5 text-green-600" />
+                  {t('nutritionalBreakdown')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-green-50 to-white">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded-lg border border-green-200">
+                      <h4 className="font-medium text-green-800 mb-2">{t('macronutrients')}</h4>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <p>• {t('carbs')}: {selectedFruit.nutritionInfo?.netCarbs || '25g'}</p>
+                        <p>• {t('fiber')}: {selectedFruit.nutritionInfo?.fiber || '4.4g'}</p>
+                        <p>• {t('sugar')}: {selectedFruit.nutritionInfo?.sugar || '19g'}</p>
+                        <p>• {t('protein')}: 0.3g</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-lg border border-green-200">
+                      <h4 className="font-medium text-green-800 mb-2">{t('micronutrients')}</h4>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <p>• Vitamin C: 14% DV</p>
+                        <p>• Potassium: 6% DV</p>
+                        <p>• Vitamin A: 3% DV</p>
+                        <p>• Calcium: 1% DV</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-lg border border-green-200">
+                      <h4 className="font-medium text-green-800 mb-2">{t('phytonutrients')}</h4>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <p>• Quercetin</p>
+                        <p>• Catechin</p>
+                        <p>• Chlorogenic acid</p>
+                        <p>• Anthocyanins</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-3 border-t border-green-200">
+                    <div className="flex justify-between items-center text-sm">
+                      <div>
+                        <span className="font-medium text-green-800">{t('calorieContent')}: </span>
+                        <span className="text-green-700">{selectedFruit.nutritionInfo?.calories || '95 kcal'} per serving</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-green-800">{t('glycemicIndex')}: </span>
+                        <span className="text-green-700">Low to Medium (36-38)</span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Preparation & Usage Tips */}
+            {!isUnknownProduce && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6"
+              >
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-purple-600" />
+                  {t('preparationTips')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-purple-50 to-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg border border-purple-200">
+                        <h4 className="font-medium text-purple-800 mb-2">Preparation Methods</h4>
+                        <div className="text-sm text-purple-700 space-y-1">
+                          <p>• Fresh consumption</p>
+                          <p>• Juice extraction</p>
+                          <p>• Cooking & baking</p>
+                          <p>• Dehydration</p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-3 rounded-lg border border-purple-200">
+                        <h4 className="font-medium text-purple-800 mb-2">{t('servingRecommendations')}</h4>
+                        <div className="text-sm text-purple-700 space-y-1">
+                          <p>• Adults: 1-2 medium pieces</p>
+                          <p>• Children: ½-1 medium piece</p>
+                          <p>• Best consumed with skin</p>
+                          <p>• Combine with protein/fat</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg border border-purple-200">
+                        <h4 className="font-medium text-purple-800 mb-2">{t('pairingsSuggestions')}</h4>
+                        <div className="text-sm text-purple-700 space-y-1">
+                          <p>• Nuts & nut butters</p>
+                          <p>• Yogurt & cheese</p>
+                          <p>• Oats & grains</p>
+                          <p>• Dark leafy greens</p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-3 rounded-lg border border-purple-200">
+                        <h4 className="font-medium text-purple-800 mb-2">{t('seasonalAvailability')}</h4>
+                        <div className="text-sm text-purple-700 space-y-1">
+                          <p>• Peak: Fall season</p>
+                          <p>• Available year-round</p>
+                          <p>• Best quality: August-November</p>
+                          <p>• Local varieties preferred</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Environmental & Sustainability Info */}
+            {!isUnknownProduce && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6"
+              >
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Leaf className="w-5 h-5 text-emerald-600" />
+                  {t('sustainabilityInfo')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-emerald-50 to-white">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded-lg border border-emerald-200">
+                      <h4 className="font-medium text-emerald-800 mb-2">Carbon Footprint</h4>
+                      <div className="text-sm text-emerald-700 space-y-1">
+                        <p>• Local: 0.3 kg CO₂/kg</p>
+                        <p>• Regional: 0.8 kg CO₂/kg</p>
+                        <p>• Choose local when possible</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-lg border border-emerald-200">
+                      <h4 className="font-medium text-emerald-800 mb-2">Water Usage</h4>
+                      <div className="text-sm text-emerald-700 space-y-1">
+                        <p>• 70L water per apple</p>
+                        <p>• Moderate water footprint</p>
+                        <p>• Support sustainable farms</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white p-3 rounded-lg border border-emerald-200">
+                      <h4 className="font-medium text-emerald-800 mb-2">Eco Tips</h4>
+                      <div className="text-sm text-emerald-700 space-y-1">
+                        <p>• Buy organic when possible</p>
+                        <p>• Compost peels & cores</p>
+                        <p>• Use reusable bags</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-3 border-t border-emerald-200">
+                    <p className="text-sm text-emerald-700">
+                      <span className="font-medium">Freshness Impact:</span> {
+                        selectedFruit.freshness >= 80 
+                          ? 'Optimal freshness reduces food waste and maximizes nutritional value.' 
+                          : 'Consider using soon to minimize waste and environmental impact.'
+                      }
+                    </p>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* Health Benefits - Expanded */}
+            {!isUnknownProduce && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6"
+              >
+                <h3 className="text-lg font-semibold text-black mb-3 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-red-500" />
+                  {t('expandedHealthBenefits')}
+                </h3>
+                <Card className="p-4 bg-gradient-to-br from-red-50 to-white">
+                  <div className="space-y-4">
+                    {/* Comprehensive health benefits grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-blue-600" />
+                          <span className="font-medium text-gray-800">{t('immuneSystemSupport')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Heart className="w-4 h-4 text-red-600" />
+                          <span className="font-medium text-gray-800">{t('cardiovascularHealth')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Droplets className="w-4 h-4 text-green-600" />
+                          <span className="font-medium text-gray-800">{t('digestiveWellness')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Leaf className="w-4 h-4 text-emerald-600" />
+                          <span className="font-medium text-gray-800">{t('skinHealthBenefits')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Flame className="w-4 h-4 text-orange-600" />
+                          <span className="font-medium text-gray-800">{t('energyMetabolism')}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Package2 className="w-4 h-4 text-gray-600" />
+                          <span className="font-medium text-gray-800">{t('boneHealthSupport')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Apple className="w-4 h-4 text-purple-600" />
+                          <span className="font-medium text-gray-800">{t('eyeHealthProtection')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-indigo-600" />
+                          <span className="font-medium text-gray-800">{t('antiInflammatoryProps')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-green-600" />
+                          <span className="font-medium text-gray-800">{t('weightManagementAid')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ShoppingCart className="w-4 h-4 text-teal-600" />
+                          <span className="font-medium text-gray-800">{t('detoxificationSupport')}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Custom benefits if available */}
+                    {selectedFruit.nutritionInfo?.benefits && (
+                      <div className="pt-3 border-t border-red-200">
+                        <p className="text-sm text-gray-700 italic">
+                          "{translateAnalysisValue(language, selectedFruit.nutritionInfo.benefits)}"
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Freshness-dependent additional benefits */}
+                    {selectedFruit.freshness >= 80 && (
+                      <div className="pt-3 border-t border-red-200">
+                        <p className="text-sm font-medium text-green-700 mb-1">
+                          ✨ Premium Quality Benefits:
+                        </p>
+                        <div className="text-sm text-gray-700 space-y-1">
                           <p>• {t('highFiberBenefits')}</p>
                           <p>• {t('naturalEnergySource')}</p>
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
-              </Card>
-            </motion.div>
+                          <p>• Maximum nutrient density and bioavailability</p>
+                          <p>• Optimal antioxidant activity for cellular protection</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </motion.div>
+            )}
           </div>
 
           {/* Bottom Actions */}
           <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4 flex gap-3">
-            <Button 
-              variant="outline" 
-              className="flex-1 flex items-center justify-center gap-2"
-              onClick={onScanAnother}
-            >
-              <Camera className="w-4 h-4" />
-              {t('scanAnother')}
-            </Button>
-            <Button 
-              className="flex-1 bg-black hover:bg-gray-800 text-white"
-              onClick={onBack}
-            >
-              {t('backToMain')}
-            </Button>
+            {isUnknownProduce ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="flex-1 flex items-center justify-center gap-2"
+                  onClick={onBack}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t('backToMain')}
+                </Button>
+                <Button 
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+                  onClick={onScanAnother}
+                >
+                  <Camera className="w-4 h-4" />
+                  {t('retryScanning')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="flex-1 flex items-center justify-center gap-2"
+                  onClick={onScanAnother}
+                >
+                  <Camera className="w-4 h-4" />
+                  {t('scanAnother')}
+                </Button>
+                <Button 
+                  className="flex-1 bg-black hover:bg-gray-800 text-white"
+                  onClick={onBack}
+                >
+                  {t('backToMain')}
+                </Button>
+              </>
+            )}
           </div>
         </motion.div>
       </div>

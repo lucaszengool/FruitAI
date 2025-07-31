@@ -582,7 +582,7 @@ export default function Home() {
       // Save to scan history (async, but don't await to avoid blocking UI)
       saveScanToHistory(results, capturedImage);
       
-      // Show sign-up prompt after 2nd scan for guests
+      // Show sign-up prompt after reaching scan limit for guests
       if (!scanLimit.isSignedIn && newScanCount >= scanLimit.scanLimit) {
         // Delay showing the prompt to allow user to see results first
         setTimeout(() => {

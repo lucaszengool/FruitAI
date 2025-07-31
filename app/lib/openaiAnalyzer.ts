@@ -325,15 +325,15 @@ IMPORTANT: Analyze each visible fruit/vegetable individually. If you see multipl
   private getFallbackAnalysis(): OpenAIAnalysisResult {
     return {
       item: 'Unknown Produce',
-      freshness: 60,
+      freshness: 0,
       recommendation: 'check',
-      details: 'Unable to complete analysis with OpenAI. Please check the image quality and try again.',
-      confidence: 50,
+      details: 'No fruits or vegetables detected in the image. Please ensure you are scanning fresh produce and try again with better lighting and image quality.',
+      confidence: 0,
       characteristics: {
-        color: 'Unable to determine',
-        texture: 'Unable to determine',
+        color: 'Not detected',
+        texture: 'Not detected',
         blemishes: 'Unable to assess',
-        ripeness: 'Manual inspection needed'
+        ripeness: 'No produce detected'
       },
       timestamp: new Date().toISOString(),
       analysisId: `fallback_openai_${Date.now()}`

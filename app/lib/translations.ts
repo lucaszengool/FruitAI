@@ -224,7 +224,65 @@ export const translations: Translations = {
     withA: 'with a',
     finish: 'finish',
     deepRedGlossy: 'Deep red with a glossy finish',
-    howScoreCalculated: 'Click to see how the freshness score is calculated'
+    howScoreCalculated: 'Click to see how the freshness score is calculated',
+    
+    // Unknown produce handling
+    unknownProduce: 'Unknown Produce',
+    scanHistoryView: 'Scan History View',
+    noProduceDetected: 'No Produce Detected',
+    scanFruitsVegetables: 'Please scan fruits or vegetables and try again',
+    improveImageQuality: 'Tips to improve scan quality:',
+    betterLightingTip: '• Ensure good lighting',
+    clearImageTip: '• Take clear, focused photos',
+    closerDistanceTip: '• Position items closer to camera',
+    multipleAnglesTip: '• Try different angles',
+    removeObstructionsTip: '• Remove any obstructions',
+    retryScanning: 'Retry Scanning',
+    
+    // Expanded health benefits content
+    expandedHealthBenefits: 'Comprehensive Health Benefits',
+    immuneSystemSupport: 'Supports immune system function with high vitamin C content',
+    cardiovascularHealth: 'Promotes heart health through antioxidants and potassium',
+    digestiveWellness: 'Aids digestion with natural fiber and beneficial enzymes',
+    skinHealthBenefits: 'Supports healthy skin with vitamins A, C, and antioxidants',
+    energyMetabolism: 'Provides natural energy through healthy carbohydrates',
+    boneHealthSupport: 'Supports bone health with calcium and vitamin K',
+    eyeHealthProtection: 'Protects eye health with lutein and beta-carotene',
+    antiInflammatoryProps: 'Contains anti-inflammatory compounds',
+    weightManagementAid: 'Supports healthy weight management with low calories and high fiber',
+    detoxificationSupport: 'Aids natural detoxification processes',
+    
+    // Expanded storage tips content
+    expandedStorageTips: 'Detailed Storage Guide',
+    temperatureControl: 'Optimal Temperature Control',
+    humidityManagement: 'Humidity Management',
+    gasManagement: 'Ethylene Gas Management',
+    containerGuidance: 'Container Selection',
+    locationRecommendations: 'Storage Location',
+    temperatureRange: 'Store at 32-40°F (0-4°C) for maximum freshness',
+    humidityLevel: 'Maintain 85-90% humidity in crisper drawer',
+    ethyleneProducers: 'Keep away from ethylene-producing fruits (apples, bananas)',
+    ethyleneSensitive: 'Store separately from ethylene-sensitive produce',
+    ventilatedContainers: 'Use perforated bags or ventilated containers',
+    airtightStorage: 'Store in airtight containers to maintain moisture',
+    refrigeratorCrisper: 'Best stored in refrigerator crisper drawer',
+    counterRipening: 'Keep at room temperature until ripe, then refrigerate',
+    avoidDirectSunlight: 'Avoid direct sunlight and heat sources',
+    checkRegularly: 'Check regularly and remove any spoiled items',
+    
+    // Additional detailed analysis sections
+    nutritionalBreakdown: 'Detailed Nutritional Analysis',
+    phytonutrients: 'Phytonutrients & Antioxidants',
+    macronutrients: 'Macronutrient Profile',
+    micronutrients: 'Vitamin & Mineral Content',
+    calorieContent: 'Caloric Information',
+    glycemicIndex: 'Glycemic Impact',
+    servingRecommendations: 'Serving Size & Recommendations',
+    preparationTips: 'Preparation & Cooking Tips',
+    pairingsSuggestions: 'Food Pairing Suggestions',
+    seasonalAvailability: 'Seasonal Information',
+    varietyInformation: 'Variety & Selection Guide',
+    sustainabilityInfo: 'Environmental Impact'
   },
   
   es: {
@@ -844,7 +902,7 @@ export const translations: Translations = {
     // New additions for Chinese
     veryGood: '非常好！',
     highNutrients: '富含有益营养素，对整体健康非常有利。可以成为健康饮食的常规部分。',
-    storeCoolDry: '存放在阴凉干燥的地方或冷藏以延长新鲜度。',
+    storeCoolDry: '存放在阴凉干燥的地方或冷藏以延长新鲜度。建议温度控制在0-4°C，湿度保持在85-90%。避免阳光直射和高温环境，远离产生乙烯气体的水果。使用透气性良好的容器或保鲜袋，定期检查并及时移除变质部分。正确的存储方式可以显著延长新鲜度，保持最佳营养价值和口感。',
     deepRed: '深红色',
     smoothAndFirm: '光滑紧实',
     perfectlyRipe: '完美成熟',
@@ -865,7 +923,7 @@ export const translations: Translations = {
     healthBenefits: '健康益处',
     
     // Health benefits
-    providesAntioxidants: '提供抗氧化剂和营养素',
+    providesAntioxidants: '富含天然抗氧化剂、多种维生素、矿物质和植物营养素，全面支持身体健康机能，增强免疫力，促进新陈代谢，改善消化系统功能',
     richInVitamins: '富含维生素和矿物质，支持免疫系统和整体健康',
     highFiberBenefits: '高纤维含量有助于消化，帮助维持健康的胆固醇水平',
     naturalEnergySource: '来自健康糖分和碳水化合物的天然能量来源',
@@ -874,7 +932,65 @@ export const translations: Translations = {
     withA: '具有',
     finish: '质感',
     deepRedGlossy: '深红色，具有光泽质感',
-    howScoreCalculated: '点击查看新鲜度分数是如何计算的'
+    howScoreCalculated: '点击查看新鲜度分数是如何计算的',
+    
+    // Unknown produce handling
+    unknownProduce: '未知农产品',
+    scanHistoryView: '扫描历史视图',
+    noProduceDetected: '未检测到农产品',
+    scanFruitsVegetables: '请扫描水果或蔬菜然后重试',
+    improveImageQuality: '提高扫描质量的技巧：',
+    betterLightingTip: '• 确保光线充足',
+    clearImageTip: '• 拍摄清晰、聚焦的照片',
+    closerDistanceTip: '• 将物品放置更靠近相机',
+    multipleAnglesTip: '• 尝试不同角度',
+    removeObstructionsTip: '• 移除任何障碍物',
+    retryScanning: '重新扫描',
+    
+    // Expanded health benefits content
+    expandedHealthBenefits: '全面健康益处',
+    immuneSystemSupport: '高维生素C含量支持免疫系统功能',
+    cardiovascularHealth: '通过抗氧化剂和钾促进心脏健康',
+    digestiveWellness: '天然纤维和有益酶帮助消化',
+    skinHealthBenefits: '维生素A、C和抗氧化剂支持健康肌肤',
+    energyMetabolism: '通过健康碳水化合物提供天然能量',
+    boneHealthSupport: '钙和维生素K支持骨骼健康',
+    eyeHealthProtection: '叶黄素和β-胡萝卜素保护眼部健康',
+    antiInflammatoryProps: '含有抗炎化合物',
+    weightManagementAid: '低热量高纤维支持健康体重管理',
+    detoxificationSupport: '帮助天然排毒过程',
+    
+    // Expanded storage tips content - 存储提示
+    expandedStorageTips: '详细存储指南',
+    temperatureControl: '最佳温度控制',
+    humidityManagement: '湿度管理',
+    gasManagement: '乙烯气体管理',
+    containerGuidance: '容器选择',
+    locationRecommendations: '存储位置',
+    temperatureRange: '存储在32-40°F（0-4°C）以保持最佳新鲜度',
+    humidityLevel: '在蔬菜保鲜盒中保持85-90%湿度',
+    ethyleneProducers: '远离产生乙烯的水果（苹果、香蕉）',
+    ethyleneSensitive: '与对乙烯敏感的农产品分开存放',
+    ventilatedContainers: '使用有孔袋子或通风容器',
+    airtightStorage: '存放在密封容器中以保持水分',
+    refrigeratorCrisper: '最好存放在冰箱蔬菜保鲜盒中',
+    counterRipening: '室温下放至成熟，然后冷藏',
+    avoidDirectSunlight: '避免阳光直射和热源',
+    checkRegularly: '定期检查并移除任何变质物品',
+    
+    // Additional detailed analysis sections
+    nutritionalBreakdown: '详细营养分析',
+    phytonutrients: '植物营养素和抗氧化剂',
+    macronutrients: '宏量营养素配比',
+    micronutrients: '维生素和矿物质含量',
+    calorieContent: '热量信息',
+    glycemicIndex: '血糖指数影响',
+    servingRecommendations: '份量大小和建议',
+    preparationTips: '准备和烹饪技巧',
+    pairingsSuggestions: '食物搭配建议',
+    seasonalAvailability: '季节性信息',
+    varietyInformation: '品种和选择指南',
+    sustainabilityInfo: '环境影响'
   },
   
   ja: {
@@ -1349,6 +1465,7 @@ export function translateAnalysisValue(language: string, value: string): string 
     'Tomato': 'tomato',
     'Lettuce': 'lettuce',
     'Spinach': 'spinach',
+    'Unknown Produce': 'unknownProduce',
     
     // Additional quality scores and storage
     'Very Good!': 'veryGood',
