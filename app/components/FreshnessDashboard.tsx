@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { useTranslation } from '../contexts/TranslationContext';
 
 interface FreshnessDashboardProps {
   onStartScan: () => void;
@@ -32,6 +33,7 @@ interface RecentScan {
 }
 
 export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardProps) {
+  const { t } = useTranslation();
   const [currentStreak, setCurrentStreak] = useState(1);
   const [todayScans, setTodayScans] = useState(0);
   const [weeklyAverage, setWeeklyAverage] = useState(82);
@@ -65,25 +67,25 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
 
   const freshnessMetrics = [
     {
-      title: 'Total Scans',
+      title: t('totalScans'),
       value: totalScans.toString(),
-      subtitle: 'Items analyzed',
+      subtitle: t('itemsAnalyzedShort'),
       icon: Apple,
       color: 'text-green-500',
       progress: Math.min(totalScans / 100, 1) // Progress based on scans up to 100
     },
     {
-      title: 'Quality Score',
+      title: t('qualityScore'),
       value: averageFreshness > 0 ? `${averageFreshness}%` : '0%', 
-      subtitle: 'Avg freshness',
+      subtitle: t('avgFreshness'),
       icon: Leaf,
       color: averageFreshness >= 80 ? 'text-green-500' : averageFreshness >= 60 ? 'text-yellow-500' : 'text-red-500',
       progress: averageFreshness / 100
     },
     {
-      title: 'Recent Activity',
+      title: t('recentActivity'),
       value: recentScans.length.toString(),
-      subtitle: 'Recent scans', 
+      subtitle: t('recentScans'), 
       icon: Clock,
       color: 'text-blue-500',
       progress: Math.min(recentScans.length / 10, 1) // Progress based on recent activity
@@ -113,7 +115,7 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
           <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
             <Apple className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-black">FruitAI Dashboard</h1>
+          <h1 className="text-2xl font-bold text-black">{t('fruitaiDashboard')}</h1>
         </div>
         <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
           <Flame className="w-4 h-4 text-orange-500" />
@@ -134,7 +136,7 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
             <div className="text-8xl font-light text-black mb-2">
               {totalScans}
             </div>
-            <p className="text-lg text-gray-600 mb-4">Total items analyzed</p>
+            <p className="text-lg text-gray-600 mb-4">{t('totalItemsAnalyzed')}</p>
             
             {/* Circular Progress Indicator */}
             <div className="relative inline-flex items-center justify-center">
@@ -233,9 +235,9 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
         className="mb-8"
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-black">🏆 Top Fresh Items</h2>
+          <h2 className="text-xl font-semibold text-black">{t('topFreshItems')}</h2>
           <span className="text-sm text-gray-500 bg-green-100 px-3 py-1 rounded-full">
-            Ranked by freshness
+            {t('rankedByFreshness')}
           </span>
         </div>
         
@@ -288,11 +290,11 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Flame className="w-3 h-3 text-green-600" />
-                          <span className="text-black font-medium">{scan.averageScore}% fresh</span>
+                          <span className="text-black font-medium">{scan.averageScore}% {t('fresh')}</span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-500">
                           <Apple className="w-3 h-3" />
-                          <span>{scan.itemCount} items</span>
+                          <span>{scan.itemCount} {t('items')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3 text-gray-500" />
@@ -301,8 +303,8 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
                             scan.averageScore >= 60 ? 'bg-yellow-100 text-yellow-800' : 
                             'bg-red-100 text-red-800'
                           }`}>
-                            {scan.averageScore >= 80 ? 'Excellent' : 
-                             scan.averageScore >= 60 ? 'Good' : 'Fair'}
+                            {scan.averageScore >= 80 ? t('excellent') : 
+                             scan.averageScore >= 60 ? t('good') : t('fair')}
                           </span>
                         </div>
                       </div>
@@ -314,11 +316,11 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
           ) : (
             <Card className="bg-white p-8 text-center">
               <Apple className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">No scans yet</h3>
-              <p className="text-gray-500 mb-6">Start analyzing fruit freshness to see your history here</p>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('noScansYet')}</h3>
+              <p className="text-gray-500 mb-6">{t('startAnalyzing')}</p>
               <Button onClick={onStartScan} className="bg-green-600 hover:bg-green-700">
                 <Plus className="w-4 h-4 mr-2" />
-                Start First Scan
+                {t('startFirstScan')}
               </Button>
             </Card>
           )}
@@ -352,7 +354,7 @@ export function FreshnessDashboard({ onStartScan, onBack }: FreshnessDashboardPr
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
               <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
-            <span className="text-sm font-medium text-black">Dashboard</span>
+            <span className="text-sm font-medium text-black">{t('dashboard')}</span>
           </button>
         </div>
       </motion.div>

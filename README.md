@@ -82,8 +82,8 @@ This application is configured for deployment on Railway:
 Set these in your Railway environment:
 
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_Y3V0ZS1ib25lZmlzaC04NS5jbGVyay5hY2NvdW50cy5kZXYk
-CLERK_SECRET_KEY=sk_test_UelifwMljvBicRm4UIOQqjqWoVs3akaK8h9pE3gZDF
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsuZnJ1aXRhaS5vcmck
+CLERK_SECRET_KEY=sk_live_vaE2p7BZsAd3GmplhsG3ajUXyJBLmYtfHQ4zg3aUiX
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/

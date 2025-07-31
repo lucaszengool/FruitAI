@@ -178,7 +178,7 @@ const translations: Record<string, Translations> = {
     
     // Main App
     appTitle: 'FruitAI',
-    appSubtitle: 'AI智能新鲜度扫描器',
+    appSubtitle: 'AI蔬果新鲜度助手',
     
     // Modes
     storeSession: '商店扫描',
@@ -187,8 +187,8 @@ const translations: Record<string, Translations> = {
     dashboard: '仪表板',
     
     // Mode Descriptions
-    storeSessionDesc: '购物时扫描多个商品，比较新鲜度，做出最佳选择',
-    fridgeCheckDesc: '监控需要尽快使用的物品，跟踪储存农产品的新鲜度',
+    storeSessionDesc: '购物时扫描多个水果和蔬菜，比较新鲜度，做出最佳选择',
+    fridgeCheckDesc: '监控需要尽快使用的物品，跟踪储存产品的新鲜度',
     pantryCheckDesc: '跟踪储存物品，在需要注意时获得提醒',
     
     // Scanning

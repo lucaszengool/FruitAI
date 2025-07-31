@@ -820,7 +820,7 @@ export default function Home() {
                       className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-3 group"
                     >
                       <Camera className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                      {t('quickScan')}
+                      {t('scanProduce')}
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                     <p className="text-xs text-gray-500 mt-2 text-center">

@@ -29,9 +29,9 @@ export const translations: Translations = {
     loading: 'Loading...',
     
     // Analysis
-    analyzingFruit: 'Analyzing your fruit...',
+    analyzingFruit: 'Analyzing your produce...',
     aiScanning: 'AI is scanning for freshness and quality',
-    detectingFruits: 'Detecting individual fruits',
+    detectingFruits: 'Detecting individual items',
     analyzingColor: 'Analyzing color and texture',
     calculatingFreshness: 'Calculating freshness scores',
     thisMayTake: 'This may take 10-30 seconds',
@@ -84,7 +84,100 @@ export const translations: Translations = {
     // Feature Labels
     smartShoppingFeature: 'Smart Shopping',
     instantCheckFeature: 'Instant Check',
-    fridgeHelperFeature: 'Fridge Helper'
+    fridgeHelperFeature: 'Fridge Helper',
+    
+    // Additional analysis page translations
+    analysisComplete: 'Analysis Complete',
+    itemAnalyzed: 'item analyzed',
+    confidenceLevel: 'confidence',
+    nutritionHighlights: 'Nutrition Highlights',
+    vitamins: 'Vitamins',
+    fiber: 'Fiber',
+    minerals: 'Minerals',
+    benefits: 'Benefits',
+    highInVitaminC: 'High in Vitamin C, Vitamin A',
+    fiberContent: '4.4g per medium apple',
+    potassiumCalcium: 'Potassium, Calcium',
+    heartHealthDigestive: 'Heart health, digestive support',
+    storageAdvice: 'Store in refrigerator crisper drawer for up to 2 weeks. Keep away from other fruits that produce ethylene gas.',
+    vibrantRed: 'Vibrant red',
+    crispFirm: 'Crisp & firm',
+    noneVisible: 'None visible',
+    perfect: 'Perfect',
+    
+    // Dashboard specific
+    fruitaiDashboard: 'FruitAI Dashboard',
+    totalItemsAnalyzed: 'Total items analyzed',
+    
+    // Specific analysis values
+    redWithPatches: 'Red with yellow and brown patches',
+    wrinkledSoft: 'Wrinkled and soft', 
+    visibleBlemishes: 'Visible blemishes and discoloration',
+    overripe: 'Overripe',
+    notRecommendedStorage: 'Not recommended for storage',
+    storeInRefrigerator: 'Store in refrigerator crisper drawer for up to 2 weeks',
+    
+    // Common fruit conditions
+    ripe: 'Ripe',
+    unripe: 'Unripe',
+    firm: 'Firm',
+    soft: 'Soft',
+    crisp: 'Crisp',
+    wrinkled: 'Wrinkled',
+    smooth: 'Smooth',
+    red: 'Red',
+    green: 'Green',
+    yellow: 'Yellow',
+    brown: 'Brown',
+    patches: 'patches',
+    blemished: 'Blemished',
+    unblemished: 'Unblemished',
+    
+    // Nutrition labels
+    netCarbs: 'Net Carbs',
+    sugar: 'Sugar',
+    sodium: 'Sodium',
+    protein: 'Protein',
+    carbs: 'Carbs',
+    fats: 'Fats',
+    
+    // Quality descriptions
+    goodQuality: 'Good',
+    excellentQuality: 'Excellent',
+    fairQuality: 'Fair',
+    poorQuality: 'Poor',
+    veryGood: 'Very Good!',
+    decentQuality: 'Decent quality with some beneficial nutrients. Consider consuming soon for best quality.',
+    excellentQualityDesc: 'Excellent quality with high nutritional value. Perfect for immediate consumption.',
+    fairQualityDesc: 'Fair quality with moderate nutritional value. Use within a few days.',
+    poorQualityDesc: 'Poor quality with limited nutritional value. Not recommended for consumption.',
+    highNutrients: 'High in beneficial nutrients and very supportive of overall health. It can be a regular part of a healthy diet.',
+    
+    // Storage recommendations
+    storeCoolDry: 'Store in a cool, dry place or refrigerate to extend freshness.',
+    
+    // Texture combinations
+    deepRed: 'Deep red',
+    smoothAndFirm: 'Smooth and firm',
+    perfectlyRipe: 'Perfectly ripe',
+    
+    // Fruit and vegetable names
+    apple: 'Apple',
+    banana: 'Banana',
+    orange: 'Orange',
+    strawberry: 'Strawberry',
+    grape: 'Grape',
+    carrot: 'Carrot',
+    broccoli: 'Broccoli',
+    tomato: 'Tomato',
+    lettuce: 'Lettuce',
+    spinach: 'Spinach',
+    
+    // Updated UI text to include vegetables
+    fruitsAndVegetables: 'Fruits & Vegetables',
+    analyzeProduceInstantly: 'Analyze produce instantly',
+    fruitVegetableScanning: 'Fruit & Vegetable Scanning',
+    scanProduce: 'Scan Produce'
   },
   
   es: {
@@ -107,9 +200,9 @@ export const translations: Translations = {
     loading: 'Cargando...',
     
     // Analysis
-    analyzingFruit: 'Analizando tu fruta...',
+    analyzingFruit: 'Analizando tu producto...',
     aiScanning: 'La IA está escaneando la frescura y calidad',
-    detectingFruits: 'Detectando frutas individuales',
+    detectingFruits: 'Detectando elementos individuales',
     analyzingColor: 'Analizando color y textura',
     calculatingFreshness: 'Calculando puntuaciones de frescura',
     thisMayTake: 'Esto puede tomar 10-30 segundos',
@@ -162,7 +255,90 @@ export const translations: Translations = {
     // Feature Labels
     smartShoppingFeature: 'Compras Inteligentes',
     instantCheckFeature: 'Verificación Instantánea',
-    fridgeHelperFeature: 'Asistente de Refrigerador'
+    fridgeHelperFeature: 'Asistente de Refrigerador',
+    
+    // Additional analysis page translations
+    analysisComplete: 'Análisis Completo',
+    itemAnalyzed: 'artículo analizado',
+    confidenceLevel: 'confianza',
+    nutritionHighlights: 'Destacados Nutricionales',
+    vitamins: 'Vitaminas',
+    fiber: 'Fibra',
+    minerals: 'Minerales',
+    benefits: 'Beneficios',
+    highInVitaminC: 'Alto en Vitamina C, Vitamina A',
+    fiberContent: '4.4g por manzana mediana',
+    potassiumCalcium: 'Potasio, Calcio',
+    heartHealthDigestive: 'Salud cardíaca, apoyo digestivo',
+    storageAdvice: 'Almacenar en el cajón para verduras del refrigerador hasta por 2 semanas. Mantener alejado de otras frutas que producen gas etileno.',
+    vibrantRed: 'Rojo vibrante',
+    crispFirm: 'Crujiente y firme',
+    noneVisible: 'Ninguna visible',
+    perfect: 'Perfecto',
+    
+    // Dashboard specific
+    fruitaiDashboard: 'Panel FruitAI',
+    totalItemsAnalyzed: 'Total de artículos analizados',
+    
+    // Specific analysis values
+    redWithPatches: 'Rojo con manchas amarillas y marrones',
+    wrinkledSoft: 'Arrugado y blando', 
+    visibleBlemishes: 'Manchas visibles y decoloración',
+    overripe: 'Demasiado maduro',
+    notRecommendedStorage: 'No recomendado para almacenamiento',
+    storeInRefrigerator: 'Almacenar en el cajón para verduras del refrigerador hasta por 2 semanas',
+    
+    // Common fruit conditions
+    ripe: 'Maduro',
+    unripe: 'Verde',
+    firm: 'Firme',
+    soft: 'Blando',
+    crisp: 'Crujiente',
+    wrinkled: 'Arrugado',
+    smooth: 'Suave',
+    red: 'Rojo',
+    green: 'Verde',
+    yellow: 'Amarillo',
+    brown: 'Marrón',
+    patches: 'manchas',
+    blemished: 'Con manchas',
+    unblemished: 'Sin manchas',
+    
+    // Nutrition labels
+    netCarbs: 'Carbohidratos Netos',
+    sugar: 'Azúcar',
+    sodium: 'Sodio',
+    protein: 'Proteína',
+    carbs: 'Carbohidratos',
+    fats: 'Grasas',
+    
+    // Quality descriptions
+    goodQuality: 'Bueno',
+    excellentQuality: 'Excelente',
+    fairQuality: 'Regular',
+    poorQuality: 'Malo',
+    decentQuality: 'Calidad decente con algunos nutrientes beneficiosos. Considere consumir pronto para mejor calidad.',
+    excellentQualityDesc: 'Excelente calidad con alto valor nutricional. Perfecto para consumo inmediato.',
+    fairQualityDesc: 'Calidad regular con valor nutricional moderado. Usar en pocos días.',
+    poorQualityDesc: 'Mala calidad con valor nutricional limitado. No recomendado para consumo.',
+    
+    // Fruit and vegetable names
+    apple: 'Manzana',
+    banana: 'Plátano',
+    orange: 'Naranja',
+    strawberry: 'Fresa',
+    grape: 'Uva',
+    carrot: 'Zanahoria',
+    broccoli: 'Brócoli',
+    tomato: 'Tomate',
+    lettuce: 'Lechuga',
+    spinach: 'Espinaca',
+    
+    // Updated UI text to include vegetables
+    fruitsAndVegetables: 'Frutas y Verduras',
+    analyzeProduceInstantly: 'Analizar productos al instante',
+    fruitVegetableScanning: 'Escaneo de Frutas y Verduras',
+    scanProduce: 'Escanear Productos'
   },
   
   fr: {
@@ -185,9 +361,9 @@ export const translations: Translations = {
     loading: 'Chargement...',
     
     // Analysis
-    analyzingFruit: 'Analyse de votre fruit...',
+    analyzingFruit: 'Analyse de votre produit...',
     aiScanning: 'L\'IA scanne la fraîcheur et la qualité',
-    detectingFruits: 'Détection des fruits individuels',
+    detectingFruits: 'Détection des éléments individuels',
     analyzingColor: 'Analyse de la couleur et de la texture',
     calculatingFreshness: 'Calcul des scores de fraîcheur',
     thisMayTake: 'Cela peut prendre 10-30 secondes',
@@ -240,32 +416,115 @@ export const translations: Translations = {
     // Feature Labels
     smartShoppingFeature: 'Achat Intelligent',
     instantCheckFeature: 'Vérification Instantanée',
-    fridgeHelperFeature: 'Assistant Frigo'
+    fridgeHelperFeature: 'Assistant Frigo',
+    
+    // Additional analysis page translations
+    analysisComplete: 'Analyse Terminée',
+    itemAnalyzed: 'article analysé',
+    confidenceLevel: 'confiance',
+    nutritionHighlights: 'Points Nutritionnels',
+    vitamins: 'Vitamines',
+    fiber: 'Fibres',
+    minerals: 'Minéraux',
+    benefits: 'Bénéfices',
+    highInVitaminC: 'Riche en Vitamine C, Vitamine A',
+    fiberContent: '4,4g par pomme moyenne',
+    potassiumCalcium: 'Potassium, Calcium',
+    heartHealthDigestive: 'Santé cardiaque, soutien digestif',
+    storageAdvice: 'Conserver dans le bac à légumes du réfrigérateur jusqu\'à 2 semaines. Tenir éloigné des autres fruits qui produisent du gaz éthylène.',
+    vibrantRed: 'Rouge vibrant',
+    crispFirm: 'Croquant et ferme',
+    noneVisible: 'Aucune visible',
+    perfect: 'Parfait',
+    
+    // Dashboard specific
+    fruitaiDashboard: 'Tableau de Bord FruitAI',
+    totalItemsAnalyzed: 'Total d\'articles analysés',
+    
+    // Specific analysis values
+    redWithPatches: 'Rouge avec des taches jaunes et brunes',
+    wrinkledSoft: 'Ridé et mou', 
+    visibleBlemishes: 'Taches visibles et décoloration',
+    overripe: 'Trop mûr',
+    notRecommendedStorage: 'Non recommandé pour le stockage',
+    storeInRefrigerator: 'Conserver dans le bac à légumes du réfrigérateur jusqu\'à 2 semaines',
+    
+    // Common fruit conditions
+    ripe: 'Mûr',
+    unripe: 'Pas mûr',
+    firm: 'Ferme',
+    soft: 'Mou',
+    crisp: 'Croquant',
+    wrinkled: 'Ridé',
+    smooth: 'Lisse',
+    red: 'Rouge',
+    green: 'Vert',
+    yellow: 'Jaune',
+    brown: 'Brun',
+    patches: 'taches',
+    blemished: 'Taché',
+    unblemished: 'Sans taches',
+    
+    // Nutrition labels
+    netCarbs: 'Glucides Nets',
+    sugar: 'Sucre',
+    sodium: 'Sodium',
+    protein: 'Protéine',
+    carbs: 'Glucides',
+    fats: 'Graisses',
+    
+    // Quality descriptions
+    goodQuality: 'Bon',
+    excellentQuality: 'Excellent',
+    fairQuality: 'Correct',
+    poorQuality: 'Mauvais',
+    decentQuality: 'Qualité décente avec quelques nutriments bénéfiques. Considérez consommer bientôt pour la meilleure qualité.',
+    excellentQualityDesc: 'Excellente qualité avec une haute valeur nutritionnelle. Parfait pour la consommation immédiate.',
+    fairQualityDesc: 'Qualité correcte avec une valeur nutritionnelle modérée. À utiliser dans quelques jours.',
+    poorQualityDesc: 'Mauvaise qualité avec une valeur nutritionnelle limitée. Non recommandé pour la consommation.',
+    
+    // Fruit and vegetable names
+    apple: 'Pomme',
+    banana: 'Banane',
+    orange: 'Orange',
+    strawberry: 'Fraise',
+    grape: 'Raisin',
+    carrot: 'Carotte',
+    broccoli: 'Brocoli',
+    tomato: 'Tomate',
+    lettuce: 'Laitue',
+    spinach: 'Épinard',
+    
+    // Updated UI text to include vegetables
+    fruitsAndVegetables: 'Fruits et Légumes',
+    analyzeProduceInstantly: 'Analyser les produits instantanément',
+    fruitVegetableScanning: 'Scan de Fruits et Légumes',
+    scanProduce: 'Scanner les Produits'
   },
   
   zh: {
     // Main App
     appTitle: 'FruitAI',
-    appSubtitle: 'AI驱动的新鲜度扫描器',
+    appSubtitle: 'AI驱动的蔬果新鲜度助手',
     quickScan: '快速扫描',
     viewDashboard: '查看仪表板',
     viewAnalytics: '查看分析',
     startScanningNow: '现在开始扫描',
     aiPoweredAnalysis: 'AI驱动的新鲜度分析',
-    smartShopping: '通过AI扫描做出明智的购物决策并减少浪费',
+    smartShopping: '通过AI扫描判断蔬果新鲜度 做出明智的购物决策并减少浪费',
     readyToReduce: '准备好减少食物浪费并做出更明智的选择了吗？',
-    startSession: '开始扫描会话以分析新鲜度并获得个性化建议',
+    startSession: '开始扫描 分析新鲜度并获得个性化建议',
     
     // Camera
-    positionFruits: '将水果放在框架内',
+    positionFruits: '将蔬果放在框架内',
     ensureGoodLighting: '确保良好的照明以获得最佳效果',
     ready: '准备好',
     loading: '加载中...',
     
     // Analysis
-    analyzingFruit: '正在分析您的水果...',
-    aiScanning: 'AI正在扫描新鲜度和质量',
-    detectingFruits: '检测个别水果',
+    analyzingFruit: '正在分析您的产品...',
+    aiScanning: 'AI正在蔬果新鲜度和质量',
+    detectingFruits: '检测个别项目',
     analyzingColor: '分析颜色和质地',
     calculatingFreshness: '计算新鲜度分数',
     thisMayTake: '这可能需要10-30秒',
@@ -298,7 +557,7 @@ export const translations: Translations = {
     topFreshItems: '🏆 最新鲜项目',
     rankedByFreshness: '按新鲜度排名',
     noScansYet: '还没有扫描',
-    startAnalyzing: '开始分析水果新鲜度以在此查看您的历史记录',
+    startAnalyzing: '开始分析蔬果新鲜度以在此查看您的历史记录',
     startFirstScan: '开始第一次扫描',
     
     // Quality levels
@@ -318,7 +577,90 @@ export const translations: Translations = {
     // Feature Labels
     smartShoppingFeature: '智能购物',
     instantCheckFeature: '即时检查',
-    fridgeHelperFeature: '冰箱助手'
+    fridgeHelperFeature: '冰箱助手',
+    
+    // Additional analysis page translations
+    analysisComplete: '分析完成',
+    itemAnalyzed: '项目已分析',
+    confidenceLevel: '置信度',
+    nutritionHighlights: '营养亮点',
+    vitamins: '维生素',
+    fiber: '纤维',
+    minerals: '矿物质',
+    benefits: '益处',
+    highInVitaminC: '富含维生素C、维生素A',
+    fiberContent: '每个中等苹果4.4克',
+    potassiumCalcium: '钾、钙',
+    heartHealthDigestive: '心脏健康，消化支持',
+    storageAdvice: '存放在冰箱蔬菜抽屉中最多2周。远离产生乙烯气体的其他水果。',
+    vibrantRed: '鲜艳的红色',
+    crispFirm: '酥脆结实',
+    noneVisible: '无可见',
+    perfect: '完美',
+    
+    // Dashboard specific
+    fruitaiDashboard: 'FruitAI 仪表板',
+    totalItemsAnalyzed: '分析的项目总数',
+    
+    // Specific analysis values
+    redWithPatches: '红色带有黄色和棕色斑块',
+    wrinkledSoft: '起皱且柔软', 
+    visibleBlemishes: '可见斑点和变色',
+    overripe: '过熟',
+    notRecommendedStorage: '不建议储存',
+    storeInRefrigerator: '存放在冰箱蔬菜抽屉中最多2周',
+    
+    // Common fruit conditions
+    ripe: '成熟',
+    unripe: '未熟',
+    firm: '结实',
+    soft: '柔软',
+    crisp: '酥脆',
+    wrinkled: '起皱',
+    smooth: '光滑',
+    red: '红色',
+    green: '绿色',
+    yellow: '黄色',
+    brown: '棕色',
+    patches: '斑块',
+    blemished: '有斑点',
+    unblemished: '无斑点',
+    
+    // Nutrition labels
+    netCarbs: '净碳水化合物',
+    sugar: '糖',
+    sodium: '钠',
+    protein: '蛋白质',
+    carbs: '碳水化合物',
+    fats: '脂肪',
+    
+    // Quality descriptions
+    goodQuality: '良好',
+    excellentQuality: '优秀',
+    fairQuality: '一般',
+    poorQuality: '较差',
+    decentQuality: '质量不错，含有一些有益营养素。建议尽快食用以获得最佳品质。',
+    excellentQualityDesc: '品质优秀，营养价值高。适合立即食用。',
+    fairQualityDesc: '品质一般，营养价值中等。建议几天内食用。',
+    poorQualityDesc: '品质较差，营养价值有限。不建议食用。',
+    
+    // Fruit and vegetable names
+    apple: '苹果',
+    banana: '香蕉',
+    orange: '橙子',
+    strawberry: '草莓',
+    grape: '葡萄',
+    carrot: '胡萝卜',
+    broccoli: '西兰花',
+    tomato: '番茄',
+    lettuce: '生菜',
+    spinach: '菠菜',
+    
+    // Updated UI text to include vegetables
+    fruitsAndVegetables: '水果和蔬菜',
+    analyzeProduceInstantly: '即时分析农产品',
+    fruitVegetableScanning: '水果蔬菜扫描',
+    scanProduce: '扫描农产品'
   },
   
   ja: {
@@ -341,9 +683,9 @@ export const translations: Translations = {
     loading: '読み込み中...',
     
     // Analysis
-    analyzingFruit: '果物を分析中...',
+    analyzingFruit: '農産物を分析中...',
     aiScanning: 'AIがフレッシュネスと品質をスキャンしています',
-    detectingFruits: '個別の果物を検出中',
+    detectingFruits: '個別のアイテムを検出中',
     analyzingColor: '色と質感を分析中',
     calculatingFreshness: 'フレッシュネススコアを計算中',
     thisMayTake: 'これには10-30秒かかる場合があります',
@@ -396,7 +738,90 @@ export const translations: Translations = {
     // Feature Labels
     smartShoppingFeature: 'スマート買い物',
     instantCheckFeature: '即時チェック',
-    fridgeHelperFeature: '冷蔵庫アシスタント'
+    fridgeHelperFeature: '冷蔵庫アシスタント',
+    
+    // Additional analysis page translations
+    analysisComplete: '分析完了',
+    itemAnalyzed: 'アイテム分析済み',
+    confidenceLevel: '信頼度',
+    nutritionHighlights: '栄養ハイライト',
+    vitamins: 'ビタミン',
+    fiber: '食物繊維',
+    minerals: 'ミネラル',
+    benefits: '効果',
+    highInVitaminC: 'ビタミンC、ビタミンAが豊富',
+    fiberContent: '中サイズのりんご1個あたり4.4g',
+    potassiumCalcium: 'カリウム、カルシウム',
+    heartHealthDigestive: '心臓の健康、消化サポート',
+    storageAdvice: '冷蔵庫の野菜室で最大2週間保存してください。エチレンガスを発生する他の果物から離してください。',
+    vibrantRed: '鮮やかな赤',
+    crispFirm: 'サクサクで硬い',
+    noneVisible: '見当たらない',
+    perfect: '完璧',
+    
+    // Dashboard specific
+    fruitaiDashboard: 'FruitAI ダッシュボード',
+    totalItemsAnalyzed: '分析されたアイテムの総数',
+    
+    // Specific analysis values
+    redWithPatches: '黄色と茶色の斑点がある赤',
+    wrinkledSoft: 'しわがあり柔らかい', 
+    visibleBlemishes: '目に見える汚れと変色',
+    overripe: '熟しすぎ',
+    notRecommendedStorage: '保存には推奨されません',
+    storeInRefrigerator: '冷蔵庫の野菜室で最大2週間保存',
+    
+    // Common fruit conditions
+    ripe: '熟した',
+    unripe: '未熟',
+    firm: '硬い',
+    soft: '柔らかい',
+    crisp: 'サクサク',
+    wrinkled: 'しわがある',
+    smooth: '滑らか',
+    red: '赤',
+    green: '緑',
+    yellow: '黄色',
+    brown: '茶色',
+    patches: '斑点',
+    blemished: '傷がある',
+    unblemished: '傷がない',
+    
+    // Nutrition labels
+    netCarbs: '正味炭水化物',
+    sugar: '糖質',
+    sodium: 'ナトリウム',
+    protein: 'タンパク質',
+    carbs: '炭水化物',
+    fats: '脂質',
+    
+    // Quality descriptions
+    goodQuality: '良い',
+    excellentQuality: '優秀',
+    fairQuality: '普通',
+    poorQuality: '悪い',
+    decentQuality: 'まずまずの品質で、いくつかの有益な栄養素を含んでいます。最高の品質のために早めに摂取することを検討してください。',
+    excellentQualityDesc: '高い栄養価を持つ優秀な品質。即座の摂取に最適です。',
+    fairQualityDesc: '中程度の栄養価を持つ普通の品質。数日以内に使用してください。',
+    poorQualityDesc: '限られた栄養価を持つ悪い品質。摂取は推奨されません。',
+    
+    // Fruit and vegetable names
+    apple: 'りんご',
+    banana: 'バナナ',
+    orange: 'オレンジ',
+    strawberry: 'いちご',
+    grape: 'ぶどう',
+    carrot: 'にんじん',
+    broccoli: 'ブロッコリー',
+    tomato: 'トマト',
+    lettuce: 'レタス',
+    spinach: 'ほうれん草',
+    
+    // Updated UI text to include vegetables
+    fruitsAndVegetables: '果物と野菜',
+    analyzeProduceInstantly: '農産物を即座に分析',
+    fruitVegetableScanning: '果物・野菜スキャン',
+    scanProduce: '農産物をスキャン'
   }
 };
 
@@ -595,4 +1020,90 @@ export function getTranslation(language: string, key: string): string {
 // Create translation hook-like function
 export function createTranslator(language: string) {
   return (key: string): string => getTranslation(language, key);
+}
+
+// Translate dynamic analysis content
+export function translateAnalysisValue(language: string, value: string): string {
+  if (!value) return value;
+  
+  // Create a mapping of English values to translation keys
+  const valueMap: { [key: string]: string } = {
+    'Red with yellow and brown patches': 'redWithPatches',
+    'Wrinkled and soft': 'wrinkledSoft',
+    'Visible blemishes and discoloration': 'visibleBlemishes',
+    'Overripe': 'overripe',
+    'Not recommended for storage': 'notRecommendedStorage',
+    'Store in refrigerator crisper drawer for up to 2 weeks': 'storeInRefrigerator',
+    'Ripe': 'ripe',
+    'Unripe': 'unripe',
+    'Firm': 'firm',
+    'Soft': 'soft',
+    'Crisp': 'crisp',
+    'Wrinkled': 'wrinkled',
+    'Smooth': 'smooth',
+    'Red': 'red',
+    'Green': 'green',
+    'Yellow': 'yellow',
+    'Brown': 'brown',
+    'Perfect': 'perfect',
+    'Vibrant red': 'vibrantRed',
+    'Crisp & firm': 'crispFirm',
+    'None visible': 'noneVisible',
+    
+    // Nutrition labels
+    'Fiber': 'fiber',
+    'Net Carbs': 'netCarbs',
+    'Sugar': 'sugar',
+    'Sodium': 'sodium',
+    'Protein': 'protein',
+    'Carbs': 'carbs',
+    'Fats': 'fats',
+    
+    // Quality descriptions
+    'Good': 'goodQuality',
+    'Excellent': 'excellentQuality',
+    'Fair': 'fairQuality',
+    'Poor': 'poorQuality',
+    'Decent quality with some beneficial nutrients. Consider consuming soon for best quality.': 'decentQuality',
+    'Excellent quality with high nutritional value. Perfect for immediate consumption.': 'excellentQualityDesc',
+    'Fair quality with moderate nutritional value. Use within a few days.': 'fairQualityDesc',
+    'Poor quality with limited nutritional value. Not recommended for consumption.': 'poorQualityDesc',
+    
+    // Fruit and vegetable names
+    'Apple': 'apple',
+    'Banana': 'banana',
+    'Orange': 'orange',
+    'Strawberry': 'strawberry',
+    'Grape': 'grape',
+    'Carrot': 'carrot',
+    'Broccoli': 'broccoli',
+    'Tomato': 'tomato',
+    'Lettuce': 'lettuce',
+    'Spinach': 'spinach',
+    
+    // Additional quality scores and storage
+    'Very Good!': 'veryGood',
+    'High in beneficial nutrients and very supportive of overall health. It can be a regular part of a healthy diet.': 'highNutrients',
+    'Store in a cool, dry place or refrigerate to extend freshness.': 'storeCoolDry',
+    'Deep red': 'deepRed',
+    'Smooth and firm': 'smoothAndFirm',
+    'Perfectly ripe': 'perfectlyRipe'
+  };
+  
+  // Check if we have a translation key for this value
+  const translationKey = valueMap[value];
+  if (translationKey) {
+    return getTranslation(language, translationKey);
+  }
+  
+  // If no direct match, try to translate individual words
+  let translatedValue = value;
+  for (const [englishWord, key] of Object.entries(valueMap)) {
+    if (value.includes(englishWord)) {
+      const translatedWord = getTranslation(language, key);
+      translatedValue = translatedValue.replace(englishWord, translatedWord);
+    }
+  }
+  
+  return translatedValue;
 }
