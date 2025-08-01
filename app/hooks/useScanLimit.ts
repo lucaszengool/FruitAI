@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 
-const GUEST_SCAN_LIMIT = 7;
+const GUEST_SCAN_LIMIT = 2;
 
 export function useScanLimit() {
   const { isSignedIn, userId } = useAuth();
