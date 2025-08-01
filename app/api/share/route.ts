@@ -47,9 +47,13 @@ export async function POST(request: NextRequest) {
     
     console.log(`📤 Created share link: ${shareId}`);
     
+    // Use production domain or fallback to request origin
+    const productionDomain = 'https://fruitai.org';
+    const baseUrl = process.env.NODE_ENV === 'production' ? productionDomain : request.nextUrl.origin;
+    
     return NextResponse.json({ 
       shareId, 
-      shareUrl: `${request.nextUrl.origin}/shared/${shareId}`,
+      shareUrl: `${baseUrl}/shared/${shareId}`,
       expiresAt 
     });
     
