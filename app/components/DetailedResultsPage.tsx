@@ -70,6 +70,9 @@ export function DetailedResultsPage({
 }: DetailedResultsPageProps) {
   const { t, language } = useTranslation();
   const [selectedFruit, setSelectedFruit] = useState<FruitAnalysisResult>(results[0]);
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const getRecommendationColor = (recommendation: string) => {
     switch (recommendation) {
@@ -144,6 +147,61 @@ export function DetailedResultsPage({
 
   // Check if this is an unknown produce case
   const isUnknownProduce = selectedFruit.item === 'Unknown Produce' || selectedFruit.freshness === 0;
+
+  const handleShare = async () => {
+    if (isUnknownProduce) {
+      alert('Cannot share results for undetected produce');
+      return;
+    }
+
+    setIsSharing(true);
+    try {
+      const response = await fetch('/api/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          results,
+          capturedImage
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create share link');
+      }
+
+      const data = await response.json();
+      setShareUrl(data.shareUrl);
+      setShowShareModal(true);
+      
+      console.log('Share created:', data.shareUrl);
+    } catch (error) {
+      console.error('Error sharing results:', error);
+      alert('Failed to create share link. Please try again.');
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return;
+    
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Share link copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy URL:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Share link copied to clipboard!');
+    }
+  };
 
   return (
     <div className={`min-h-screen ${isUnknownProduce ? 'bg-white' : 'bg-gray-50'}`}>
@@ -225,10 +283,23 @@ export function DetailedResultsPage({
           <h1 className="text-lg font-semibold text-white">{t('freshnessAnalysis')}</h1>
           
           <div className="flex gap-2">
-            <button className="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <Share className="w-5 h-5 text-white" />
+            <button 
+              onClick={handleShare}
+              disabled={isSharing || isUnknownProduce}
+              className={`w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center transition-colors ${
+                isSharing || isUnknownProduce 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : 'hover:bg-opacity-30'
+              }`}
+              title={isUnknownProduce ? 'Cannot share undetected produce' : 'Share Results'}
+            >
+              {isSharing ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Share className="w-5 h-5 text-white" />
+              )}
             </button>
-            <button className="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <button className="w-10 h-10 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
               <MoreHorizontal className="w-5 h-5 text-white" />
             </button>
           </div>
@@ -482,7 +553,7 @@ export function DetailedResultsPage({
                         <div className="bg-white p-3 rounded-lg border border-blue-200">
                           <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
                             <Clock className="w-4 h-4" />
-                            Maintenance
+                            {t('maintenance')}
                           </h4>
                           <p className="text-sm text-blue-700">{t('checkRegularly')}</p>
                         </div>
@@ -492,7 +563,7 @@ export function DetailedResultsPage({
                     {/* Custom storage recommendation if available */}
                     {selectedFruit.storageRecommendation && (
                       <div className="pt-3 border-t border-blue-200">
-                        <h4 className="font-medium text-blue-800 mb-2">Specific Recommendation:</h4>
+                        <h4 className="font-medium text-blue-800 mb-2">{t('specificRecommendation')}:</h4>
                         <p className="text-sm text-blue-700 italic">
                           "{translateAnalysisValue(language, selectedFruit.storageRecommendation)}"
                         </p>
@@ -502,15 +573,15 @@ export function DetailedResultsPage({
                     {/* Freshness-dependent storage advice */}
                     <div className="pt-3 border-t border-blue-200">
                       <h4 className="font-medium text-blue-800 mb-2">
-                        {selectedFruit.freshness >= 80 ? '🟢 Optimal Storage:' :
-                         selectedFruit.freshness >= 60 ? '🟡 Priority Storage:' : '🔴 Immediate Use:'}
+                        {selectedFruit.freshness >= 80 ? `🟢 ${t('optimalStorage')}:` :
+                         selectedFruit.freshness >= 60 ? `🟡 ${t('priorityStorage')}:` : `🔴 ${t('immediateUse')}:`}
                       </h4>
                       <p className="text-sm text-blue-700">
                         {selectedFruit.freshness >= 80 
-                          ? 'High quality produce - follow standard storage guidelines for maximum shelf life extension.'
+                          ? t('highQualityProduce')
                           : selectedFruit.freshness >= 60
-                          ? 'Good quality but aging - store properly and use within recommended timeframe.'
-                          : 'Lower quality - consume soon and store in optimal conditions to prevent further deterioration.'
+                          ? t('goodQualityButAging')
+                          : t('lowerQuality')
                         }
                       </p>
                     </div>
@@ -650,20 +721,20 @@ export function DetailedResultsPage({
                     <div className="bg-white p-3 rounded-lg border border-green-200">
                       <h4 className="font-medium text-green-800 mb-2">{t('micronutrients')}</h4>
                       <div className="text-sm text-green-700 space-y-1">
-                        <p>• Vitamin C: 14% DV</p>
-                        <p>• Potassium: 6% DV</p>
-                        <p>• Vitamin A: 3% DV</p>
-                        <p>• Calcium: 1% DV</p>
+                        <p>• {t('vitaminC')}: 14% {t('dv')}</p>
+                        <p>• {t('potassium')}: 6% {t('dv')}</p>
+                        <p>• {t('vitaminA')}: 3% {t('dv')}</p>
+                        <p>• {t('calcium')}: 1% {t('dv')}</p>
                       </div>
                     </div>
                     
                     <div className="bg-white p-3 rounded-lg border border-green-200">
                       <h4 className="font-medium text-green-800 mb-2">{t('phytonutrients')}</h4>
                       <div className="text-sm text-green-700 space-y-1">
-                        <p>• Quercetin</p>
-                        <p>• Catechin</p>
-                        <p>• Chlorogenic acid</p>
-                        <p>• Anthocyanins</p>
+                        <p>• {t('quercetin')}</p>
+                        <p>• {t('catechin')}</p>
+                        <p>• {t('chlorogenicAcid')}</p>
+                        <p>• {t('anthocyanins')}</p>
                       </div>
                     </div>
                   </div>
@@ -672,11 +743,11 @@ export function DetailedResultsPage({
                     <div className="flex justify-between items-center text-sm">
                       <div>
                         <span className="font-medium text-green-800">{t('calorieContent')}: </span>
-                        <span className="text-green-700">{selectedFruit.nutritionInfo?.calories || '95 kcal'} per serving</span>
+                        <span className="text-green-700">{selectedFruit.nutritionInfo?.calories || '95 kcal'} {t('perServing')}</span>
                       </div>
                       <div>
                         <span className="font-medium text-green-800">{t('glycemicIndex')}: </span>
-                        <span className="text-green-700">Low to Medium (36-38)</span>
+                        <span className="text-green-700">{t('lowToMedium')} (36-38)</span>
                       </div>
                     </div>
                   </div>
@@ -699,22 +770,22 @@ export function DetailedResultsPage({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div className="bg-white p-3 rounded-lg border border-purple-200">
-                        <h4 className="font-medium text-purple-800 mb-2">Preparation Methods</h4>
+                        <h4 className="font-medium text-purple-800 mb-2">{t('preparationMethods')}</h4>
                         <div className="text-sm text-purple-700 space-y-1">
-                          <p>• Fresh consumption</p>
-                          <p>• Juice extraction</p>
-                          <p>• Cooking & baking</p>
-                          <p>• Dehydration</p>
+                          <p>• {t('freshConsumption')}</p>
+                          <p>• {t('juiceExtraction')}</p>
+                          <p>• {t('cookingBaking')}</p>
+                          <p>• {t('dehydration')}</p>
                         </div>
                       </div>
                       
                       <div className="bg-white p-3 rounded-lg border border-purple-200">
                         <h4 className="font-medium text-purple-800 mb-2">{t('servingRecommendations')}</h4>
                         <div className="text-sm text-purple-700 space-y-1">
-                          <p>• Adults: 1-2 medium pieces</p>
-                          <p>• Children: ½-1 medium piece</p>
-                          <p>• Best consumed with skin</p>
-                          <p>• Combine with protein/fat</p>
+                          <p>• {t('adults')}: 1-2 {t('mediumPieces')}</p>
+                          <p>• {t('children')}: ½-1 {t('mediumPieces')}</p>
+                          <p>• {t('bestConsumedWithSkin')}</p>
+                          <p>• {t('combineWithProteinFat')}</p>
                         </div>
                       </div>
                     </div>
@@ -723,20 +794,20 @@ export function DetailedResultsPage({
                       <div className="bg-white p-3 rounded-lg border border-purple-200">
                         <h4 className="font-medium text-purple-800 mb-2">{t('pairingsSuggestions')}</h4>
                         <div className="text-sm text-purple-700 space-y-1">
-                          <p>• Nuts & nut butters</p>
-                          <p>• Yogurt & cheese</p>
-                          <p>• Oats & grains</p>
-                          <p>• Dark leafy greens</p>
+                          <p>• {t('nutsNutButters')}</p>
+                          <p>• {t('yogurtCheese')}</p>
+                          <p>• {t('oatsGrains')}</p>
+                          <p>• {t('darkLeafyGreens')}</p>
                         </div>
                       </div>
                       
                       <div className="bg-white p-3 rounded-lg border border-purple-200">
                         <h4 className="font-medium text-purple-800 mb-2">{t('seasonalAvailability')}</h4>
                         <div className="text-sm text-purple-700 space-y-1">
-                          <p>• Peak: Fall season</p>
-                          <p>• Available year-round</p>
-                          <p>• Best quality: August-November</p>
-                          <p>• Local varieties preferred</p>
+                          <p>• {t('peakFallSeason')}</p>
+                          <p>• {t('availableYearRound')}</p>
+                          <p>• {t('bestQualityAugNov')}</p>
+                          <p>• {t('localVarietiesPreferred')}</p>
                         </div>
                       </div>
                     </div>
@@ -759,39 +830,39 @@ export function DetailedResultsPage({
                 <Card className="p-4 bg-gradient-to-br from-emerald-50 to-white">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-white p-3 rounded-lg border border-emerald-200">
-                      <h4 className="font-medium text-emerald-800 mb-2">Carbon Footprint</h4>
+                      <h4 className="font-medium text-emerald-800 mb-2">{t('carbonFootprint')}</h4>
                       <div className="text-sm text-emerald-700 space-y-1">
-                        <p>• Local: 0.3 kg CO₂/kg</p>
-                        <p>• Regional: 0.8 kg CO₂/kg</p>
-                        <p>• Choose local when possible</p>
+                        <p>• {t('local')}: 0.3 kg CO₂/kg</p>
+                        <p>• {t('regional')}: 0.8 kg CO₂/kg</p>
+                        <p>• {t('chooseLocalWhenPossible')}</p>
                       </div>
                     </div>
                     
                     <div className="bg-white p-3 rounded-lg border border-emerald-200">
-                      <h4 className="font-medium text-emerald-800 mb-2">Water Usage</h4>
+                      <h4 className="font-medium text-emerald-800 mb-2">{t('waterUsage')}</h4>
                       <div className="text-sm text-emerald-700 space-y-1">
-                        <p>• 70L water per apple</p>
-                        <p>• Moderate water footprint</p>
-                        <p>• Support sustainable farms</p>
+                        <p>• {t('waterPerApple')}</p>
+                        <p>• {t('moderateWaterFootprint')}</p>
+                        <p>• {t('supportSustainableFarms')}</p>
                       </div>
                     </div>
                     
                     <div className="bg-white p-3 rounded-lg border border-emerald-200">
-                      <h4 className="font-medium text-emerald-800 mb-2">Eco Tips</h4>
+                      <h4 className="font-medium text-emerald-800 mb-2">{t('ecoTips')}</h4>
                       <div className="text-sm text-emerald-700 space-y-1">
-                        <p>• Buy organic when possible</p>
-                        <p>• Compost peels & cores</p>
-                        <p>• Use reusable bags</p>
+                        <p>• {t('buyOrganicWhenPossible')}</p>
+                        <p>• {t('compostPeelsAndCores')}</p>
+                        <p>• {t('useReusableBags')}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="mt-4 pt-3 border-t border-emerald-200">
                     <p className="text-sm text-emerald-700">
-                      <span className="font-medium">Freshness Impact:</span> {
+                      <span className="font-medium">{t('freshnessImpact')}:</span> {
                         selectedFruit.freshness >= 80 
-                          ? 'Optimal freshness reduces food waste and maximizes nutritional value.' 
-                          : 'Consider using soon to minimize waste and environmental impact.'
+                          ? t('optimalFreshnessReducesWaste')
+                          : t('considerUsingSoon')
                       }
                     </p>
                   </div>
@@ -874,13 +945,13 @@ export function DetailedResultsPage({
                     {selectedFruit.freshness >= 80 && (
                       <div className="pt-3 border-t border-red-200">
                         <p className="text-sm font-medium text-green-700 mb-1">
-                          ✨ Premium Quality Benefits:
+                          ✨ {t('premiumQualityBenefits')}:
                         </p>
                         <div className="text-sm text-gray-700 space-y-1">
                           <p>• {t('highFiberBenefits')}</p>
                           <p>• {t('naturalEnergySource')}</p>
-                          <p>• Maximum nutrient density and bioavailability</p>
-                          <p>• Optimal antioxidant activity for cellular protection</p>
+                          <p>• {t('maximumNutrientDensity')}</p>
+                          <p>• {t('optimalAntioxidantActivity')}</p>
                         </div>
                       </div>
                     )}
@@ -931,6 +1002,71 @@ export function DetailedResultsPage({
           </div>
         </motion.div>
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && shareUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+          >
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Share className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Share Your Results</h2>
+              <p className="text-gray-600">
+                Share this analysis with others. The link will expire in 7 days.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-600 mb-2">Share Link:</p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={shareUrl}
+                  readOnly
+                  className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                />
+                <button
+                  onClick={copyShareUrl}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'FruitAI Analysis Results',
+                      text: `Check out my produce freshness analysis from FruitAI! ${results.length} items analyzed.`,
+                      url: shareUrl
+                    }).catch(() => copyShareUrl());
+                  } else {
+                    copyShareUrl();
+                  }
+                }}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors"
+              >
+                Share Link
+              </button>
+              
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

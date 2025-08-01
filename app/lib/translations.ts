@@ -990,7 +990,83 @@ export const translations: Translations = {
     pairingsSuggestions: '食物搭配建议',
     seasonalAvailability: '季节性信息',
     varietyInformation: '品种和选择指南',
-    sustainabilityInfo: '环境影响'
+    sustainabilityInfo: '环境影响',
+    
+    // Additional missing translations
+    maintenance: '维护',
+    specificRecommendation: '具体建议',
+    optimalStorage: '最佳存储',
+    highQualityProduce: '高质量农产品 - 遵循标准存储指南以最大限度延长保质期',
+    goodSourceOfFiber: '良好的纤维来源',
+    variesByFruitType: '因水果类型而异',
+    preparationMethods: '准备方法',
+    freshConsumption: '新鲜食用',
+    juiceExtraction: '榨汁',
+    cookingBaking: '烹饪和烘焙',
+    dehydration: '脱水',
+    adults: '成人',
+    children: '儿童',
+    mediumPieces: '中等大小',
+    bestConsumedWithSkin: '最好连皮食用',
+    combineWithProteinFat: '与蛋白质/脂肪结合',
+    nutsNutButters: '坚果和坚果酱',
+    yogurtCheese: '酸奶和奶酪',
+    oatsGrains: '燕麦和谷物',
+    darkLeafyGreens: '深色叶菜',
+    peakFallSeason: '高峰期：秋季',
+    availableYearRound: '全年供应',
+    bestQualityAugNov: '最佳品质：8月-11月',
+    localVarietiesPreferred: '首选本地品种',
+    carbonFootprint: '碳足迹',
+    local: '本地',
+    regional: '区域',
+    chooseLocalWhenPossible: '尽可能选择本地产品',
+    waterUsage: '用水量',
+    waterPerApple: '每个苹果70升水',
+    moderateWaterFootprint: '中等水足迹',
+    supportSustainableFarms: '支持可持续农场',
+    ecoTips: '环保提示',
+    buyOrganicWhenPossible: '尽可能购买有机产品',
+    compostPeelsAndCores: '将果皮和果核堆肥',
+    useReusableBags: '使用可重复使用的袋子',
+    freshnessImpact: '新鲜度影响',
+    optimalFreshnessReducesWaste: '最佳新鲜度减少食物浪费并最大化营养价值',
+    quercetin: '槲皮素',
+    catechin: '儿茶素',
+    chlorogenicAcid: '绿原酸',
+    anthocyanins: '花青素',
+    vitaminC: '维生素C',
+    potassium: '钾',
+    vitaminA: '维生素A',
+    calcium: '钙',
+    maximumNutrientDensity: '最大营养密度和生物利用度',
+    optimalAntioxidantActivity: '最佳抗氧化活性，提供细胞保护',
+    premiumQualityBenefits: '高品质益处',
+    
+    // Additional missing storage translations
+    immediateUse: '立即使用',
+    priorityStorage: '优先存储',
+    lowerQuality: '质量较低 - 尽快食用并在最佳条件下存储以防止进一步变质',
+    goodQualityButAging: '质量良好但正在老化 - 请妥善存储并在建议时间内使用',
+    considerUsingSoon: '考虑尽快使用以减少浪费和环境影响',
+    
+    // Calorie and serving translations
+    perServing: '每份',
+    lowToMedium: '低至中等',
+    dv: '日推荐摄入量',
+    
+    // Additional untranslated phrases
+    providesAntioxidantsNutrients: '提供抗氧化剂和营养素',
+    
+    // Additional missing phrases from user feedback
+    consumeImmediatelyOrDiscard: '如有必要请立即食用，否则丢弃',
+    with: '与',
+    and: '和',
+    areas: '区域',
+    multiple: '多个',
+    spots: '斑点',
+    mediumSize: '中等大小',
+    butStillSomeEnglish: '但仍有一些是英文'
   },
   
   ja: {
@@ -1408,6 +1484,39 @@ export function createTranslator(language: string) {
 }
 
 // Translate dynamic analysis content
+// Enhanced automatic translation function
+export async function autoTranslateText(text: string, targetLanguage: string): Promise<string> {
+  // Simple regex to detect English text
+  const englishPattern = /[a-zA-Z]{2,}/;
+  
+  if (!englishPattern.test(text) || targetLanguage === 'en') {
+    return text;
+  }
+  
+  // Use a simple translation mapping for common words first
+  const simpleTranslations: { [key: string]: { [lang: string]: string } } = {
+    'with': { zh: '与', ja: 'と' },
+    'and': { zh: '和', ja: 'と' },
+    'areas': { zh: '区域', ja: 'エリア' },
+    'spots': { zh: '斑点', ja: 'スポット' },
+    'Multiple': { zh: '多个', ja: '複数の' },
+    'Good source of fiber': { zh: '良好的纤维来源', ja: '食物繊維の良い供給源' },
+    'Varies by fruit type': { zh: '因水果类型而异', ja: '果物の種類によって異なります' }
+  };
+  
+  let translatedText = text;
+  
+  // Apply simple translations
+  for (const [english, translations] of Object.entries(simpleTranslations)) {
+    if (translations[targetLanguage]) {
+      const regex = new RegExp(`\\b${english}\\b`, 'gi');
+      translatedText = translatedText.replace(regex, translations[targetLanguage]);
+    }
+  }
+  
+  return translatedText;
+}
+
 export function translateAnalysisValue(language: string, value: string): string {
   if (!value) return value;
   
@@ -1483,7 +1592,83 @@ export function translateAnalysisValue(language: string, value: string): string 
     'Smooth and glossy': 'smoothAndGlossy',
     'glossy': 'glossy',
     'Needs Attention': 'needsAttention',
-    'Quality is declining. Inspect carefully before consuming or consider avoiding.': 'qualityDeclining'
+    'Quality is declining. Inspect carefully before consuming or consider avoiding.': 'qualityDeclining',
+    
+    // Additional mapping for missing translations
+    'Maintenance': 'maintenance',
+    'Specific Recommendation': 'specificRecommendation',
+    'Optimal Storage': 'optimalStorage',
+    'High quality produce - follow standard storage guidelines for maximum shelf life extension.': 'highQualityProduce',
+    'Good source of fiber': 'goodSourceOfFiber',
+    'Varies by fruit type': 'variesByFruitType',
+    'Preparation Methods': 'preparationMethods',
+    'Fresh consumption': 'freshConsumption',
+    'Juice extraction': 'juiceExtraction',
+    'Cooking & baking': 'cookingBaking',
+    'Dehydration': 'dehydration',
+    'Adults': 'adults',
+    'Children': 'children',
+    'medium pieces': 'mediumPieces',
+    'Best consumed with skin': 'bestConsumedWithSkin',
+    'Combine with protein/fat': 'combineWithProteinFat',
+    'Nuts & nut butters': 'nutsNutButters',
+    'Yogurt & cheese': 'yogurtCheese',
+    'Oats & grains': 'oatsGrains',
+    'Dark leafy greens': 'darkLeafyGreens',
+    'Peak: Fall season': 'peakFallSeason',
+    'Available year-round': 'availableYearRound',
+    'Best quality: August-November': 'bestQualityAugNov',
+    'Local varieties preferred': 'localVarietiesPreferred',
+    'Carbon Footprint': 'carbonFootprint',
+    'Local': 'local',
+    'Regional': 'regional',
+    'Choose local when possible': 'chooseLocalWhenPossible',
+    'Water Usage': 'waterUsage',
+    '70L water per apple': 'waterPerApple',
+    'Moderate water footprint': 'moderateWaterFootprint',
+    'Support sustainable farms': 'supportSustainableFarms',
+    'Eco Tips': 'ecoTips',
+    'Buy organic when possible': 'buyOrganicWhenPossible',
+    'Compost peels & cores': 'compostPeelsAndCores',
+    'Use reusable bags': 'useReusableBags',
+    'Freshness Impact': 'freshnessImpact',
+    'Optimal freshness reduces food waste and maximizes nutritional value.': 'optimalFreshnessReducesWaste',
+    'Quercetin': 'quercetin',
+    'Catechin': 'catechin',
+    'Chlorogenic acid': 'chlorogenicAcid',
+    'Anthocyanins': 'anthocyanins',
+    'Vitamin C': 'vitaminC',
+    'Potassium': 'potassium',
+    'Vitamin A': 'vitaminA',
+    'Calcium': 'calcium',
+    'Maximum nutrient density and bioavailability': 'maximumNutrientDensity',
+    'Optimal antioxidant activity for cellular protection': 'optimalAntioxidantActivity',
+    'Premium Quality Benefits': 'premiumQualityBenefits',
+    
+    // Storage level translations
+    'Immediate Use': 'immediateUse',
+    'Priority Storage': 'priorityStorage',
+    'Lower quality - consume soon and store in optimal conditions to prevent further deterioration.': 'lowerQuality',
+    'Good quality but aging - store properly and use within recommended timeframe.': 'goodQualityButAging',
+    'Consider using soon to minimize waste and environmental impact.': 'considerUsingSoon',
+    
+    // Serving translations
+    'per serving': 'perServing',
+    'Low to Medium': 'lowToMedium',
+    'DV': 'dv',
+    
+    // More phrase translations
+    'Provides antioxidants and nutrients': 'providesAntioxidantsNutrients',
+    
+    // Additional missing phrases from user feedback
+    'Consume immediately if necessary, otherwise discard': 'consumeImmediatelyOrDiscard',
+    'with': 'with',
+    'and': 'and',
+    'areas': 'areas',
+    'Multiple': 'multiple',
+    'spots': 'spots',
+    '中等大小': 'mediumSize',
+    'but still some of them are ENglish': 'butStillSomeEnglish'
   };
   
   // Check if we have a translation key for this value
@@ -1503,6 +1688,27 @@ export function translateAnalysisValue(language: string, value: string): string 
     if (regex.test(translatedValue)) {
       const translatedPhrase = getTranslation(language, key);
       translatedValue = translatedValue.replace(regex, translatedPhrase);
+    }
+  }
+  
+  // Apply automatic translation for any remaining English text
+  const simpleTranslations: { [key: string]: { [lang: string]: string } } = {
+    'with': { zh: '与', ja: 'と' },
+    'and': { zh: '和', ja: 'と' },
+    'areas': { zh: '区域', ja: 'エリア' },
+    'spots': { zh: '斑点', ja: 'スポット' },
+    'Multiple': { zh: '多个', ja: '複数の' },
+    'Good source of fiber': { zh: '良好的纤维来源', ja: '食物繊維の良い供給源' },
+    'Varies by fruit type': { zh: '因水果类型而异', ja: '果物の種類によって異なります' },
+    'per serving': { zh: '每份', ja: '1食あたり' },
+    'Consume immediately if necessary, otherwise discard': { zh: '如有必要请立即食用，否则丢弃', ja: '必要に応じてすぐに摂取し、そうでなければ廃棄してください' }
+  };
+  
+  // Apply simple translations for remaining English words
+  for (const [english, translations] of Object.entries(simpleTranslations)) {
+    if (translations[language]) {
+      const regex = new RegExp(`\\b${english.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\b`, 'gi');
+      translatedValue = translatedValue.replace(regex, translations[language]);
     }
   }
   
